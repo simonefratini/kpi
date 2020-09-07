@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<head>
+    <title>Generale</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- CSS -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <!-- Bootstrap Table CSS -->
+    <link href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css" rel="stylesheet">
+    <!--FINE CSS--->
+
+    <!-- javascript -->
+    <!-- Boostrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <!-- Bootstrap Table -->
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <!-- Load D3.js to read csv files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js" integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg==" crossorigin="anonymous"></script>
+    <!-- Load Label dentro la ciambella -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+    <!-- Load label nel centro della ciambella -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-doughnutlabel/2.0.3/chartjs-plugin-doughnutlabel.js" integrity="sha512-tqhJttGunGgQiVVp8pTNIwV39kpz8scVMRVpkBYyxrWFhsUQPP91a22+EYtxofO9eh1acFb+vIisxyPXg7Ll1g==" crossorigin="anonymous"></script>
+    <!-- Load Moment for date -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/locale/it.min.js" integrity="sha512-1jXfYnMhjj2dL+ng4SqSza+YDv9QMExgUpp9OzubnIbsj+ryCzxvoqK65vIOHszMtuvIpf2Hu5ravK3lRbawEA==" crossorigin="anonymous"></script>
+    <script src="carica.js"></script>
+    <style>
+/* beta banner */
+body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; background: #EE8E4A; top: 7px; left: -20px; text-align: center; font-size: 13px; font-family: sans-serif; text-transform: uppercase; font-weight: bold; color: #fff; line-height: 27px; transform:rotate(-45deg); }
+    </style>
+</head>
+<body onload="start()">
+    <div class="container">
+        <!-- GESTIONE CON TAB PER OGNI REPORT -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="project-tab" data-toggle="tab" href="#project" role="tab" aria-controls="project" aria-selected="true">project</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="team-tab" data-toggle="tab" href="#team" role="tab" aria-controls="team" aria-selected="false">team</a>
+            </li>
+        </ul>
+        <div class="tab-content border-left border-right border-bottom" id="myTabContent">
+            <!-- REPORT PER PROGETTI -->
+            <div class="tab-pane fade show active" id="project" role="tabpanel" aria-labelledby="project-tab">
+                <!-- intestazione con selezione del progetto --> 
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="selectProject">&nbsp;</label>
+                            <select class="form-control" id="selectProject" onchange="changeSelect(this)"> 
+                                <option value="0" selected>All</option>
+                                <!-- inserimento dinamico -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- riga con i grafici del progetto-->
+                <div class="row">
+                    <div class="col-6">
+                        <p class="text-center"><i>Actual Numbers<span id="timestamp"></span></i>
+                        <div class="form-check text-center">
+                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" onchange="changePriority(this)">
+                            <label class="form-check-label" for="defaultCheck1"> Priority  &GreaterEqual; High</label>
+                        </div>
+                        <canvas id="ciambella"></canvas>    
+                        <canvas id="ciambella_group"></canvas>    
+                    </div>
+                    <div class="col-6">
+                        <canvas id="barre"></canvas>                                                        
+                        <table id="table" class="table table-sm table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th data-align="right" data-field="label">Last 12 months performance </th>
+                                    <th data-align="right" data-field="value">bugs</th>
+                                    <th data-align="right" data-field="percent">percentage</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <!-- fine riga con grafici progetti-->
+            </div>
+            <!-- REPORT PER TEAM/GRUPPO-->
+            <div class="tab-pane fade" id="team" role="tabpanel" aria-labelledby="team-tab">
+                <!-- intestazione con selezione gruppi --> 
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="selectGroup">&nbsp;</label>
+                            <select class="form-control" id="selectGroup" onchange="changeSelect(this)"> 
+                                <option value="0" selected>All</option>
+                                <!-- inserimento dinamico -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- riga con i grafici del -->
+                <div class="row">
+                    <div class="col-6">
+                        <canvas id="barre_team"></canvas>                                                        
+                    </div>
+                    <div class="col-6">
+                        <table id="table_team" class="table table-sm table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th data-align="right" data-field="team"></th>
+                                    <th data-align="right" data-field="bugs">bugs</th>
+                                    <th data-align="right" data-field="days">days latency</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <!-- fine riga con grafici TEAM-->
+            </div>
+        </div>
+    </div>
+    <script>
+        // navigazione delle tab standard Boostrap
+        $('#nav-tab a').on('click', function (e) { e.preventDefault(); $(this).tab('show'); })
+    </script >
+    <footer>
+        <div class="container text-center"> <br>
+            <a class="badge badge-danger"  href="http://monitoring-helpdesk.it.abb.com/projects/redmine-customization-requestes/issues/new" target="_blank">For any issues, click to open a ticket </a>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,4 @@
+datasource/*csv
+datasource/*json
+export/*pyc
+export/export.log
