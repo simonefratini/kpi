@@ -1,7 +1,9 @@
 use kpi;
 drop view if exists open_bugs;
 create view open_bugs as  
-select p.project_id , if(status_id=9,'under test','under development') stato, ifnull(g.description,'Others') team,
+select p.project_id ,
+IF((`i`.`status_id` = 9), 'under test', IF((`i`.`status_id` = 1), 'new', 'under development')) AS `stato`,
+IFNULL(`g`.`description`, 'Others/Not Assigned') AS `team`,
 if(((i.priority_id >= 4) and (i.priority_id <= 7)), 1, 0) as peso,
 count(1) as bugs
 from redmine.issues i
