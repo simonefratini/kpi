@@ -64,6 +64,10 @@ scrivi_csv(csv_output_path+'monthly_performance.csv',cursor);
 cursor = redmine.execute('call team_performance')
 cursor = redmine.execute('select mese,group_id,team,days,bugs from team_performance')
 scrivi_csv(csv_output_path+'team_performance.csv',cursor);
+## aggregazione 
+cursor = redmine.execute('select group_id, team,days, bugs from team_performance_annuale')
+scrivi_csv(csv_output_path+'team_performance_annuale.csv',cursor);
+
 redmine.close
 ## Salvo il timestamp dell'estrazioni in formato json
 a = { "timestamp": datetime.now().strftime(' %Y-%m-%d %I:%M %p')} 
