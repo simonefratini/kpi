@@ -111,9 +111,10 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                         <table id="table_team" class="table table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
-                                    <th data-align="right" data-field="team"></th>
-                                    <th data-align="right" data-field="bugs">bugs</th>
-                                    <th data-align="right" data-field="days">days latency</th>
+                                    <th data-field="group_id" data-visible=false></th>
+                                    <th data-sortable=true data-align="right" data-field="team" data-formatter="grandTotal">Team (last 12 months)</th>
+                                    <th data-sortable=true data-align="right" data-field="bugs" data-formatter="grandTotal">Bugs</th>
+                                    <th data-sortable=true data-align="right" data-field="days" data-formatter="grandTotal">Days latency</th>
                                 </tr>
                             </thead>
                         </table>

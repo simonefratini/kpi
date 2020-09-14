@@ -76,6 +76,7 @@ function popola_team(gid) {
     if (barre_team != undefined)
         barre_team.destroy();
     team_performance_chart(gid);
+    team_performance_annuale(gid);
 }
 
 function getTimestamp() {
@@ -405,8 +406,6 @@ function team_performance_chart(group_id) {
             // filtro sul progetto 
             rows = rows.filter(function(d) { return d.group_id == group_id; })
         }
-        let rows_filter =  rows;
-    
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.mese;})
@@ -512,47 +511,45 @@ function team_performance_chart(group_id) {
 
             }
         });
-        // valori finali
-        // aggregazione di tutti i progetti sulla data
-        console.log(rows_filter);
-        rows_filter = d3.nest()
-            .key(function(d) { return d.team;})
-            .rollup(function(v) { return {
-                bugs: d3.sum(v, function(d) { return d.bugs;}),
-                // arrotondo per eccesso al giorno superiore
-                days: Math.ceil(d3.mean(v, function(d) { return d.days;}))
-            }; })
-            .entries(rows_filter)
-            // devo rimappare
-            .map(function (g) {
-                return {
-                    team: g.key,
-                    bugs: g.value.bugs,
-                    days: g.value.days
+    });
+}
 
-                }
-            });
-        let initialValue = 0;
 
+function team_performance_annuale(group_id) {
+    let file=datasource_path+'team_performance_annuale.csv';
+    d3.csv(file).then(function(rows) {
+        if (group_id != 0  ) { 
+            // filtro sul progetto 
+            rows = rows.filter(function(d) { return d.group_id == group_id; })
+        }
+        let rows_filter =  rows;
         rows_filter.sort(function(x, y){
            return d3.ascending(x.team, y.team);
         })
 
         if (group_id == 0 ) {
-
+            let initialValue = 0;
             let total = {
+            group_id : 0,
             team : "Total",
-            bugs : rows_filter.reduce(function (a,c) { return a + c.bugs; }, initialValue),
-            divisore_media : rows_filter.reduce(function (a,c) {  return a + Math.sign(c.bugs); }, initialValue),
-            days : rows_filter.reduce(function (a,c) { return a + c.days}, initialValue),
+            bugs : rows_filter.reduce(function (a,c) { return a + parseInt(c.bugs); }, initialValue),
+            divisore_media : rows_filter.reduce(function (a,c) {  return a + Math.sign(parseInt(c.bugs)); }, initialValue),
+            days : rows_filter.reduce(function (a,c) { return a + parseInt(c.days)}, initialValue),
             }
             total.days = Math.ceil(total.days / total.divisore_media);
-            console.log(total);
             rows_filter.push(total);
         }
-
         var $table = $('#table_team');
         $table.bootstrapTable({});
         $table.bootstrapTable("load",rows_filter);
+
     });
 }
+// formatter 
+function grandTotal(value,row) {
+    if (row.group_id == 0)
+        return '<span class="font-weight-bold">'+value+'</span>';
+    else
+        return value;
+}
+
