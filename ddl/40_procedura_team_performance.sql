@@ -26,7 +26,7 @@ select i.id,
     j.created_on as modificato ,
     ifnull(closed_on, now()) as chiuso 
 from redmine.issues i 
-join vproject p on p.project_id = i.project_id 
+join vproject p on p.id = i.project_id 
 left join(
 select journalized_id as id ,
        j.created_on,
