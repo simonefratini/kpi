@@ -264,7 +264,6 @@ function peso_bugs(rows) {
         .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
         .entries(rows)
         // devo rimappare
-    console.log(rows);
     let colonne = [];
     let data = [];
     let TOTALE_APERTI = 0;
