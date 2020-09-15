@@ -151,10 +151,10 @@ function openbugs(project_id, peso) {
 
 
 function under_development_bugs_by_team (rows) {
-    var TITLE = 'Under development bugs by team';
+    var TITLE = 'Being fixed bugs by team';
     // filtro per stato 
     // attenzione la label  è statica!!! TODO
-    rows = rows.filter(function(d) { return d.stato == "under development" });
+    rows = rows.filter(function(d) { return d.stato == "being fixed" });
     // aggregazione di tutti i progetti sulla data
     rows = d3.nest()
         .key(function(d) { return d.team;})

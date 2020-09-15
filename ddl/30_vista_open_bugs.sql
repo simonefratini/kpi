@@ -2,7 +2,7 @@ use kpi;
 drop view if exists open_bugs;
 create view open_bugs as  
 select p.project_id ,
-IF((`i`.`status_id` = 9), 'under test', IF((`i`.`status_id` = 1), 'new', 'under development')) AS `stato`,
+IF((`i`.`status_id` = 9), 'being validated', IF((`i`.`status_id` = 1), 'new', 'being fixed')) AS `stato`,
 IFNULL(`g`.`description`, 'Others/Not Assigned') AS `team`,
 i.priority_id as peso,
 count(1) as bugs
