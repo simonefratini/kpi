@@ -8,6 +8,8 @@ var barre = null;
 var barre_team = null;
 var ciambella = null;
 var ciambella_group = null;
+var ciambella_new = null;
+var pila_bugs = null;
 
 
 // funzione per recuperare i progetti/team ecc chiave valore semplice
@@ -93,16 +95,17 @@ function openbugs(project_id, peso) {
     var TITLE='Open bugs';
     let file=datasource_path+'open_bugs.csv'
     d3.csv(file).then(function(rows) {
-
         // filtro sul progetto 
         if (project_id != 0  ) 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
         // filtro sul peso  
         if (peso)
-            rows = rows.filter(function(d) { return d.peso == 1})
+            // high=4, urgent = 5 and immediate = 7 //
+            rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
         // uso il filtrato per la ciambella dei bugs di solo develpoment
+        peso_bugs(rows);
         under_development_bugs_by_team(rows);
-
+        new_bugs_by_team(rows);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.stato;})
@@ -116,8 +119,8 @@ function openbugs(project_id, peso) {
             data.push(e.value); 
             TOTALE_APERTI += parseInt(e.value);
         });
-            
-        let dati_ciambella  = { datasets : [ { data : data, backgroundColor: [ '#231964','#FFF014'] } ], labels: colonne };
+        let dati_ciambella  = { datasets : [ { data : data, backgroundColor: [ '#231964','#FFF014','lightgreen'] } ], labels: colonne };
+
         var ctx = document.getElementById('ciambella').getContext('2d');
         ciambella = new Chart(ctx, {
             type: 'doughnut',  // default  
@@ -149,7 +152,6 @@ function openbugs(project_id, peso) {
 
 function under_development_bugs_by_team (rows) {
     var TITLE = 'Under development bugs by team';
-    // aggregazione la devo fare dinamica
     // filtro per stato 
     // attenzione la label  è statica!!! TODO
     rows = rows.filter(function(d) { return d.stato == "under development" });
@@ -158,7 +160,7 @@ function under_development_bugs_by_team (rows) {
         .key(function(d) { return d.team;})
         .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
         .entries(rows)
-        // devo rimappare
+    // devo rimappare
     let colonne = [];
     let data = [];
     let TOTALE_APERTI= 0;
@@ -167,7 +169,6 @@ function under_development_bugs_by_team (rows) {
         data.push(e.value); 
         TOTALE_APERTI += parseInt(e.value);
     });
-
     let dati_ciambella = { datasets : [ { data : data , backgroundColor: [ 'lightblue','lightgreen','orange','green','red','pink','blue','magenta','brown','cyan'] } ], labels: colonne };
     var ctx = document.getElementById('ciambella_group').getContext('2d');
     ciambella_group = new Chart(ctx, {
@@ -194,9 +195,108 @@ function under_development_bugs_by_team (rows) {
             }
         }
     });
-    
+
+}
+function new_bugs_by_team (rows) {
+    var TITLE = 'New bugs by team';
+    // filtro per stato 
+    // attenzione la label  è statica!!! TODO
+    rows = rows.filter(function(d) { return d.stato == "new" });
+    // aggregazione di tutti i progetti sulla data
+    rows = d3.nest()
+        .key(function(d) { return d.team;})
+        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+        .entries(rows)
+    // devo rimappare
+    let colonne = [];
+    let data = [];
+    let TOTALE_APERTI= 0;
+    rows.forEach(function (e) {
+        colonne.push(e.key);
+        data.push(e.value); 
+        TOTALE_APERTI += parseInt(e.value);
+    });
+    let dati_ciambella = { datasets : [ { data : data , backgroundColor: [ 'lightblue','lightgreen','orange','green','red','pink','blue','magenta','brown','cyan'] } ], labels: colonne };
+    var ctx = document.getElementById('ciambella_new').getContext('2d');
+    ciambella_new = new Chart(ctx, {
+        type: 'doughnut',  // default  
+        data: dati_ciambella,
+        options: {
+            title: { display: true, text: TITLE },
+            responsive: true,
+            tooltips: { mode: 'label' },
+            plugins : {
+                datalabels : {
+                    render: 'value',
+                    font: { 
+                        size: '20' }, 
+                },
+                doughnutlabel: {
+                    labels: [
+                        {
+                            text: TOTALE_APERTI,
+                            font: { size: '30' }
+                        },
+                    ]
+                },
+            }
+        }
+    });
+
 }
 
+function peso_bugs(rows) {
+    var TITLE = 'Priority Bugs';
+    // attenzione la label  è statica!!! TODO
+    pesi = { 3 : 'Low',
+             4 : 'Normal',
+             5 : 'High',
+             6 : 'Urgent',
+             7 : 'Immediate',
+            39 : 'Not set' }
+            
+    rows = d3.nest()
+        .key(function(d) { return d.peso})
+        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+        .entries(rows)
+        // devo rimappare
+    console.log(rows);
+    let colonne = [];
+    let data = [];
+    let TOTALE_APERTI = 0;
+    rows.forEach(function (e) {
+        colonne.push(pesi[e.key]);
+        data.push(e.value); 
+        TOTALE_APERTI += parseInt(e.value);
+    });
+    let dati_ciambella = { datasets : [ { data : data , backgroundColor: [ 'lightblue','lightgreen','orange','green','red','pink','blue','magenta','brown','cyan'] } ], labels: colonne };
+    var ctx = document.getElementById('pila_bugs').getContext('2d');
+    pila_bugs = new Chart(ctx, {
+        type: 'doughnut',  // default  
+        data: dati_ciambella,
+        options: {
+            title: { display: true, text: TITLE },
+            responsive: true,
+            tooltips: { mode: 'label' },
+            plugins : {
+                datalabels : {
+                    render: 'value',
+                    font: { 
+                        size: '20' }, 
+                },
+                doughnutlabel: {
+                    labels: [
+                        {
+                            text: TOTALE_APERTI,
+                            font: { size: '30' }
+                        },
+                    ]
+                },
+            }
+        }
+    });
+    
+}
 
 function monthly_performance_chart(project_id) {
 
@@ -448,13 +548,11 @@ function team_performance_chart(group_id) {
                 data: []
             }
         });
-
         rows.map(function(row) {
             datasets.map(function(d) {
                 d.data.push(row[d.labelDirty])
             })
         });
-
         var barChartData = {
             labels : rows.map(function(el) { 
                 moment.locale('en');
@@ -463,7 +561,6 @@ function team_performance_chart(group_id) {
             datasets: datasets,
 
         };
-
         var ctx = document.getElementById('barre_team').getContext('2d');
         barre_team = new Chart(ctx, {
             type: 'bar',  // default  
@@ -522,27 +619,12 @@ function team_performance_annuale(group_id) {
             // filtro sul progetto 
             rows = rows.filter(function(d) { return d.group_id == group_id; })
         }
-        let rows_filter =  rows;
-        rows_filter.sort(function(x, y){
+        rows.sort(function(x, y){
            return d3.ascending(x.team, y.team);
         })
-
-        if (group_id == 0 ) {
-            let initialValue = 0;
-            let total = {
-            group_id : 0,
-            team : "Total",
-            bugs : rows_filter.reduce(function (a,c) { return a + parseInt(c.bugs); }, initialValue),
-            divisore_media : rows_filter.reduce(function (a,c) {  return a + Math.sign(parseInt(c.bugs)); }, initialValue),
-            days : rows_filter.reduce(function (a,c) { return a + parseInt(c.days)}, initialValue),
-            }
-            total.days = Math.ceil(total.days / total.divisore_media);
-            rows_filter.push(total);
-        }
         var $table = $('#table_team');
         $table.bootstrapTable({});
-        $table.bootstrapTable("load",rows_filter);
-
+        $table.bootstrapTable("load",rows);
     });
 }
 // formatter 
@@ -552,4 +634,3 @@ function grandTotal(value,row) {
     else
         return value;
 }
-
