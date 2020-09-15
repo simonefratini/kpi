@@ -63,6 +63,10 @@ function popola_bugs(pid,peso) {
         ciambella_group.destroy();
     if (ciambella != undefined)
         ciambella.destroy();
+    if (ciambella_new != undefined)
+        ciambella_new.destroy();
+    if (pila_bugs != undefined)
+        pila_bugs.destroy();
     openbugs(pid,peso);
     getTimestamp();
 }
