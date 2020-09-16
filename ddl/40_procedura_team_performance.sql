@@ -47,12 +47,13 @@ truncate table  tmp_team_performance;
 open cursore;
 giro:LOOP   
     FETCH cursore into v_id, v_user_id, v_previous_user_id, v_aperto, v_modificato, v_chiuso;        
-    if done then leave giro; end if;    
-    if previous_id != v_id and previous_aperto is not null  then
+    if done or (previous_id != v_id and previous_aperto is not null) then
 		-- devo inserire riga precedente 
+        -- vale anche per ultimo giro
         call insert_spalmato_sui_mesi(previous_id,previous_user_id,previous_modificato,previous_chiuso);                 
         set previous_aperto = null;
     end if ;
+    if done then leave giro; end if;    
     -- se e' senza previous_user_id e' unica v_id è unico
      if v_previous_user_id is null then     
 		-- posso inserire 

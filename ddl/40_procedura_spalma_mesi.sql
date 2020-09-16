@@ -8,11 +8,11 @@ declare inizio_mese datetime default null;
 declare fine_mese datetime default null;
 set inizio_mese = p_inizio;
 
-while inizio_mese < p_fine do
+while inizio_mese < ifnull(p_fine,now()) do
 	-- fine mese alle ore 23.59
 	set fine_mese = date_sub(date_add(last_day(inizio_mese),interval 1 day),interval 1 second);
 
-    if fine_mese >= p_fine then
+    if fine_mese >= ifnull(p_fine,now()) then
 		set fine_mese = p_fine;
 	end if;
 
