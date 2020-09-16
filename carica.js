@@ -495,6 +495,11 @@ function team_performance_chart(group_id) {
 
         },
         {
+            column: 'stillown',
+            name: 'Bugs spostati (negate) ',
+            color: '#FFF014'
+        },
+        {
             column: 'days',
             name: 'Average days handle in the month',
             color: '#231964'
@@ -514,6 +519,7 @@ function team_performance_chart(group_id) {
             .key(function(d) { return d.mese;})
             .rollup(function(v) { return {
                 bugs: d3.sum(v, function(d) { return d.bugs;}),
+                unleash: d3.sum(v, function(d) { return (d.bugs -d.stillown) ;}),
                 // arrotondo per eccesso al giorno superiore
                 days: Math.ceil(d3.mean(v, function(d) { return d.days;}))
             }; })
@@ -523,6 +529,7 @@ function team_performance_chart(group_id) {
                 return {
                     mese: g.key,
                     bugs: g.value.bugs,
+                    stilown: g.value.unleash,
                     days: g.value.days
 
                 }
@@ -564,6 +571,7 @@ function team_performance_chart(group_id) {
             datasets: datasets,
 
         };
+        console.log(rows);
         var ctx = document.getElementById('barre_team').getContext('2d');
         barre_team = new Chart(ctx, {
             type: 'bar',  // default  
