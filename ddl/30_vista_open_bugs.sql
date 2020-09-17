@@ -11,5 +11,5 @@ join vproject p on p.id = i.project_id
 left join vteam g on g.user_id = i.assigned_to_id
 where tracker_id = 1 -- tracker bugs
 and created_on > date_sub(now(), interval 1 year)
-and closed_on is null
+and closed_on is null -- bugs open
 group by project_id,stato,team,priority_id;
