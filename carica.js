@@ -76,6 +76,7 @@ function popola_project(pid) {
     if (barre != undefined)
         barre.destroy();
     monthly_performance_chart(pid);
+    yearly_performance(pid);
 }
 
 function popola_team(gid) {
