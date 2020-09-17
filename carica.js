@@ -495,8 +495,8 @@ function team_performance_chart(group_id) {
 
         },
         {
-            column: 'stillown',
-            name: 'Bugs spostati (negate) ',
+            column: 'unleash',
+            name: 'Bugs moved or closed',
             color: '#FFF014'
         },
         {
@@ -519,7 +519,7 @@ function team_performance_chart(group_id) {
             .key(function(d) { return d.mese;})
             .rollup(function(v) { return {
                 bugs: d3.sum(v, function(d) { return d.bugs;}),
-                unleash: d3.sum(v, function(d) { return (d.bugs -d.stillown) ;}),
+                stillown: d3.sum(v, function(d) { return (d.stillown) ;}),
                 // arrotondo per eccesso al giorno superiore
                 days: Math.ceil(d3.mean(v, function(d) { return d.days;}))
             }; })
@@ -529,12 +529,12 @@ function team_performance_chart(group_id) {
                 return {
                     mese: g.key,
                     bugs: g.value.bugs,
-                    stilown: g.value.unleash,
+                    stillown: g.value.stillown, 
+                    unleash: g.value.bugs - g.value.stillown,
                     days: g.value.days
 
                 }
             });
-        //
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
@@ -571,7 +571,6 @@ function team_performance_chart(group_id) {
             datasets: datasets,
 
         };
-        console.log(rows);
         var ctx = document.getElementById('barre_team').getContext('2d');
         barre_team = new Chart(ctx, {
             type: 'bar',  // default  
