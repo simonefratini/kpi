@@ -46,6 +46,6 @@ from redmine.issues ri
 join vproject p on p.id = ri.project_id
 where tracker_id = 1 -- tracker bugs
 and created_on > date_add(date_sub(last_day(date_sub(now(), interval 1 year)), interval 1 month),interval 1 day)
-and closed_on > date_add(date_sub(last_day(date_sub(now(), interval 1 year)), interval 1 month),interval 1 day)
+and closed_on is not null 
 group by p.project_id, mese) as tm on a.mese = tm.mese and a.project_id = tm.project_id
 order by a.mese;
