@@ -205,7 +205,7 @@ function peso_bugs(rows) {
 
 function monthly_performance_chart(project_id) {
 
-    var TITLE = 'Monthly Performance Chart';
+    var TITLE = 'Monthly Performance';
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
@@ -229,8 +229,7 @@ function monthly_performance_chart(project_id) {
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
     d3.csv(file).then(function(rows) {
-        if (project_id != 0  ) { 
-            // filtro sul progetto 
+        if (project_id != 0  ) { // filtro sul progetto 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
         }
         // aggregazione di tutti i progetti sulla data
@@ -252,17 +251,6 @@ function monthly_performance_chart(project_id) {
                     daytoclose: g.value.daytoclose
                 }
             });
-        //
-        let initialValue = 0;
-        grand_total = {
-            aperti : rows.reduce(function (a,c) { return a + c.aperti; }, initialValue),
-            chiusi : rows.reduce(function (a,c) { return a + c.chiusi; }, initialValue),
-            // prendo per la media delle medie solo quei mesi che hanno bugs, c.chiusi > 0 
-            divisore_media : rows.reduce(function (a,c) {  return a + Math.sign(c.chiusi); }, initialValue),
-            daytoclose : rows.reduce(function (a,c) { return a + c.daytoclose;}, initialValue),
-        }
-        grand_total.daytoclose = Math.ceil(grand_total.daytoclose / grand_total.divisore_media);
-
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
@@ -300,7 +288,6 @@ function monthly_performance_chart(project_id) {
             datasets: datasets,
 
         };
-
         var ctx = document.getElementById('barre').getContext('2d');
         barre = new Chart(ctx, {
             type: 'bar',  // default  
@@ -348,35 +335,110 @@ function monthly_performance_chart(project_id) {
 
             }
         });
+    });
+}
+
+function yearly_performance(project_id) {
+
+    let file=datasource_path+'yearly_performance.csv';
+    d3.csv(file).then(function(rows) {
+        if (project_id != 0  ) { // filtro sul progetto 
+            rows = rows.filter(function(d) { return d.project_id == project_id; })
+        }
+        // aggregazione di tutti i progetti sulla data
+        rows = d3.nest()
+            .key(function(d) { return d.mese;})
+            .rollup(function(v) { return {
+                aperti: d3.sum(v, function(d) { return d.aperti;}),
+                chiusi: d3.sum(v, function(d) { return d.chiusi;}),
+                // arrotondo per eccesso al giorno superiore
+                daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
+                aperti_assoluti: d3.sum(v, function(d) { return d.aperti_assoluti;}),
+                chiusi_assoluti: d3.sum(v, function(d) { return d.chiusi_assoluti;}),
+                // arrotondo per eccesso al giorno superiore
+                daytoclose_assoluti: Math.ceil(d3.mean(v, function(d) { return d.daytoclose_assoluti;}))
+            }; })
+            .entries(rows)
+        // devo rimappare
+            .map(function (g) {
+                return {
+                    mese: g.key,
+                    aperti: g.value.aperti,
+                    chiusi: g.value.chiusi,
+                    daytoclose: g.value.daytoclose,
+                    aperti_assoluti: g.value.aperti_assoluti,
+                    chiusi_assoluti: g.value.chiusi_assoluti,
+                    daytoclose_assoluti: g.value.daytoclose_assoluti
+                }
+            });
+        let initialValue = 0;
+        grand_total = {
+            aperti : rows.reduce(function (a,c) { return a + c.aperti; }, initialValue),
+            chiusi : rows.reduce(function (a,c) { return a + c.chiusi; }, initialValue),
+            daytoclose : rows.reduce(function(a,c) { return (a+  c.daytoclose)/rows.length}, initialValue), 
+            aperti_assoluti : rows.reduce(function (a,c) { return a + c.aperti_assoluti; }, initialValue),
+            chiusi_assoluti : rows.reduce(function (a,c) { return a + c.chiusi_assoluti; }, initialValue),
+            daytoclose_assoluti : rows.reduce(function(a,c) { return (a+  c.daytoclose_assoluti)/rows.length;},initialValue) 
+        }
+        // valori finali
+        grand_total["totale"]=grand_total.aperti+grand_total.chiusi;
+        grand_total["totale_assoluti"]=grand_total.aperti_assoluti+grand_total.chiusi_assoluti;
+        var valori = [
+            { 'id': 0,
+                'label': 'Open',
+                'yearly_value':  grand_total.aperti,
+                'yearly_percent':  Math.round(100*grand_total.aperti/grand_total.totale)+'%',
+                'absolute_value':  grand_total.aperti_assoluti,
+                'absolute_percent':  Math.round(100*grand_total.aperti_assoluti/grand_total.totale_assoluti)+'%',
+            }];
 
         // valori finali
         grand_total["totale"]=grand_total.aperti+grand_total.chiusi;
         var valori = [
             { 'id': 0,
-            'label': 'Open in last 12 months',
-            'value':  grand_total.aperti,
-            'percent':  Math.round(100*grand_total.aperti/grand_total.totale)+'%',
-                },
+                'label': 'Open',
+                'yearly_value':  grand_total.aperti,
+                'yearly_percent':  Math.round(100*grand_total.aperti/grand_total.totale)+'%',
+                'absolute_value':  grand_total.aperti_assoluti,
+                'absolute_percent':  Math.round(100*grand_total.aperti_assoluti/grand_total.totale_assoluti)+'%',
+            },
             { 'id': 1,
-            'label': 'Closed of Opened in last 12 months',
-            'value': grand_total.chiusi,
-            'percent': Math.round(100*grand_total.chiusi/grand_total.totale)+'%',
-                },
+                'label': 'Closed',
+                'yearly_value': grand_total.chiusi,
+                'yearly_percent': Math.round(100*grand_total.chiusi/grand_total.totale)+'%',
+                'absolute_value': grand_total.chiusi_assoluti,
+                'absolute_percent': Math.round(100*grand_total.chiusi_assoluti/grand_total.totale_assoluti)+'%',
+            },
             { 'id': 2,
-            'label': 'Total Bugs in last 12 months',
-            'value':  grand_total.totale,
-            'percent': '100%',    
-                },
-            { 'id': 4,
-            'label': 'Average days to close a bugs', 
-
-            'value':  grand_total.daytoclose,
-            'percent': ' ' ,    
-                },
+                'label': 'Total',
+                'yearly_value':  grand_total.totale,
+                'yearly_percent': '',    
+                'absolute_value':  grand_total.totale_assoluti,
+                'absolute_percent': '',    
+            },
+            { 'id': 3,
+                'label': 'Average days to close', 
+                'yearly_value':  grand_total.daytoclose,
+                'yearly_percent': '',    
+                'absolute_value':  grand_total.daytoclose_assoluti,
+                'absolute_percent': '',    
+            },
         ];
         var $table = $('#table');
         $table.bootstrapTable({});
         $table.bootstrapTable("load",valori);
+
     });
 }
 
+function grandTotal(value,row) {
+    if (row.id == 2)
+        return '<span class="font-weight-bold">'+value+'</span>';
+    else if (row.id == 3)
+        return '<span class="font-italic">'+value+'</span>';
+    else if (row.id < 2)
+        return '<span class="font-italic">'+value+'</span>';
+    else
+        return value;
+        return value;
+}

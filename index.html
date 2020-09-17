@@ -82,12 +82,16 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                     </div>
                     <div class="col-6">
                         <canvas id="barre"></canvas>                                                        
+                        <hr>
+                        <p class="text-center "><i>Summarized Bugs Performance</i></p>
                         <table id="table" class="table table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
-                                    <th data-align="right" data-field="label">Last 12 months performance </th>
-                                    <th data-align="right" data-field="value">bugs</th>
-                                    <th data-align="right" data-field="percent">percentage</th>
+                                    <th data-align="right" data-formatter="grandTotal" data-field="label"></th>
+                                    <th data-align="right" data-formatter="grandTotal" data-field="yearly_value">Last 12 Month</th>
+                                    <th data-align="right" data-formatter="grandTotal" data-field="yearly_percent"></th>
+                                    <th data-align="right" data-formatter="grandTotal" data-field="absolute_value">Absolute</th>
+                                    <th data-align="right" data-formatter="grandTotal" data-field="absolute_percent"></th>
                                 </tr>
                             </thead>
                         </table>
@@ -103,7 +107,7 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                         <div class="form-group">
                             <label for="selectGroup">&nbsp;</label>
                             <select class="form-control" id="selectGroup" onchange="changeSelect(this)"> 
-                                <option value="0" selected>All Teams</option>
+                                <option value="0" selected>All Teams - One Company</option>
                                 <!-- inserimento dinamico -->
                             </select>
                         </div>
@@ -115,11 +119,12 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                         <canvas id="barre_team"></canvas>                                                        
                     </div>
                     <div class="col-6">
+                        <p class="text-center "><i>Summarized Teams Performance</i></p>
                         <table id="table_team" class="table table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
                                     <th data-field="group_id" data-visible=false></th>
-                                    <th data-sortable=true data-align="right" data-field="team" data-formatter="grandTotal">Team (last 12 months)</th>
+                                    <th data-sortable=true data-align="right" data-field="team" data-formatter="grandTotal">Team</th>
                                     <th data-sortable=true data-align="right" data-field="bugs" data-formatter="grandTotal">Bugs</th>
                                     <th data-sortable=true data-align="right" data-field="days" data-formatter="grandTotal">Days latency</th>
                                 </tr>
