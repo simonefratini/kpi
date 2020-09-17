@@ -58,6 +58,11 @@ scrivi_csv(csv_output_path+'open_bugs.csv',cursor);
 cursor = redmine.execute('select * from monthly_performance')
 scrivi_csv(csv_output_path+'monthly_performance.csv',cursor);
 # #################################
+# estrazione  performance annuali 
+# #################################
+cursor = redmine.execute('select * from yearly_performance')
+scrivi_csv(csv_output_path+'yearly_performance.csv',cursor);
+# #################################
 # performance mensili per team 
 # prima occorre lanciare la stored procedure
 # #################################
