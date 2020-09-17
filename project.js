@@ -220,7 +220,7 @@ function monthly_performance_chart(project_id) {
         },
         {
             column: 'daytoclose',
-            name: 'Average days open to Close',
+            name: 'Average days open to close',
             color: '#231964'
         }
     ];
