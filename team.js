@@ -1,21 +1,21 @@
 function team_performance_chart(group_id) {
 
-    var TITLE = 'Team Performance Chart';
+    var TITLE = 'Team Performance';
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'bugs',
-            name: 'Bugs handle in the month',
+            name: 'Bug own in the month',
             color: 'lightblue'
         },
         {
             column: 'unleash',
-            name: 'Bugs moved or closed',
+            name: 'Bug moved or closed in the month',
             color: '#FFF014'
         },
         {
             column: 'days',
-            name: 'Average days handle in the month',
+            name: 'Average days, bug own in the month',
             color: '#231964'
         }
     ];
