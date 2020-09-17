@@ -431,14 +431,13 @@ function yearly_performance(project_id) {
     });
 }
 
-function grandTotal(value,row) {
+function summarized(value,row) {
     if (row.id == 2)
         return '<span class="font-weight-bold">'+value+'</span>';
     else if (row.id == 3)
         return '<span class="font-italic">'+value+'</span>';
-    else if (row.id < 2)
-        return '<span class="font-italic">'+value+'</span>';
-    else
-        return value;
-        return value;
+    return value;
+}
+function summarizedPercent(value) {
+   return '<span class="font-italic">'+value+'</span>';
 }
