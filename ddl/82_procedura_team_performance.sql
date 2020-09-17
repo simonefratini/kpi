@@ -24,7 +24,7 @@ select i.id,
     j.previous_user_id,
     i.created_on as aperto ,
     j.created_on as modificato ,
-    ifnull(closed_on, now()) as chiuso 
+    closed_on as chiuso 
 from redmine.issues i 
 join vproject p on p.id = i.project_id 
 left join(

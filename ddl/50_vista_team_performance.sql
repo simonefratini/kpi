@@ -37,6 +37,9 @@ select g.group_id,
        count(1) as incarico 
   from tmp_team_performance tp
   join vteam g on tp.user_id = g.user_id
+ -- per come e' fatto la tmp_team_performance, 
+ -- un bugs e' ancora in carico di un gruppo se la data di chiusura s un mese precedente al corrente e' 
+ -- all'ultimo giorno del mese alle 23.59.59  oppure per il mese corrente e' nulla
  where date_sub(date_add(last_day(aperto),interval 1 day),interval 1 second) = chiuso or chiuso is null
  group by 1,2,3
 ) as p on p.mese = a.mese and p.group_id = a.group_id
