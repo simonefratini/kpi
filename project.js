@@ -215,12 +215,12 @@ function monthly_performance_chart(project_id) {
         },
         {
             column: 'chiusi',
-            name: 'Closed of opened bugs in the same month',
+            name: 'Closed of opened in the same month',
             color: '#FFF014'
         },
         {
             column: 'daytoclose',
-            name: 'Average days open to close',
+            name: 'Average days to close',
             color: '#231964'
         }
     ];
