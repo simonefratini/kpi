@@ -1,3 +1,16 @@
+let colorGroup = { 
+ "Connectivity": "rgb(75,192,192)",
+ "DVT Functional": "rgb(255,159,64)",
+ "DVT Integration": "rgb(153,102,255)",
+ "DVT Reliability": "rgb(255,99,132)",
+ "Digital Hardware": "pink",
+ "Embedded Control - Firmware": "rgb(54,162,235)",
+ "Mechanical Designer": "lightblue",
+ "Power Hardware": "rgb(255,205,86)",
+ "Product Engineering": "lightgreen",
+ "Project Management": "orangered",
+}
+
 function openbugs(project_id, peso) {
     var TITLE='Open bugs';
     let file=datasource_path+'open_bugs.csv'
@@ -20,13 +33,21 @@ function openbugs(project_id, peso) {
             .entries(rows)
         let colonne = [];
         let data = [];
+        let backgroundColor  = [];
         let TOTALE_APERTI= 0;
+        let statiColor = { 
+                 'New' : 'orange',
+                 'Being Fixed': '#FFF014', 
+                 'Being Validated': 'lightblue', 
+                 };
+
         rows.forEach(function (e) {
             colonne.push(e.key);
             data.push(e.value); 
+            backgroundColor.push(statiColor[e.key]);
             TOTALE_APERTI += parseInt(e.value);
         });
-        let dati_ciambella  = { datasets : [ { data : data, backgroundColor: [ '#231964','#FFF014','lightgreen'] } ], labels: colonne };
+        let dati_ciambella  = { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne };
 
         var ctx = document.getElementById('ciambella').getContext('2d');
         ciambella = new Chart(ctx, {
@@ -69,13 +90,15 @@ function under_development_bugs_by_team (rows) {
     // devo rimappare
     let colonne = [];
     let data = [];
+    let backgroundColor = []
     let TOTALE_APERTI= 0;
     rows.forEach(function (e) {
         colonne.push(e.key);
         data.push(e.value); 
+        backgroundColor.push(colorGroup[e.key]);
         TOTALE_APERTI += parseInt(e.value);
     });
-    let dati_ciambella = { datasets : [ { data : data , backgroundColor: [ 'lightblue','lightgreen','orange','green','red','pink','blue','magenta','brown','cyan'] } ], labels: colonne };
+    let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('ciambella_group').getContext('2d');
     ciambella_group = new Chart(ctx, {
         type: 'doughnut',  // default  
@@ -116,13 +139,15 @@ function new_bugs_by_team (rows) {
     // devo rimappare
     let colonne = [];
     let data = [];
+    let backgroundColor = [];
     let TOTALE_APERTI= 0;
     rows.forEach(function (e) {
         colonne.push(e.key);
         data.push(e.value); 
+        backgroundColor.push(colorGroup[e.key]);
         TOTALE_APERTI += parseInt(e.value);
     });
-    let dati_ciambella = { datasets : [ { data : data , backgroundColor: [ 'lightblue','lightgreen','orange','green','red','pink','blue','magenta','brown','cyan'] } ], labels: colonne };
+    let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('ciambella_new').getContext('2d');
     ciambella_new = new Chart(ctx, {
         type: 'doughnut',  // default  
@@ -154,12 +179,13 @@ function new_bugs_by_team (rows) {
 function peso_bugs(rows) {
     var TITLE = 'Priority';
     // attenzione la label  è statica!!! TODO
-    pesi = { 3 : 'Low',
-             4 : 'Normal',
-             5 : 'High',
-             6 : 'Urgent',
-             7 : 'Immediate',
-            39 : 'Not set' }
+    let pesi = { 3 : { color:'lightcyan', label:'Low'},
+             4 : { color:'lightgreen', label:'Normal'},
+             5 : { color:'yellow', label:'High'},
+             6 : { color:'orange', label:'Urgent'},
+             7 : { color:'orangered', label:'Immediate'},
+            39 : { color:'lightgrey', label:'Not set' }
+             };
             
     rows = d3.nest()
         .key(function(d) { return d.peso})
@@ -168,13 +194,15 @@ function peso_bugs(rows) {
         // devo rimappare
     let colonne = [];
     let data = [];
+    let backgroundColor = [];
     let TOTALE_APERTI = 0;
     rows.forEach(function (e) {
-        colonne.push(pesi[e.key]);
+        colonne.push(pesi[e.key].label);
+        backgroundColor.push(pesi[e.key].color)
         data.push(e.value); 
         TOTALE_APERTI += parseInt(e.value);
     });
-    let dati_ciambella = { datasets : [ { data : data , backgroundColor: [ 'lightblue','lightgreen','orange','green','red','pink','blue','magenta','brown','cyan'] } ], labels: colonne };
+    let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('pila_bugs').getContext('2d');
     pila_bugs = new Chart(ctx, {
         type: 'doughnut',  // default  
