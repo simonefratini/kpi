@@ -36,7 +36,7 @@ function openbugs(project_id, peso) {
         let backgroundColor  = [];
         let TOTALE_APERTI= 0;
         let statiColor = { 
-                 'New' : 'orange',
+                 'New' : 'lightgreen',
                  'Being Fixed': '#FFF014', 
                  'Being Validated': 'lightblue', 
                  };
