@@ -10,6 +10,8 @@ var ciambella = null;
 var ciambella_group = null;
 var ciambella_new = null;
 var pila_bugs = null;
+var stacked_bugs_by_team = null;
+
 
 
 // funzione per recuperare i progetti/team ecc chiave valore semplice
@@ -78,6 +80,8 @@ function popola_bugs(pid,peso) {
         ciambella_new.destroy();
     if (pila_bugs != undefined)
         pila_bugs.destroy();
+    if (stacked_bugs_by_team != undefined)
+        stacked_bugs_by_team.destroy();
     openbugs(pid,peso);
     getTimestamp();
 }

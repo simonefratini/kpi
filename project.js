@@ -26,6 +26,7 @@ function openbugs(project_id, peso) {
         peso_bugs(rows);
         under_development_bugs_by_team(rows);
         new_bugs_by_team(rows);
+        bugs_by_team(rows);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.stato;})
@@ -132,6 +133,7 @@ function under_development_bugs_by_team (rows) {
     });
 
 }
+
 function new_bugs_by_team (rows) {
     var TITLE = 'New bugs by team';
     // filtro per stato 
@@ -487,4 +489,82 @@ function summarized(value,row) {
 }
 function summarizedPercent(value) {
    return '<span class="font-italic">'+value+'</span>';
+}
+
+
+function bugs_by_team (rows) {
+    rows = d3.nest()
+        .key(function(d) { return d.team;})
+        .key(function(d) { return d.stato;})
+        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+        .entries(rows)
+    // devo rimappare
+    let colonne = [];
+    let data_new = [];
+    let data_fixed = [];
+    let data_validated = [];
+    // ordinamento per nome 
+    rows.sort(function (a,b) {
+        if (a.key > b.key) 
+            return 1;
+        return -1;
+    });
+    rows.forEach(function (e) {
+        colonne.push(e.key);
+        var f = e.values.reduce(
+            (obj, item) => Object.assign(obj, { [item.key]: item.value }), {});
+        if (f.hasOwnProperty('New'))
+            data_new.push(f['New']);
+        else
+            data_new.push(''); //metto empty per non vedere il valore
+        if (f.hasOwnProperty('Being Fixed'))
+            data_fixed.push(f['Being Fixed']);
+        else
+            data_fixed.push('');
+        if (f.hasOwnProperty('Being Validated'))
+            data_validated.push(f['Being Validated']);
+        else
+            data_validated.push('');
+    });
+    var barChartData = {
+        labels: colonne,
+        datasets: [{
+            label: 'New',
+            backgroundColor: 'lightgreen',
+            data: data_new  
+        }, {
+            label: 'Being Fixed',
+            backgroundColor: '#FFF014',
+            data: data_fixed 
+        }, {
+            label: 'Being Validated',
+            backgroundColor: 'lightblue',
+            data: data_validated 
+        }]
+    };
+    var ctx = document.getElementById('stacked_bugs').getContext('2d');
+    stacked_bugs_by_team = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: barChartData,
+        options: {
+            title: {
+                display: true,
+                text: 'Bugs by team (molto più leggibile)' 
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false
+            },
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    stacked: true,
+                    scaleLabel: { display : true, labelString: 'Bugs' },
+                }],
+                yAxes: [{
+                    stacked: true,
+                }]
+            }
+        }
+    });
 }
