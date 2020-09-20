@@ -92,6 +92,12 @@ function under_development_bugs_by_team (rows) {
     let data = [];
     let backgroundColor = []
     let TOTALE_APERTI= 0;
+    // ordinamento per nome 
+    rows.sort(function (a,b) {
+        if (a.key > b.key) 
+            return 1;
+        return -1;
+    });
     rows.forEach(function (e) {
         colonne.push(e.key);
         data.push(e.value); 
@@ -141,6 +147,12 @@ function new_bugs_by_team (rows) {
     let data = [];
     let backgroundColor = [];
     let TOTALE_APERTI= 0;
+    // ordinamento per nome 
+    rows.sort(function (a,b) {
+        if (a.key > b.key) 
+            return 1;
+        return -1;
+    });
     rows.forEach(function (e) {
         colonne.push(e.key);
         data.push(e.value); 
@@ -179,14 +191,14 @@ function new_bugs_by_team (rows) {
 function peso_bugs(rows) {
     var TITLE = 'Priority';
     // attenzione la label  è statica!!! TODO
-    let pesi = { 3 : { color:'lightcyan', label:'Low'},
+    let pesi={ 3 : { color:'lightcyan', label:'Low'},
              4 : { color:'lightgreen', label:'Normal'},
              5 : { color:'yellow', label:'High'},
              6 : { color:'orange', label:'Urgent'},
              7 : { color:'orangered', label:'Immediate'},
             39 : { color:'lightgrey', label:'Not set' }
              };
-            
+           
     rows = d3.nest()
         .key(function(d) { return d.peso})
         .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
