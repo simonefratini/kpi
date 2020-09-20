@@ -34,7 +34,7 @@ function openbugs(project_id, peso) {
         let colonne = [];
         let data = [];
         let backgroundColor  = [];
-        let TOTALE_APERTI= 0;
+        let totale= 0;
         let statiColor = { 
                  'New' : 'lightgreen',
                  'Being Fixed': '#FFF014', 
@@ -45,7 +45,7 @@ function openbugs(project_id, peso) {
             colonne.push(e.key);
             data.push(e.value); 
             backgroundColor.push(statiColor[e.key]);
-            TOTALE_APERTI += parseInt(e.value);
+            totale += parseInt(e.value);
         });
         let dati_ciambella  = { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne };
 
@@ -66,7 +66,7 @@ function openbugs(project_id, peso) {
                     doughnutlabel: {
                         labels: [
                             {
-                                text: TOTALE_APERTI,
+                                text: totale,
                                 font: { size: '30' }
                             },
                         ]
@@ -91,7 +91,7 @@ function under_development_bugs_by_team (rows) {
     let colonne = [];
     let data = [];
     let backgroundColor = []
-    let TOTALE_APERTI= 0;
+    let totale= 0;
     // ordinamento per nome 
     rows.sort(function (a,b) {
         if (a.key > b.key) 
@@ -102,7 +102,7 @@ function under_development_bugs_by_team (rows) {
         colonne.push(e.key);
         data.push(e.value); 
         backgroundColor.push(colorGroup[e.key]);
-        TOTALE_APERTI += parseInt(e.value);
+        totale += parseInt(e.value);
     });
     let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('ciambella_group').getContext('2d');
@@ -122,7 +122,7 @@ function under_development_bugs_by_team (rows) {
                 doughnutlabel: {
                     labels: [
                         {
-                            text: TOTALE_APERTI,
+                            text: totale,
                             font: { size: '30' }
                         },
                     ]
@@ -146,7 +146,7 @@ function new_bugs_by_team (rows) {
     let colonne = [];
     let data = [];
     let backgroundColor = [];
-    let TOTALE_APERTI= 0;
+    let totale= 0;
     // ordinamento per nome 
     rows.sort(function (a,b) {
         if (a.key > b.key) 
@@ -157,7 +157,7 @@ function new_bugs_by_team (rows) {
         colonne.push(e.key);
         data.push(e.value); 
         backgroundColor.push(colorGroup[e.key]);
-        TOTALE_APERTI += parseInt(e.value);
+        totale += parseInt(e.value);
     });
     let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('ciambella_new').getContext('2d');
@@ -177,7 +177,7 @@ function new_bugs_by_team (rows) {
                 doughnutlabel: {
                     labels: [
                         {
-                            text: TOTALE_APERTI,
+                            text: totale,
                             font: { size: '30' }
                         },
                     ]
@@ -207,12 +207,12 @@ function peso_bugs(rows) {
     let colonne = [];
     let data = [];
     let backgroundColor = [];
-    let TOTALE_APERTI = 0;
+    let totale = 0;
     rows.forEach(function (e) {
         colonne.push(pesi[e.key].label);
         backgroundColor.push(pesi[e.key].color)
         data.push(e.value); 
-        TOTALE_APERTI += parseInt(e.value);
+        totale += parseInt(e.value);
     });
     let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('pila_bugs').getContext('2d');
@@ -232,7 +232,7 @@ function peso_bugs(rows) {
                 doughnutlabel: {
                     labels: [
                         {
-                            text: TOTALE_APERTI,
+                            text: totale,
                             font: { size: '30' }
                         },
                     ]
@@ -434,20 +434,27 @@ function yearly_performance(project_id) {
 
         // valori finali
         grand_total["totale"]=grand_total.aperti+grand_total.chiusi;
+
+        function percentuale(valore,totale) {
+            if (totale > 0)
+                return Math.round(100*valore/totale)+'%';
+            return '-';
+        }
+
         var valori = [
             { 'id': 0,
                 'label': 'Open',
                 'yearly_value':  grand_total.aperti,
-                'yearly_percent':  Math.round(100*grand_total.aperti/grand_total.totale)+'%',
+                'yearly_percent':  percentuale(grand_total.aperti,grand_total.totale),
                 'absolute_value':  grand_total.aperti_assoluti,
-                'absolute_percent':  Math.round(100*grand_total.aperti_assoluti/grand_total.totale_assoluti)+'%',
+                'absolute_percent':  percentuale(grand_total.aperti_assoluti,grand_total.totale_assoluti),
             },
             { 'id': 1,
                 'label': 'Closed',
                 'yearly_value': grand_total.chiusi,
-                'yearly_percent': Math.round(100*grand_total.chiusi/grand_total.totale)+'%',
+                'yearly_percent': percentuale(grand_total.chiusi,grand_total.totale),
                 'absolute_value': grand_total.chiusi_assoluti,
-                'absolute_percent': Math.round(100*grand_total.chiusi_assoluti/grand_total.totale_assoluti)+'%',
+                'absolute_percent': percentuale(grand_total.chiusi_assoluti,grand_total.totale_assoluti),
             },
             { 'id': 2,
                 'label': 'Total',
