@@ -58,6 +58,17 @@ popola_team(0);
 popola_bugs(0,0);
 }
 
+
+function setFocus() {
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  var target = $(e.target).attr("href") // activated tab
+  if (target == '#project')  
+    document.getElementById(selectProjectID).focus();
+  else
+    document.getElementById('selectGroup').focus();
+});
+}
+
 function popola_bugs(pid,peso) {
     if (ciambella_group != undefined)
         ciambella_group.destroy();

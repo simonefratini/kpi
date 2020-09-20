@@ -57,7 +57,7 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                     <div class="col">
                         <div class="form-group">
                             <label for="selectProject">&nbsp;</label>
-                            <select class="form-control" id="selectProject" onchange="changeSelect(this)"> 
+                            <select class="form-control" id="selectProject" onchange="changeSelect(this)" autofocus> 
                                 <option value="0" selected>All</option>
                                 <!-- inserimento dinamico -->
                             </select>
@@ -106,7 +106,7 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                     <div class="col">
                         <div class="form-group">
                             <label for="selectGroup">&nbsp;</label>
-                            <select class="form-control" id="selectGroup" onchange="changeSelect(this)"> 
+                            <select class="form-control" id="selectGroup" onchange="changeSelect(this)" > 
                                 <option value="0" selected>All Teams - One Company</option>
                                 <!-- inserimento dinamico -->
                             </select>
@@ -117,7 +117,7 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                 <div class="row">
                     <div class="col-6">
                         <canvas id="barre_team"></canvas>                                                        
-                        <p class="small font-italic">Note: average days latency on the current month is referred to today, so could be smaller that you aspect from previous months, especially at the beginning of the month. For previous months is referred to month duration, so could be oscillating for same number of bugs handle by team in contiguous months.
+                        <p class="small font-italic">Note: average days latency on the current month is referred to today, so could be smaller that you aspect from previous months, especially at the beginning of the month. For previous months is referred to month duration, so could be oscillating for same number of bugs handled by team in contiguous months.
                         <br>In the same month, one bug could be managed by a team at different intervals, these are united. 
                        <br>One bug could be handled by more than a team, so the sum of different teams' bugs has no mean. 
                        <br>Teams must be mutually exclusive for members</p>
@@ -142,7 +142,7 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
     </div>
     <script>
         // navigazione delle tab standard Boostrap
-        $('#nav-tab a').on('click', function (e) { e.preventDefault(); $(this).tab('show'); })
+        setFocus();
     </script >
     <footer>
         <div class="container text-center"> <br>
