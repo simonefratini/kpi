@@ -549,7 +549,7 @@ function bugs_by_team (rows) {
         options: {
             title: {
                 display: true,
-                text: 'Bugs by team (molto più leggibile)' 
+                text: 'Bugs by team (di grande impatto!)' 
             },
             tooltips: {
                 mode: 'index',
