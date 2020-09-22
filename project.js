@@ -11,8 +11,14 @@ let colorGroup = {
  "Project Management": "orangered",
 }
 
+
+let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
+    '1': { label:'Backlog', color: 'rgb(255,159,64)'},
+    '9': { label:'Being Validated', color: 'rgb(75,192,192)' },
+    '2': { label:'Being Fixed', color: 'rgb(255,99,132)'}
+}
+
 function openbugs(project_id, peso) {
-    var TITLE='Open bugs';
     let file=datasource_path+'open_bugs.csv'
     d3.csv(file).then(function(rows) {
         // filtro sul progetto 
@@ -34,26 +40,19 @@ function openbugs(project_id, peso) {
         let data = [];
         let backgroundColor  = [];
         let totale= 0;
-        let statiColor = { 
-                 'New' : 'lightgreen',
-                 'Being Fixed': '#FFF014', 
-                 'Being Validated': 'lightblue', 
-                 };
-
+        //
         rows.forEach(function (e) {
-            colonne.push(e.key);
+            colonne.push(issues_statues[e.key].label);
             data.push(e.value); 
-            backgroundColor.push(statiColor[e.key]);
+            backgroundColor.push(issues_statues[e.key].color);
             totale += parseInt(e.value);
         });
-        let dati_ciambella  = { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne };
-
         var ctx = document.getElementById('ciambella').getContext('2d');
         ciambella = new Chart(ctx, {
-            type: 'doughnut',  // default  
-            data: dati_ciambella ,
+            type: 'doughnut',    
+            data: { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne },
             options: {
-                title: { display: true, text: TITLE },
+                title: { display: true, text: 'Open bugs' },
                 responsive: true,
                 tooltips: { mode: 'label' },
                 plugins : {
@@ -103,11 +102,10 @@ function peso_bugs(rows) {
         data.push(e.value); 
         totale += parseInt(e.value);
     });
-    let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
     var ctx = document.getElementById('pila_bugs').getContext('2d');
     pila_bugs = new Chart(ctx, {
-        type: 'doughnut',  // default  
-        data: dati_ciambella,
+        type: 'doughnut',    
+        data:  { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne },
         options: {
             title: { display: true, text: TITLE },
             responsive: true,
@@ -400,32 +398,32 @@ function bugs_by_team (rows) {
         colonne.push(e.key);
         var f = e.values.reduce(
             (obj, item) => Object.assign(obj, { [item.key]: item.value }), {});
-        if (f.hasOwnProperty('New'))
-            data_new.push(f['New']);
+        if (f.hasOwnProperty('1'))
+            data_new.push(f['1']);
         else
             data_new.push(''); //metto empty per non vedere il valore
-        if (f.hasOwnProperty('Being Fixed'))
-            data_fixed.push(f['Being Fixed']);
+        if (f.hasOwnProperty('2'))
+            data_fixed.push(f['2']);
         else
             data_fixed.push('');
-        if (f.hasOwnProperty('Being Validated'))
-            data_validated.push(f['Being Validated']);
+        if (f.hasOwnProperty('9'))
+            data_validated.push(f['9']);
         else
             data_validated.push('');
     });
     var barChartData = {
         labels: colonne,
         datasets: [{
-            label: 'New',
-            backgroundColor: 'lightgreen',
+            label: issues_statues['1'].label,
+            backgroundColor: issues_statues['1'].color, 
             data: data_new  
         }, {
-            label: 'Being Fixed',
-            backgroundColor: '#FFF014',
+            label: issues_statues['2'].label,
+            backgroundColor: issues_statues['2'].color, 
             data: data_fixed 
         }, {
-            label: 'Being Validated',
-            backgroundColor: 'lightblue',
+            label: issues_statues['9'].label,
+            backgroundColor: issues_statues['9'].color, 
             data: data_validated 
         }]
     };
@@ -436,7 +434,7 @@ function bugs_by_team (rows) {
         options: {
             title: {
                 display: true,
-                text: 'Bugs by team (di grande impatto!)' 
+                text: 'Bugs by team' 
             },
             tooltips: {
                 mode: 'index',
