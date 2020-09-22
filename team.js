@@ -1,26 +1,23 @@
 function team_performance_chart(group_id) {
 
-    var TITLE = 'Team Performance';
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'bugs',
-            name: 'Bug own in the month',
+            name: 'Bug owned in the month ⓐ ',
             color: 'lightblue'
         },
         {
             column: 'unleash',
-            name: 'Bug moved or closed in the month',
+            name: 'Bug moved or closed in the month ⓑ ',
             color: '#FFF014'
         },
         {
-            column: 'days',
-            name: 'Average days, bug own in the month',
+            column: 'ratio',
+            name: 'Ratio ⓑ / ⓐ ',
             color: '#231964'
         }
     ];
-    var Y_AXIS_1 = 'Bugs'; // y-axis label and label in tooltip
-    var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
     // Read data file and create a chart
     let file=datasource_path+'team_performance.csv';
     d3.csv(file).then(function(rows) {
@@ -45,15 +42,17 @@ function team_performance_chart(group_id) {
                     bugs: g.value.bugs,
                     stillown: g.value.stillown, 
                     unleash: g.value.bugs - g.value.stillown,
-                    days: g.value.days
-
+                    days: g.value.days,
+                    ratio : Math.round(100 * (1  - g.value.stillown / g.value.bugs)) 
                 }
             });
+
+        //team_latency(rows);
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
             var order = 1;
-            if (el.column == 'days') {
+            if (el.column == 'ratio') {
                 type = 'line';
                 yAxisID = 'y-axis-2';
                 order =  0; 
@@ -98,7 +97,8 @@ function team_performance_chart(group_id) {
                         }
                     }
                 },
-                title: { display: true, text: TITLE },
+                title: { display: true, text: 'Team Performance' },
+
                 responsive: true,
                 tooltips: { mode: 'label' },
                 scales: {
@@ -115,15 +115,15 @@ function team_performance_chart(group_id) {
                             position: 'right',
                             id: 'y-axis-2',
                             display: true,
-                            scaleLabel: { display : true, labelString: Y_AXIS_2 },
+                            scaleLabel: { display : true, labelString: 'Ratio' },
                             gridLines: { display: true },
-                            ticks: { precision: 0 }
+                            ticks: { min: 0, max:100,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
                         }, {
                             stacked: false,
                             position: 'left',
                             id: 'y-axis-1',
                             display: true,
-                            scaleLabel: { display : true, labelString: Y_AXIS_1 },
+                            scaleLabel: { display : true, labelString: 'Bugs' },
                             gridLines: { display: false },
                             ticks: { precision: 0 }
                         }
@@ -134,6 +134,88 @@ function team_performance_chart(group_id) {
         });
     });
 }
+
+function team_latency(rows) {
+
+    var TITLE = 'Team Latency Performance';
+    var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
+    var SERIES = [  // For each column representing a series, define its name and color
+        {
+            column: 'days',
+            name: 'Average days, bug own in the month',
+            color: '#231964'
+        },
+    ];
+
+
+    var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
+    // Read data file and create a chart
+    var datasets = SERIES.map(function(el) {
+        return {
+            label: el.name,
+            labelDirty: el.column,
+            backgroundColor: el.color,
+    		borderColor: el.color,
+            fill : false,
+            lineTension: 0,
+            data: []
+        }
+    });
+
+    rows.map(function(row) {
+        datasets.map(function(d) {
+            d.data.push(row[d.labelDirty])
+        })
+    });
+    var barChartData = {
+        labels : rows.map(function(el) { 
+            moment.locale('en');
+            return moment(el[LABELS]).format('MMM y');
+        }),
+        datasets: datasets,
+
+    };
+    var ctx = document.getElementById('barre_latency').getContext('2d');
+    barre_latency = new Chart(ctx, {
+        type: 'line',  // default  
+        data: barChartData,
+        options: {
+            plugins : {
+                datalabels: {
+                    labels: { 
+                        // escamotage per evitare sovrascrizioni della label
+                        title: { color:null }
+                    }
+                }
+            },
+            title: { display: true, text: TITLE },
+            responsive: true,
+            tooltips: { mode: 'label' },
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: false,
+                    },
+                    gridLines: { display: true, },
+                    ticks: {source: 'auto'},
+                }],
+                yAxes: [
+                    {	
+                        stacked: true,
+                        position: 'right',
+                        id: 'y-axis-2',
+                        display: true,
+                        scaleLabel: { display : true, labelString: Y_AXIS_2 },
+                        gridLines: { display: true },
+                        ticks: { precision: 0 }
+                    }, 
+                ]
+            }
+
+        }
+    });
+}
+
 function team_performance_annuale(group_id) {
     let file=datasource_path+'team_performance_annuale.csv';
     d3.csv(file).then(function(rows) {

@@ -7,6 +7,7 @@ var peso = false;
 var barre = null;
 var barre_average = null;
 var barre_team = null;
+var barre_latency = null;
 var ciambella = null;
 var pila_bugs = null;
 var stacked_bugs_by_team = null;
@@ -94,6 +95,8 @@ function popola_project(pid) {
 function popola_team(gid) {
     if (barre_team != undefined)
         barre_team.destroy();
+    if (barre_latency != undefined)
+        barre_latency.destroy();
     team_performance_chart(gid);
     team_performance_annuale(gid);
 }

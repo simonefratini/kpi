@@ -6,17 +6,18 @@ function monthly_performance_chart(project_id) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'aperti',
-            name: 'Opened in the month (a)',
+            name: 'Opened in the month ⓐ ',
+
             color: 'lightblue'
         },
         {
             column: 'chiusi',
-            name: 'Closed of opened in the same month (b)',
+            name: 'Closed of opened in the same month ⓑ ',
             color: '#FFF014'
         },
         {
             column: 'ratio',
-            name: 'Ratio (b)/(a)',
+            name: 'Ratio ⓑ / ⓐ ',
             color: '#231964'
         },
 /*
@@ -156,8 +157,6 @@ function monthly_average_performance(rows) {
         }
     ];
     var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
-    // Read data file and create a chart
-    console.log(rows);
     var datasets = SERIES.map(function(el) {
         var type = 'bar';
         var yAxisID = 'y-axis-1';

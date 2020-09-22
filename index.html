@@ -80,9 +80,9 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                     <div class="col-6">
                         <canvas id="barre"></canvas>                                                        
                         <canvas id="barre_average"></canvas>                                                        
-                        <p class="small font-italic">Note:
+                        <!--p class="small font-italic">Note:
                         <br>Average days to close is computated on all bugs closed in the month, independently when they was opened 
-                        </p>
+                        </p-->
                         <hr>
                         <p class="text-center "><i>Summarized Bugs Performance</i></p>
                         <table id="table" class="table table-sm table-striped">
@@ -118,15 +118,16 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                 <div class="row">
                     <div class="col-6">
                         <canvas id="barre_team"></canvas>                                                        
-                        <p class="small font-italic">Note:
+                        <canvas id="barre_latency"></canvas>                                                        
+                        <!--p class="small font-italic">Note:
                         <br>Average days latency on the current month is referred to today, so could be smaller that you aspect from previous months, especially at the beginning of the month. For previous months is referred to month duration, so could be oscillating for same number of bugs handled by team in contiguous months.
                         <br>In the same month, one bug could be managed by a team at different intervals, these are united. 
                        <br>One bug could be handled by more than a team, so the sum of different teams' bugs has no mean. 
                        <br>For "All Teams - One Company", bugs in the month could be only closed, moved has no mean.  
-                       <br>Teams must be mutually exclusive for members</p>
+                       <br>Teams must be mutually exclusive for members</p-->
                     </div>
                     <div class="col-6">
-                        <p class="text-center "><i>Summarized Teams Performance</i></p>
+                        <p class="text-center "><i>Summarized Teams Last 12 Months Performance</i></p>
                         <table id="table_team" class="table table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
