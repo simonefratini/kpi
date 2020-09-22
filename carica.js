@@ -7,8 +7,6 @@ var peso = false;
 var barre = null;
 var barre_team = null;
 var ciambella = null;
-var ciambella_group = null;
-var ciambella_new = null;
 var pila_bugs = null;
 var stacked_bugs_by_team = null;
 
@@ -72,12 +70,8 @@ function setFocus() {
 }
 
 function popola_bugs(pid,peso) {
-    if (ciambella_group != undefined)
-        ciambella_group.destroy();
     if (ciambella != undefined)
         ciambella.destroy();
-    if (ciambella_new != undefined)
-        ciambella_new.destroy();
     if (pila_bugs != undefined)
         pila_bugs.destroy();
     if (stacked_bugs_by_team != undefined)

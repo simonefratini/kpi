@@ -24,8 +24,6 @@ function openbugs(project_id, peso) {
             rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
         // uso il filtrato per la ciambella dei bugs di solo develpoment
         peso_bugs(rows);
-        under_development_bugs_by_team(rows);
-        new_bugs_by_team(rows);
         bugs_by_team(rows);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
@@ -78,117 +76,6 @@ function openbugs(project_id, peso) {
     });
 };
 
-function under_development_bugs_by_team (rows) {
-    var TITLE = 'Being fixed by team';
-    // filtro per stato 
-    // attenzione la label  è statica!!! TODO
-    rows = rows.filter(function(d) { return d.stato == "Being Fixed" });
-    // aggregazione di tutti i progetti sulla data
-    rows = d3.nest()
-        .key(function(d) { return d.team;})
-        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-        .entries(rows)
-    // devo rimappare
-    let colonne = [];
-    let data = [];
-    let backgroundColor = []
-    let totale= 0;
-    // ordinamento per nome 
-    rows.sort(function (a,b) {
-        if (a.key > b.key) 
-            return 1;
-        return -1;
-    });
-    rows.forEach(function (e) {
-        colonne.push(e.key);
-        data.push(e.value); 
-        backgroundColor.push(colorGroup[e.key]);
-        totale += parseInt(e.value);
-    });
-    let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
-    var ctx = document.getElementById('ciambella_group').getContext('2d');
-    ciambella_group = new Chart(ctx, {
-        type: 'doughnut',  // default  
-        data: dati_ciambella,
-        options: {
-            title: { display: true, text: TITLE },
-            responsive: true,
-            tooltips: { mode: 'label' },
-            plugins : {
-                datalabels : {
-                    render: 'value',
-                    font: { 
-                        size: '20' }, 
-                },
-                doughnutlabel: {
-                    labels: [
-                        {
-                            text: totale,
-                            font: { size: '30' }
-                        },
-                    ]
-                },
-            }
-        }
-    });
-
-}
-
-function new_bugs_by_team (rows) {
-    var TITLE = 'New bugs by team';
-    // filtro per stato 
-    // attenzione la label  è statica!!! TODO
-    rows = rows.filter(function(d) { return d.stato == "New" });
-    // aggregazione di tutti i progetti sulla data
-    rows = d3.nest()
-        .key(function(d) { return d.team;})
-        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-        .entries(rows)
-    // devo rimappare
-    let colonne = [];
-    let data = [];
-    let backgroundColor = [];
-    let totale= 0;
-    // ordinamento per nome 
-    rows.sort(function (a,b) {
-        if (a.key > b.key) 
-            return 1;
-        return -1;
-    });
-    rows.forEach(function (e) {
-        colonne.push(e.key);
-        data.push(e.value); 
-        backgroundColor.push(colorGroup[e.key]);
-        totale += parseInt(e.value);
-    });
-    let dati_ciambella = { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne };
-    var ctx = document.getElementById('ciambella_new').getContext('2d');
-    ciambella_new = new Chart(ctx, {
-        type: 'doughnut',  // default  
-        data: dati_ciambella,
-        options: {
-            title: { display: true, text: TITLE },
-            responsive: true,
-            tooltips: { mode: 'label' },
-            plugins : {
-                datalabels : {
-                    render: 'value',
-                    font: { 
-                        size: '20' }, 
-                },
-                doughnutlabel: {
-                    labels: [
-                        {
-                            text: totale,
-                            font: { size: '30' }
-                        },
-                    ]
-                },
-            }
-        }
-    });
-
-}
 
 function peso_bugs(rows) {
     var TITLE = 'Priority';
