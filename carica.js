@@ -5,6 +5,7 @@ var selectProjectID='selectProject';
 var peso = false;
 // necessarie per distruggere i grafico vecchio
 var barre = null;
+var barre_average = null;
 var barre_team = null;
 var ciambella = null;
 var pila_bugs = null;
@@ -84,6 +85,8 @@ function popola_bugs(pid,peso) {
 function popola_project(pid) {
     if (barre != undefined)
         barre.destroy();
+    if (barre_average != undefined)
+        barre_average.destroy();
     monthly_performance_chart(pid);
     yearly_performance(pid);
 }

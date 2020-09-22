@@ -1,134 +1,3 @@
-let colorGroup = { 
- "Connectivity": "rgb(75,192,192)",
- "DVT Functional": "rgb(255,159,64)",
- "DVT Integration": "rgb(153,102,255)",
- "DVT Reliability": "rgb(255,99,132)",
- "Digital Hardware": "pink",
- "Embedded Control - Firmware": "rgb(54,162,235)",
- "Mechanical Designer": "lightblue",
- "Power Hardware": "rgb(255,205,86)",
- "Product Engineering": "lightgreen",
- "Project Management": "orangered",
-}
-
-
-let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
-    '1': { label:'Backlog', color: 'rgb(255,159,64)'},
-    '9': { label:'Being Validated', color: 'rgb(75,192,192)' },
-    '2': { label:'Being Fixed', color: 'rgb(255,99,132)'}
-}
-
-function openbugs(project_id, peso) {
-    let file=datasource_path+'open_bugs.csv'
-    d3.csv(file).then(function(rows) {
-        // filtro sul progetto 
-        if (project_id != 0  ) 
-            rows = rows.filter(function(d) { return d.project_id == project_id; })
-        // filtro sul peso  
-        if (peso)
-            // high=4, urgent = 5 and immediate = 7 //
-            rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
-        // uso il filtrato per la ciambella dei bugs di solo develpoment
-        peso_bugs(rows);
-        bugs_by_team(rows);
-        // aggregazione di tutti i progetti sulla data
-        rows = d3.nest()
-            .key(function(d) { return d.stato;})
-            .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-            .entries(rows)
-        let colonne = [];
-        let data = [];
-        let backgroundColor  = [];
-        let totale= 0;
-        //
-        rows.forEach(function (e) {
-            colonne.push(issues_statues[e.key].label);
-            data.push(e.value); 
-            backgroundColor.push(issues_statues[e.key].color);
-            totale += parseInt(e.value);
-        });
-        var ctx = document.getElementById('ciambella').getContext('2d');
-        ciambella = new Chart(ctx, {
-            type: 'doughnut',    
-            data: { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne },
-            options: {
-                title: { display: true, text: 'Open bugs' },
-                responsive: true,
-                tooltips: { mode: 'label' },
-                plugins : {
-                    datalabels : {
-                        render: 'value',
-                        font: { 
-                            size: '20' }, 
-                    },
-                    doughnutlabel: {
-                        labels: [
-                            {
-                                text: totale,
-                                font: { size: '30' }
-                            },
-                        ]
-                    },
-                }
-            }
-        });
-    });
-};
-
-
-function peso_bugs(rows) {
-    var TITLE = 'Priority';
-    // attenzione la label  è statica!!! TODO
-    let pesi={ 3 : { color:'lightcyan', label:'Low'},
-             4 : { color:'lightgreen', label:'Normal'},
-             5 : { color:'yellow', label:'High'},
-             6 : { color:'orange', label:'Urgent'},
-             7 : { color:'orangered', label:'Immediate'},
-            39 : { color:'lightgrey', label:'Not set' }
-             };
-           
-    rows = d3.nest()
-        .key(function(d) { return d.peso})
-        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-        .entries(rows)
-        // devo rimappare
-    let colonne = [];
-    let data = [];
-    let backgroundColor = [];
-    let totale = 0;
-    rows.forEach(function (e) {
-        colonne.push(pesi[e.key].label);
-        backgroundColor.push(pesi[e.key].color)
-        data.push(e.value); 
-        totale += parseInt(e.value);
-    });
-    var ctx = document.getElementById('pila_bugs').getContext('2d');
-    pila_bugs = new Chart(ctx, {
-        type: 'doughnut',    
-        data:  { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne },
-        options: {
-            title: { display: true, text: TITLE },
-            responsive: true,
-            tooltips: { mode: 'label' },
-            plugins : {
-                datalabels : {
-                    render: 'value',
-                    font: { 
-                        size: '20' }, 
-                },
-                doughnutlabel: {
-                    labels: [
-                        {
-                            text: totale,
-                            font: { size: '30' }
-                        },
-                    ]
-                },
-            }
-        }
-    });
-    
-}
 
 function monthly_performance_chart(project_id) {
 
@@ -137,22 +6,28 @@ function monthly_performance_chart(project_id) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'aperti',
-            name: 'Open in the month',
+            name: 'Opened in the month (a)',
             color: 'lightblue'
         },
         {
             column: 'chiusi',
-            name: 'Closed of opened in the same month',
+            name: 'Closed of opened in the same month (b)',
             color: '#FFF014'
         },
         {
+            column: 'ratio',
+            name: 'Ratio (b)/(a)',
+            color: '#231964'
+        },
+/*
+        {
             column: 'daytoclose',
             name: 'Average days to close',
-            color: '#231964'
-        }
+            color: 'red'
+        }*/
     ];
     var Y_AXIS_1 = 'Bugs'; // y-axis label and label in tooltip
-    var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
+    var Y_AXIS_2 = 'Ratio'; // y-axis label and label in tooltip
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
     d3.csv(file).then(function(rows) {
@@ -167,6 +42,7 @@ function monthly_performance_chart(project_id) {
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;}))
+
             }; })
             .entries(rows)
             // devo rimappare
@@ -175,14 +51,18 @@ function monthly_performance_chart(project_id) {
                     mese: g.key,
                     aperti: g.value.aperti,
                     chiusi: g.value.chiusi,
-                    daytoclose: g.value.daytoclose
+                    daytoclose : g.value.daytoclose,
+                    ratio: Math.round(100*g.value.chiusi/g.value.aperti),
                 }
             });
+
+        monthly_average_performance(rows);
+
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
             var order = 1;
-            if (el.column == 'daytoclose') {
+            if (el.column == 'ratio') {
                 type = 'line';
                 yAxisID = 'y-axis-2';
                 order =  0; 
@@ -200,7 +80,6 @@ function monthly_performance_chart(project_id) {
                 data: []
             }
         });
-
         rows.map(function(row) {
             datasets.map(function(d) {
                 d.data.push(row[d.labelDirty])
@@ -246,8 +125,8 @@ function monthly_performance_chart(project_id) {
                             id: 'y-axis-2',
                             display: true,
                             scaleLabel: { display : true, labelString: Y_AXIS_2 },
-                            gridLines: { display: true },
-                            ticks: { precision: 0 }
+                            ticks: { min: 0, max:100,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
+
                         }, {
                             stacked: false,
                             position: 'left',
@@ -264,6 +143,97 @@ function monthly_performance_chart(project_id) {
         });
     });
 }
+
+function monthly_average_performance(rows) {
+
+    var TITLE = ' Average days to close a bug';
+    var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
+    var SERIES = [  // For each column representing a series, define its name and color
+        {
+            column: 'daytoclose',
+            name: 'Average days to close',
+            color: '#231964'
+        }
+    ];
+    var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
+    // Read data file and create a chart
+    console.log(rows);
+    var datasets = SERIES.map(function(el) {
+        var type = 'bar';
+        var yAxisID = 'y-axis-1';
+        var order = 1;
+        if (el.column == 'daytoclose') {
+            type = 'line';
+            yAxisID = 'y-axis-2';
+            order =  0; 
+        }
+        return {
+            label: el.name,
+            labelDirty: el.column,
+            backgroundColor: el.color,
+       		borderColor: el.color,
+            type : type,
+            yAxisID : yAxisID,  
+            fill : false,
+            order: order,
+            lineTension: 0,
+            data: []
+        }
+    });
+
+    rows.map(function(row) {
+        datasets.map(function(d) {
+            d.data.push(row[d.labelDirty])
+        })
+    });
+
+    var barChartData = {
+        labels : rows.map(function(el) { 
+            moment.locale('en');
+            return moment(el[LABELS]).format('MMM y');
+        }),
+        datasets: datasets,
+
+    };
+    var ctx = document.getElementById('barre_average').getContext('2d');
+    barre_average = new Chart(ctx, {
+        type: 'bar',  // default  
+        data: barChartData,
+        options: {
+            plugins : {
+                datalabels: {
+                    labels: { 
+                        // escamotage per evitare sovrascrizioni della label
+                        title: { color:null }
+                    }
+                }
+            },
+            title: { display: true, text: TITLE },
+            responsive: true,
+            tooltips: { mode: 'label' },
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: false,
+                    },
+                    gridLines: { display: true, },
+                    ticks: {source: 'auto'},
+                }],
+                yAxes: [
+                    {	
+                        stacked: true,
+                        position: 'right',
+                        id: 'y-axis-2',
+                        display: true,
+                        scaleLabel: { display : true, labelString: Y_AXIS_2 },
+                    }
+                ]
+            }
+
+        }
+    });
+}
+
 
 function yearly_performance(project_id) {
 
@@ -377,79 +347,3 @@ function summarizedPercent(value) {
 }
 
 
-function bugs_by_team (rows) {
-    rows = d3.nest()
-        .key(function(d) { return d.team;})
-        .key(function(d) { return d.stato;})
-        .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-        .entries(rows)
-    // devo rimappare
-    let colonne = [];
-    let data_new = [];
-    let data_fixed = [];
-    let data_validated = [];
-    // ordinamento per nome 
-    rows.sort(function (a,b) {
-        if (a.key > b.key) 
-            return 1;
-        return -1;
-    });
-    rows.forEach(function (e) {
-        colonne.push(e.key);
-        var f = e.values.reduce(
-            (obj, item) => Object.assign(obj, { [item.key]: item.value }), {});
-        if (f.hasOwnProperty('1'))
-            data_new.push(f['1']);
-        else
-            data_new.push(''); //metto empty per non vedere il valore
-        if (f.hasOwnProperty('2'))
-            data_fixed.push(f['2']);
-        else
-            data_fixed.push('');
-        if (f.hasOwnProperty('9'))
-            data_validated.push(f['9']);
-        else
-            data_validated.push('');
-    });
-    var barChartData = {
-        labels: colonne,
-        datasets: [{
-            label: issues_statues['1'].label,
-            backgroundColor: issues_statues['1'].color, 
-            data: data_new  
-        }, {
-            label: issues_statues['2'].label,
-            backgroundColor: issues_statues['2'].color, 
-            data: data_fixed 
-        }, {
-            label: issues_statues['9'].label,
-            backgroundColor: issues_statues['9'].color, 
-            data: data_validated 
-        }]
-    };
-    var ctx = document.getElementById('stacked_bugs').getContext('2d');
-    stacked_bugs_by_team = new Chart(ctx, {
-        type: 'horizontalBar',
-        data: barChartData,
-        options: {
-            title: {
-                display: true,
-                text: 'Bugs by team' 
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    stacked: true,
-                    scaleLabel: { display : true, labelString: 'Bugs' },
-                }],
-                yAxes: [{
-                    stacked: true,
-                }]
-            }
-        }
-    });
-}

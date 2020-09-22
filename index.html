@@ -31,8 +31,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/locale/it.min.js" integrity="sha512-1jXfYnMhjj2dL+ng4SqSza+YDv9QMExgUpp9OzubnIbsj+ryCzxvoqK65vIOHszMtuvIpf2Hu5ravK3lRbawEA==" crossorigin="anonymous"></script>
     <script src="carica.js"></script>
+    <script src="project_openbugs.js"></script>
+    <script src="project_performance.js"></script>
     <script src="team.js"></script>
-    <script src="project.js"></script>
     <style>
 /* beta banner */
 body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; background: #EE8E4A; top: 7px; left: -20px; text-align: center; font-size: 13px; font-family: sans-serif; text-transform: uppercase; font-weight: bold; color: #fff; line-height: 27px; transform:rotate(-45deg); }
@@ -67,19 +68,18 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                 <!-- riga con i grafici del progetto-->
                 <div class="row">
                     <div class="col-6">
-                        <p class="text-center"><i>Actual Numbers (Last 12 Months)<span id="timestamp"></span></i>
+                        <p class="text-center"><i>Actual Numbers<span id="timestamp"></span></i>
                         <div class="form-check text-center">
                             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" onchange="changePriority(this)">
                             <label class="form-check-label" for="defaultCheck1"> Priority  &GreaterEqual; High</label>
                         </div>
-                        <canvas id="ciambella"></canvas>    
-                        <hr>
-                        <canvas id="pila_bugs"></canvas>    
-                        <hr>
+                        <canvas id="ciambella"></canvas><hr>
+                        <canvas id="pila_bugs"></canvas><hr>
                         <canvas id="stacked_bugs"></canvas>    
                     </div>
                     <div class="col-6">
                         <canvas id="barre"></canvas>                                                        
+                        <canvas id="barre_average"></canvas>                                                        
                         <p class="small font-italic">Note:
                         <br>Average days to close is computated on all bugs closed in the month, independently when they was opened 
                         </p>
