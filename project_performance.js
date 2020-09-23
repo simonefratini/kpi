@@ -6,18 +6,17 @@ function monthly_performance_chart(project_id) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'aperti',
-            name: 'Opened in the month ⓐ ',
-
+            name: 'Opened in the month (a)',
             color: 'lightblue'
         },
         {
             column: 'chiusi',
-            name: 'Closed of opened in the same month ⓑ ',
+            name: 'Closed of opened in the same month (b) ',
             color: '#FFF014'
         },
         {
             column: 'ratio',
-            name: 'Ratio ⓑ / ⓐ ',
+            name: 'Ratio (b)/(a)',
             color: '#231964'
         },
 /*

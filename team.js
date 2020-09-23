@@ -4,17 +4,17 @@ function team_performance_chart(group_id) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'bugs',
-            name: 'Bug owned in the month ⓐ ',
+            name: 'Bug owned in the month (a) ',
             color: 'lightblue'
         },
         {
             column: 'unleash',
-            name: 'Bug moved or closed in the month ⓑ ',
+            name: 'Bug moved or closed in the month (b) ',
             color: '#FFF014'
         },
         {
             column: 'ratio',
-            name: 'Ratio ⓑ / ⓐ ',
+            name: 'Ratio (b)/(a) ',
             color: '#231964'
         }
     ];
