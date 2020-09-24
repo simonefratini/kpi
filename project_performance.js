@@ -19,12 +19,6 @@ function monthly_performance_chart(project_id) {
             name: 'Ratio (b)/(a)',
             color: '#231964'
         },
-/*
-        {
-            column: 'daytoclose',
-            name: 'Average days to close',
-            color: 'red'
-        }*/
     ];
     var Y_AXIS_1 = 'Bugs'; // y-axis label and label in tooltip
     var Y_AXIS_2 = 'Ratio'; // y-axis label and label in tooltip
@@ -146,7 +140,7 @@ function monthly_performance_chart(project_id) {
 
 function monthly_average_performance(rows) {
 
-    var TITLE = ' Average days to close a bug';
+    var TITLE = '';
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {

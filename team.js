@@ -47,7 +47,7 @@ function team_performance_chart(group_id) {
                 }
             });
 
-        //team_latency(rows);
+        team_latency(rows);
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
@@ -137,19 +137,14 @@ function team_performance_chart(group_id) {
 
 function team_latency(rows) {
 
-    var TITLE = 'Team Latency Performance';
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'days',
-            name: 'Average days, bug own in the month',
+            name: 'Average days a bug is in charge',
             color: '#231964'
         },
     ];
-
-
-    var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
-    // Read data file and create a chart
     var datasets = SERIES.map(function(el) {
         return {
             label: el.name,
@@ -161,7 +156,6 @@ function team_latency(rows) {
             data: []
         }
     });
-
     rows.map(function(row) {
         datasets.map(function(d) {
             d.data.push(row[d.labelDirty])
@@ -188,7 +182,7 @@ function team_latency(rows) {
                     }
                 }
             },
-            title: { display: true, text: TITLE },
+            title: { display: true, text: 'Team Latency'},
             responsive: true,
             tooltips: { mode: 'label' },
             scales: {
@@ -205,7 +199,7 @@ function team_latency(rows) {
                         position: 'right',
                         id: 'y-axis-2',
                         display: true,
-                        scaleLabel: { display : true, labelString: Y_AXIS_2 },
+                        scaleLabel: { display : true, labelString: 'Days' },
                         gridLines: { display: true },
                         ticks: { precision: 0 }
                     }, 
@@ -224,7 +218,7 @@ function team_performance_annuale(group_id) {
             rows = rows.filter(function(d) { return d.group_id == group_id; })
         }
         rows.sort(function(x, y){
-           return d3.ascending(x.team, y.team);
+            return d3.ascending(x.team, y.team);
         })
         var $table = $('#table_team');
         $table.bootstrapTable({});

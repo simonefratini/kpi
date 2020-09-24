@@ -24,12 +24,16 @@ select date_sub(now(), interval 10 month) as mese union all
 select date_sub(now(), interval 11 month) as mese) finestra
 join vgroup g 
 ) a
--- latenza
+-- latenza incrementale 
 left join (select v.group_id,v.mese,ceil(avg(latenza)/1440) as latenza , count(1) as lavorati from (
-select id,g.group_id,  date_format(aperto,'%Y-%m') as mese, sum(timestampdiff(minute,aperto,ifnull(chiuso,now()))) latenza from tmp_team_performance tp join vteam g on tp.user_id = g.user_id
-group  by id, g.group_id, 3
+select tp.id,g.group_id,  date_format(aperto,'%Y-%m') as mese, sum(timestampdiff(minute,tc.creato,ifnull(chiuso,now()))) latenza from tmp_team_performance tp 
+-- con questa recupero la data di creazione del bugs 
+join (select id, min(aperto) as creato from tmp_team_performance group by id) tc on tc.id=tp.id
+join vteam g on tp.user_id = g.user_id
+group  by tp.id, g.group_id, mese
 ) as v
 group by 1,2) as v on v.mese = a.mese and v.group_id = a.group_id
+-- posseduti alla fine del mese
 left join (
 select g.group_id,
 	   g.description,
