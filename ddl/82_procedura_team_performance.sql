@@ -38,7 +38,7 @@ select journalized_id as id ,
          and d.property = 'attr' 
          and d.prop_key = 'assigned_to_id' ) j on j.id = i.id        
 where i.tracker_id = 1  
-and i.created_on > date_add(last_day(date_sub(now(), interval 1 year)), interval -1 month) 
+and i.created_on > date_add(last_day(date_sub(now(), interval 1 year)), interval 1 day)
 order by id, j.created_on;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 -- fine cursore
