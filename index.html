@@ -49,6 +49,9 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
             <li class="nav-item">
                 <a class="nav-link" id="team-tab" data-toggle="tab" href="#team" role="tab" aria-controls="team" aria-selected="false">team</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="faq-tab" data-toggle="tab" href="#faq" role="tab" aria-controls="faq" aria-selected="false"><small>note</small></a>
+            </li>
         </ul>
         <div class="tab-content border-left border-right border-bottom" id="myTabContent">
             <!-- REPORT PER PROGETTI -->
@@ -80,9 +83,6 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                     <div class="col-6">
                         <canvas id="barre"></canvas>                                                        
                         <canvas id="barre_average"></canvas>                                                        
-                        <!--p class="small font-italic">Note:
-                        <br>Average days to close is computated on all bugs closed in the month, independently when they was opened 
-                        </p-->
                         <hr>
                         <p class="text-center "><i>Summarized Bugs Performance</i></p>
                         <table id="table" class="table table-sm table-striped">
@@ -119,12 +119,6 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                     <div class="col-6">
                         <canvas id="barre_team"></canvas>                                                        
                         <canvas id="barre_latency"></canvas>                                                        
-                        <!--p class="small font-italic">Note:
-                        <br>Average days latency on the current month is referred to today, so could be smaller that you aspect from previous months, especially at the beginning of the month. For previous months is referred to month duration, so could be oscillating for same number of bugs handled by team in contiguous months.
-                        <br>In the same month, one bug could be managed by a team at different intervals, these are united. 
-                       <br>One bug could be handled by more than a team, so the sum of different teams' bugs has no mean. 
-                       <br>For "All Teams - One Company", bugs in the month could be only closed, moved has no mean.  
-                       <br>Teams must be mutually exclusive for members</p-->
                     </div>
                     <div class="col-6">
                         <p class="text-center "><i>Summarized Teams Last 12 Months Performance</i></p>
@@ -140,7 +134,23 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                         </table>
                     </div>
                 </div>
-                <!-- fine riga con grafici TEAM-->
+             <!-- fine riga con grafici TEAM-->
+            </div>
+            <!-- FAQ e Note-->
+            <div class="tab-pane fade" id="faq" role="tabpanel" aria-labelledby="faq-tab">
+                <h5>project</h5>
+                <ul class="small font-italic">
+                    <li>Actual numbers is referred to all open bugs from start of the project.</li>
+                    <li>Average days to close is computated on all bugs closed in the month, independently when they was opened.</li>
+                </ul>
+                <h5>team</h5>
+                <ul class="small font-italic">
+                    <li>Average days bug is in charge on the current month is referred to today, so could be smaller that you aspect from previous months, especially at the beginning of the month.</li>
+                    <li>In the same month, one bug could be managed by a team at different intervals, these are united.</li>
+                    <li>One bug could be handled by more than a team, so the sum of different teams' bugs has no mean.</li>
+                    <li>For "All Teams - One Company", bugs in the month could be only closed, moved has no mean.</li>
+                    <li>Teams must be mutually exclusive for member.</li>
+                </ul>
             </div>
         </div>
     </div>
