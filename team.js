@@ -67,7 +67,7 @@ function team_performance_chart(group_id) {
                 yAxisID : yAxisID,  
                 fill : false,
                 order: order,
-                lineTension: 0,
+                lineTension: 0.2,
                 data: []
             }
         });
@@ -152,7 +152,7 @@ function team_latency(rows) {
             backgroundColor: el.color,
     		borderColor: el.color,
             fill : false,
-            lineTension: 0,
+            lineTension: 0.2,
             data: []
         }
     });
@@ -176,32 +176,22 @@ function team_latency(rows) {
         options: {
             plugins : {
                 datalabels: {
-                    labels: { 
-                        // escamotage per evitare sovrascrizioni della label
+                    labels: { // escamotage per evitare sovrascrizioni della label
                         title: { color:null }
                     }
                 }
             },
-            title: { display: true, text: 'Team Latency'},
+            title: { display: true, text: 'Latency'},
             responsive: true,
             tooltips: { mode: 'label' },
             scales: {
                 xAxes: [{
-                    scaleLabel: {
-                        display: false,
-                    },
-                    gridLines: { display: true, },
-                    ticks: {source: 'auto'},
+                    scaleLabel: { display: false, },
                 }],
                 yAxes: [
                     {	
-                        stacked: true,
                         position: 'right',
-                        id: 'y-axis-2',
-                        display: true,
                         scaleLabel: { display : true, labelString: 'Days' },
-                        gridLines: { display: true },
-                        ticks: { precision: 0 }
                     }, 
                 ]
             }

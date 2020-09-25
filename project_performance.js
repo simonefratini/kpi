@@ -70,7 +70,7 @@ function monthly_performance_chart(project_id) {
                 yAxisID : yAxisID,  
                 fill : false,
                 order: order,
-                lineTension: 0,
+                lineTension: 0.2,
                 data: []
             }
         });
@@ -140,7 +140,6 @@ function monthly_performance_chart(project_id) {
 
 function monthly_average_performance(rows) {
 
-    var TITLE = '';
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
@@ -149,26 +148,14 @@ function monthly_average_performance(rows) {
             color: '#231964'
         }
     ];
-    var Y_AXIS_2 = 'Days'; // y-axis label and label in tooltip
     var datasets = SERIES.map(function(el) {
-        var type = 'bar';
-        var yAxisID = 'y-axis-1';
-        var order = 1;
-        if (el.column == 'daytoclose') {
-            type = 'line';
-            yAxisID = 'y-axis-2';
-            order =  0; 
-        }
         return {
             label: el.name,
             labelDirty: el.column,
             backgroundColor: el.color,
-       		borderColor: el.color,
-            type : type,
-            yAxisID : yAxisID,  
+            borderColor: el.color,
             fill : false,
-            order: order,
-            lineTension: 0,
+            lineTension: 0.2,
             data: []
         }
     });
@@ -185,43 +172,34 @@ function monthly_average_performance(rows) {
             return moment(el[LABELS]).format('MMM y');
         }),
         datasets: datasets,
-
     };
     var ctx = document.getElementById('barre_average').getContext('2d');
     barre_average = new Chart(ctx, {
-        type: 'bar',  // default  
+        type: 'line',
         data: barChartData,
         options: {
             plugins : {
                 datalabels: {
-                    labels: { 
-                        // escamotage per evitare sovrascrizioni della label
+                    labels: { // escamotage per evitare sovrascrizioni della label
                         title: { color:null }
                     }
                 }
             },
-            title: { display: true, text: TITLE },
+            title: { display: true, text: '' },
             responsive: true,
             tooltips: { mode: 'label' },
             scales: {
                 xAxes: [{
-                    scaleLabel: {
-                        display: false,
-                    },
-                    gridLines: { display: true, },
+                    scaleLabel: { display: false, },
                     ticks: {source: 'auto'},
                 }],
                 yAxes: [
                     {	
-                        stacked: true,
                         position: 'right',
-                        id: 'y-axis-2',
-                        display: true,
-                        scaleLabel: { display : true, labelString: Y_AXIS_2 },
+                        scaleLabel: { display : true, labelString: 'Days' },
                     }
                 ]
             }
-
         }
     });
 }
@@ -289,7 +267,6 @@ function yearly_performance(project_id) {
                 return Math.round(100*valore/totale)+'%';
             return '-';
         }
-
         var valori = [
             { 'id': 0,
                 'label': 'Open',
