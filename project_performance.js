@@ -119,7 +119,7 @@ function monthly_performance_chart(project_id) {
                             id: 'y-axis-2',
                             display: true,
                             scaleLabel: { display : true, labelString: Y_AXIS_2 },
-                            ticks: { min: 0, max:100,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
+                            ticks: { min: 0, max:100,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
 
                         }, {
                             stacked: false,
@@ -128,7 +128,7 @@ function monthly_performance_chart(project_id) {
                             display: true,
                             scaleLabel: { display : true, labelString: Y_AXIS_1 },
                             gridLines: { display: false },
-                            ticks: { precision: 0 }
+                            ticks: { precision: 0, min: 0, maxTicksLimit: 6 }
                         }
                     ]
                 }
@@ -197,6 +197,7 @@ function monthly_average_performance(rows) {
                     {	
                         position: 'right',
                         scaleLabel: { display : true, labelString: 'Days' },
+                        ticks: { precision: 0, min : 0, maxTicksLimit: 5 }
                     }
                 ]
             }

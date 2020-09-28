@@ -117,7 +117,7 @@ function team_performance_chart(group_id) {
                             display: true,
                             scaleLabel: { display : true, labelString: 'Ratio' },
                             gridLines: { display: true },
-                            ticks: { min: 0, max:100,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
+                            ticks: { min: 0, max:100,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
                         }, {
                             stacked: false,
                             position: 'left',
@@ -125,7 +125,7 @@ function team_performance_chart(group_id) {
                             display: true,
                             scaleLabel: { display : true, labelString: 'Bugs' },
                             gridLines: { display: false },
-                            ticks: { precision: 0 }
+                            ticks: { precision: 0, min : 0, maxTicksLimit: 6 }
                         }
                     ]
                 }
@@ -192,6 +192,7 @@ function team_latency(rows) {
                     {	
                         position: 'right',
                         scaleLabel: { display : true, labelString: 'Days' },
+                        ticks: { precision: 0, min :0, maxTicksLimit: 6 }
                     }, 
                 ]
             }

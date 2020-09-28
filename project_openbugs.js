@@ -196,7 +196,7 @@ function bugs_by_team (rows) {
                 xAxes: [{
                     stacked: true,
                     scaleLabel: { display : true, labelString: 'Bugs' },
-                    ticks: { precision: 0 },
+                    ticks: { precision: 0, min :0, maxTicksLimit: 7 },
                 }],
                 yAxes: [{
                     stacked: true,
