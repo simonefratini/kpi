@@ -31,7 +31,7 @@ redmine = dao(args.environment)
 # distinct per gestire i sottoprogetti di primo livello
 # #################################
 project = {}
-cursor = redmine.execute('select distinct description,project_id from vproject order by description')
+cursor = redmine.execute('select v.description,v.project_id from vproject v join (select distinct project_id from vproject) d on d.project_id=v.id   order by description')
 for p in  cursor.fetchall():
     project[p[0]]=p[1]
 f = open(csv_output_path+'project.json','w')
