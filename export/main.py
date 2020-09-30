@@ -67,7 +67,11 @@ scrivi_csv(csv_output_path+'yearly_performance.csv',cursor);
 # prima occorre lanciare la stored procedure
 # #################################
 cursor = redmine.execute('call team_performance')
-redmine.db.commit();
+# mettere o non mettere il commit, se non lo metti i dati sono legati alla singola sessione
+# vantaggio se la procedura ha qualche errore di overflow, per qualche motivo entra in loop di insert infinto, non si sporca filesystem
+# riempe filesystem, poi la sessione va in crash e dovrebbe poi rilasciare lo spazio occupato
+# svantaggio se devi fare debug dei dati devi ricaricare la tabella lanciando la procedura
+#redmine.db.commit();
 cursor = redmine.execute('select mese,group_id,team,days,bugs,stillown from team_performance')
 scrivi_csv(csv_output_path+'team_performance.csv',cursor);
 ## aggregazione 
