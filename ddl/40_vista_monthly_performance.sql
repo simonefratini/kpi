@@ -29,13 +29,12 @@ from redmine.issues ri
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
 and ri.created_on > date_add(last_day(date_sub(now(), interval 1 year)), interval 1 day)
-and ri.closed_on is null
 group by p.project_id, mese) as i on a.mese = i.mese and a.project_id = i.project_id
 -- chiusi nello stesso mese di apertura "ATTENZIONE RESTRIZIONE FORTE"
 left join (select p.project_id, date_format(closed_on,'%Y-%m') as mese, count(1)  as chiusi
 from redmine.issues ri
 join vproject p on p.id = ri.project_id
-where tracker_id = 1 -- tracker bugs
+where ri.tracker_id = 1 -- tracker bugs
 and created_on > date_add(last_day(date_sub(now(), interval 1 year)), interval 1 day)
 and year(closed_on) = year(created_on)
 and month(closed_on) = month(created_on)
@@ -44,7 +43,7 @@ group by p.project_id, mese) as c on a.mese = c.mese and a.project_id = c.projec
 left join (select p.project_id, date_format(closed_on,'%Y-%m') as mese, round(avg(TIMESTAMPDIFF(day,created_on,closed_on))) daytoclose
 from redmine.issues ri
 join vproject p on p.id = ri.project_id
-where tracker_id = 1 -- tracker bugs
+where ri.tracker_id = 1 -- tracker bugs
 and created_on > date_add(last_day(date_sub(now(), interval 1 year)), interval 1 day)
 and closed_on is not null 
 group by p.project_id, mese) as tm on a.mese = tm.mese and a.project_id = tm.project_id
