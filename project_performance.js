@@ -270,7 +270,7 @@ function yearly_performance(project_id) {
         }
         var valori = [
             { 'id': 0,
-                'label': 'Open',
+                'label': 'Currently Open',
                 'yearly_value':  grand_total.aperti,
                 'yearly_percent':  percentuale(grand_total.aperti,grand_total.totale),
                 'absolute_value':  grand_total.aperti_assoluti,
