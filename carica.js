@@ -12,11 +12,15 @@ var ciambella = null;
 var pila_bugs = null;
 var stacked_bugs_by_team = null;
 
+// funzione per generare un numero random per forzare il reload delle chiamate con fetch
+function random_version() {
+    return Math.round(Math.random()*100000000);
+}
 
 
 // funzione per recuperare i progetti/team ecc chiave valore semplice
 function setSelect(source_json_file,select_id) {
-    fetch(source_json_file)
+    fetch(source_json_file+'?v='+random_version())
         .then(response => response.json())
         .then( function (list) { 
             let selettore = document.getElementById(select_id);
@@ -103,7 +107,7 @@ function popola_team(gid) {
 
 function getTimestamp() {
 // funzione per recuperare il timestamp in cui e' avvenuta estrazione dei dati
-fetch(datasource_path+'timestamp.json')
+fetch(datasource_path+'timestamp.json'+'?v='+random_version())
   .then(response => response.json())
   .then( function (d) { document.getElementById('timestamp').innerHTML = ' @ '+d.timestamp; }
   );
