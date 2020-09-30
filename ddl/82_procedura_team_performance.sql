@@ -59,8 +59,8 @@ giro:LOOP
         end if;    
         leave giro; 
     end if;    
-    -- se e' senza previous_user_id e' unica v_id è unico
-     if v_previous_user_id is null then     
+    -- se e' senza previous_user_id e previous_modificato allora v_id è unico
+     if v_previous_user_id is null and previous_modificato is null then     
 		-- posso inserire 
         call insert_spalmato_sui_mesi(v_id,v_user_id,v_aperto,v_chiuso);     	        
         -- reset totale
