@@ -6,7 +6,7 @@ drop view if exists vproject;
 create view vproject as select p.id, ifnull(p.parent_id,p.id) as project_id, p.name as description
 from redmine.projects p
 join (SELECT id  from redmine.projects
-    where id IN (325 , 367, 338)) progetti_padre
+    where id IN (325 , 367, 338,273,184,198,257)) progetti_padre
 where p.id = progetti_padre.id
    or p.parent_id  = progetti_padre.id ;
 
@@ -17,10 +17,15 @@ drop view if exists vgroup;
 create view  vgroup as 
 select id as group_id, lastname as description  from redmine.users
 where type = 'Group'
-and lastname in ('Connectivity','Digital Hardware','Embedded Control - Firmware','Power Hardware','Product Engineering','Mechanical Designer',
-'DVT Reliability'
+and lastname in (
+'Connectivity'
+,'Digital Hardware'
+,'Embedded Control - Firmware'
+,'Power Hardware'
+,'Product Engineering'
+,'Mechanical Designer'
+,'DVT Reliability'
 ,'DVT Functional'
-,'DVT'
 ,'DVT Integration'
 ,'Project Management'
 ,'Product Engineering'
