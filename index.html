@@ -126,9 +126,12 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                             <thead class="thead-light">
                                 <tr>
                                     <th data-field="group_id" data-visible=false></th>
-                                    <th data-sortable=true data-align="right" data-field="team" data-formatter="grandTotal">Team</th>
-                                    <th data-sortable=true data-align="right" data-field="bugs" data-formatter="grandTotal">Bugs</th>
-                                    <th data-sortable=true data-align="right" data-field="days" data-formatter="grandTotal">Days Latency</th>
+                                    <th data-sortable=true data-align="right" data-field="team" data-formatter="grandTotal"><small>Team</small></th>
+
+                                    <th data-sortable=true data-align="right" data-field="bugs" data-formatter="grandTotal"><small>Bugs<br> Owned</small></th>
+                                    <th data-sortable=true data-align="right" data-field="move_or_close" data-formatter="grandTotal"><small>Bugs Moved<br>or Closed</small></th>
+                                    <th data-sortable=true data-align="right" data-field="ratio" data-formatter="grandTotal"><small>Ratio<small></th>
+                                    <th data-sortable=true data-align="right" data-field="days" data-formatter="grandTotal"><small>Days<br>Latency</small></th>
                                 </tr>
                             </thead>
                         </table>
@@ -160,7 +163,7 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
     </script >
     <footer>
         <div class="container text-center"> <br>
-            <a class="badge badge-danger"  href="http://monitoring-helpdesk.it.abb.com/projects/redmine-customization-requestes/issues/new" target="_blank">For any issues, click to open a ticket </a>
+            <a class="badge badge-danger"  href="http://monitoring-helpdesk.it.abb.com/projects/redmine-customization-requestes/issues/new?issue[category_id]=1200" target="_blank">For any issues, click to open a ticket </a>
         </div>
     </footer>
 </body>
