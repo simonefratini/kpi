@@ -211,6 +211,8 @@ function team_performance_annuale(group_id) {
         rows.sort(function(x, y){
             return d3.ascending(x.team, y.team);
         })
+        // aggiungo il percento a questo oggetto perverso del d3 csv -- usare json invece che csv TODO
+        Object.entries(rows).forEach(row => { row[1].ratio += '%';});
         var $table = $('#table_team');
         $table.bootstrapTable({});
         $table.bootstrapTable("load",rows);
