@@ -41,5 +41,7 @@ gu.user_id
 from vgroup v
 join redmine.groups_users gu on v.group_id = gu.group_id
 union all
-select group_id,group_id as user_id,description from vgroup;
+select group_id,description, group_id as user_id from vgroup
+union all 
+select 0, 'Not Assigned', 0;
 
