@@ -15,6 +15,11 @@ function monthly_performance_chart(project_id) {
             color: '#FFF014'
         },
         {
+            column: 'chiusi_previuos_month_open',
+            name: 'Closed of opened in the previous months  ',
+            color: 'orange'
+        },
+        {
             column: 'ratio',
             name: 'Ratio (b)/(a)',
             color: '#231964'
@@ -34,6 +39,7 @@ function monthly_performance_chart(project_id) {
             .rollup(function(v) { return {
                 aperti: d3.sum(v, function(d) { return d.aperti;}),
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
+                chiusi_assoluto: d3.sum(v, function(d) { return d.chiusi_assoluto;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;}))
 
@@ -45,6 +51,7 @@ function monthly_performance_chart(project_id) {
                     mese: g.key,
                     aperti: g.value.aperti,
                     chiusi: g.value.chiusi,
+                    chiusi_previuos_month_open: g.value.chiusi_assoluto - g.value.chiusi,
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
                 }
@@ -56,10 +63,19 @@ function monthly_performance_chart(project_id) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
             var order = 1;
+            var stacked = 'Stack 1';
+            var hidden = false;
             if (el.column == 'ratio') {
                 type = 'line';
                 yAxisID = 'y-axis-2';
                 order =  0; 
+                stacked = null;
+            }
+            if (el.column == 'aperti') {
+                stacked = 'Stack 0';
+            }
+            if (el.column == 'chiusi_previuos_month_open') {
+                hidden = true;
             }
             return {
                 label: el.name,
@@ -71,6 +87,8 @@ function monthly_performance_chart(project_id) {
                 fill : false,
                 order: order,
                 lineTension: 0.2,
+                stack: stacked,
+                hidden: hidden,
                 data: []
             }
         });
@@ -122,7 +140,7 @@ function monthly_performance_chart(project_id) {
                             ticks: { min: 0, max:100,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
 
                         }, {
-                            stacked: false,
+                            stacked: true,
                             position: 'left',
                             id: 'y-axis-1',
                             display: true,
@@ -137,7 +155,6 @@ function monthly_performance_chart(project_id) {
         });
     });
 }
-
 function monthly_average_performance(rows) {
 
     var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
@@ -205,6 +222,14 @@ function monthly_average_performance(rows) {
     });
 }
 
+function changeAllClosed(e) {
+    if (e.checked) {
+        barre.getDatasetMeta(2).hidden=true;
+    } else {
+        barre.getDatasetMeta(2).hidden=false;
+    }
+    barre.update();
+}
 
 function yearly_performance(project_id) {
 

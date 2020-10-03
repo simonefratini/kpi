@@ -7,6 +7,8 @@ select a.project_id
     ,ifnull(c.chiusi,0) as chiusi
     ,ifnull(i.aperti,0) as aperti 
     ,ifnull(tm.daytoclose,0) as daytoclose
+    ,ifnull(tm.chiusi_assoluto,0) as chiusi_assoluto 
+    
 from ( 
 select distinct p.project_id,  date_format(mese,'%Y-%m') as mese from
 (select date_sub(now(), interval 0 month) as mese union all
@@ -40,7 +42,7 @@ and year(closed_on) = year(created_on)
 and month(closed_on) = month(created_on)
 group by p.project_id, mese) as c on a.mese = c.mese and a.project_id = c.project_id
 -- tempo medio di chiusura indipendente che siano stati aperti lo stesso mese
-left join (select p.project_id, date_format(closed_on,'%Y-%m') as mese, round(avg(TIMESTAMPDIFF(day,created_on,closed_on))) daytoclose
+left join (select p.project_id, date_format(closed_on,'%Y-%m') as mese, count(1) chiusi_assoluto,  round(avg(TIMESTAMPDIFF(day,created_on,closed_on))) daytoclose
 from redmine.issues ri
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
