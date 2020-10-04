@@ -14,9 +14,8 @@ var stacked_bugs_by_team = null;
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
 function random_version() {
-    return Math.round(Math.random()*100000000);
+    return Math.round(Math.random()*1E+8);
 }
-
 
 // funzione per recuperare i progetti/team ecc chiave valore semplice
 function setSelect(source_json_file,select_id) {
@@ -86,7 +85,6 @@ function popola_bugs(pid,peso) {
     getTimestamp();
 }
 
-
 function popola_project(pid) {
     if (barre != undefined)
         barre.destroy();
@@ -112,4 +110,3 @@ fetch(datasource_path+'timestamp.json'+'?v='+random_version())
   .then( function (d) { document.getElementById('timestamp').innerHTML = ' @ '+d.timestamp; }
   );
 }
-
