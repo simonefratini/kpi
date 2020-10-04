@@ -1,6 +1,5 @@
 function team_performance_chart(group_id) {
 
-    var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'bugs',
@@ -46,7 +45,7 @@ function team_performance_chart(group_id) {
                     ratio : Math.round(100 * (1  - g.value.stillown / g.value.bugs)) 
                 }
             });
-
+        // eseguo la funzione sotto 
         team_latency(rows);
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
@@ -79,10 +78,9 @@ function team_performance_chart(group_id) {
         var barChartData = {
             labels : rows.map(function(el) { 
                 moment.locale('en');
-                return moment(el[LABELS]).format('MMM y');
+                return moment(el['mese']).format('MMM y');
             }),
             datasets: datasets,
-
         };
         var ctx = document.getElementById('barre_team').getContext('2d');
         barre_team = new Chart(ctx, {
@@ -90,39 +88,28 @@ function team_performance_chart(group_id) {
             data: barChartData,
             options: {
                 plugins : {
-                    datalabels: {
-                        labels: { 
-                            // escamotage per evitare sovrascrizioni della label
-                            title: { color:null }
-                        }
-                    }
+                    // escamotage per evitare sovrascrizioni della label
+                    datalabels: { labels: { title: { color:null } } }
                 },
                 title: { display: true, text: 'Team Performance' },
-
                 responsive: true,
                 tooltips: { mode: 'label' },
                 scales: {
                     xAxes: [{
-                        scaleLabel: {
-                            display: false,
-                        },
+                        scaleLabel: { display: false, },
                         gridLines: { display: true, },
                         ticks: {source: 'auto'},
                     }],
                     yAxes: [
                         {	
-                            stacked: true,
                             position: 'right',
                             id: 'y-axis-2',
-                            display: true,
                             scaleLabel: { display : true, labelString: 'Ratio' },
                             gridLines: { display: true },
                             ticks: { precision: 0, min: 0,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
                         }, {
-                            stacked: false,
                             position: 'left',
                             id: 'y-axis-1',
-                            display: true,
                             scaleLabel: { display : true, labelString: 'Bugs' },
                             gridLines: { display: false },
                             ticks: { precision: 0, min : 0, maxTicksLimit: 6 }
@@ -137,7 +124,6 @@ function team_performance_chart(group_id) {
 
 function team_latency(rows) {
 
-    var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'days',
@@ -164,7 +150,7 @@ function team_latency(rows) {
     var barChartData = {
         labels : rows.map(function(el) { 
             moment.locale('en');
-            return moment(el[LABELS]).format('MMM y');
+            return moment(el['mese']).format('MMM y');
         }),
         datasets: datasets,
 
@@ -175,11 +161,8 @@ function team_latency(rows) {
         data: barChartData,
         options: {
             plugins : {
-                datalabels: {
-                    labels: { // escamotage per evitare sovrascrizioni della label
-                        title: { color:null }
-                    }
-                }
+                // escamotage per evitare sovrascrizioni della label
+                datalabels: { labels: { title: { color:null } } }
             },
             title: { display: true, text: 'Latency'},
             responsive: true,
@@ -208,9 +191,8 @@ function team_performance_annuale(group_id) {
             // filtro sul progetto 
             rows = rows.filter(function(d) { return d.group_id == group_id; })
         }
-        rows.sort(function(x, y){
-            return d3.ascending(x.team, y.team);
-        })
+        // ordinamento
+        rows.sort(function(x, y){ return d3.ascending(x.team, y.team); })
         // aggiungo il percento a questo oggetto perverso del d3 csv -- usare json invece che csv TODO
         Object.entries(rows).forEach(row => { row[1].ratio += '%';});
         var $table = $('#table_team');

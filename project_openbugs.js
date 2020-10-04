@@ -1,4 +1,3 @@
-
 let chartColors = {
 	red: 'rgb(255, 99, 132)',
 	orange: 'rgb(255, 159, 64)',
@@ -8,7 +7,6 @@ let chartColors = {
 	purple: 'rgb(153, 102, 255)',
 	grey: 'rgb(201, 203, 207)'
 };
-
 
 let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
     '1': { label:'Backlog', color: chartColors.green},
@@ -54,19 +52,8 @@ function openbugs(project_id, peso) {
                 responsive: true,
                 tooltips: { mode: 'label' },
                 plugins : {
-                    datalabels : {
-                        render: 'value',
-                        font: { 
-                            size: '20' }, 
-                    },
-                    doughnutlabel: {
-                        labels: [
-                            {
-                                text: totale,
-                                font: { size: '30' }
-                            },
-                        ]
-                    },
+                    datalabels : { render: 'value', font: { size: '20' }, },
+                    doughnutlabel: { labels: [ { text: totale, font: { size: '30' } }, ] },
                 }
             }
         });
@@ -75,7 +62,6 @@ function openbugs(project_id, peso) {
 
 
 function peso_bugs(rows) {
-    var TITLE = 'Priority';
     // attenzione la label  è statica!!! TODO
     let pesi={ 3 : { color:'lightcyan', label:'Low'},
              4 : { color:'lightgreen', label:'Normal'},
@@ -84,12 +70,10 @@ function peso_bugs(rows) {
              7 : { color:'orangered', label:'Immediate'},
             39 : { color:'lightgrey', label:'Not set' }
              };
-           
     rows = d3.nest()
         .key(function(d) { return d.peso})
         .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-        .entries(rows)
-        // devo rimappare
+        .entries(rows);
     let colonne = [];
     let data = [];
     let backgroundColor = [];
@@ -111,22 +95,12 @@ function peso_bugs(rows) {
         type: 'doughnut',    
         data:  { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne },
         options: {
-            title: { display: true, text: TITLE },
+            title: { display: true, text:'Priority'},
             responsive: true,
             tooltips: { mode: 'label' },
             plugins : {
-                datalabels : {
-                    render: 'value',
-                    font: { 
-                        size: '20' }, 
-                },
-                doughnutlabel: {
-                    labels: [
-                        {
-                            text: totale,
-                            font: { size: '30' }
-                        },
-                    ]
+                datalabels : { render: 'value', font: { size: '20' }, },
+                doughnutlabel: { labels: [ { text: totale, font: { size: '30' } }, ]
                 },
             }
         }

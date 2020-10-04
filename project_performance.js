@@ -104,14 +104,12 @@ function monthly_performance_chart(project_id) {
                 d.data.push(row[d.labelDirty])
             })
         });
-
         var barChartData = {
             labels : rows.map(function(el) { 
                 moment.locale('en');
                 return moment(el['mese']).format('MMM y');
             }),
             datasets: datasets,
-
         };
         var ctx = document.getElementById('barre').getContext('2d');
         barre = new Chart(ctx, {
@@ -119,12 +117,8 @@ function monthly_performance_chart(project_id) {
             data: barChartData,
             options: {
                 plugins : {
-                    datalabels: {
-                        labels: { 
-                            // escamotage per evitare sovrascrizioni della label
-                            title: { color:null }
-                        }
-                    }
+                    // escamotage per evitare sovrascrizioni della label
+                    datalabels: { labels: { title: { color:null } } } 
                 },
                 title: { display: true, text: 'Monthly Performance' },
                 responsive: true,
@@ -137,10 +131,8 @@ function monthly_performance_chart(project_id) {
                     }],
                     yAxes: [
                         {	
-                            stacked: false,
                             position: 'right',
                             id: 'y-axis-2',
-                            display: true,
                             scaleLabel: { display : true, labelString: 'Ratio'},
                             ticks: { precision: 0 , min:0,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
 
@@ -148,9 +140,7 @@ function monthly_performance_chart(project_id) {
                             stacked: true,
                             position: 'left',
                             id: 'y-axis-1',
-                            display: true,
                             scaleLabel: { display : true, labelString: 'Bugs' },
-                            gridLines: { display: false },
                             ticks: { precision: 0, min: 0, maxTicksLimit: 6 }
                         }
                     ]
@@ -180,13 +170,11 @@ function monthly_average_performance(rows) {
             data: []
         }
     });
-
     rows.map(function(row) {
         datasets.map(function(d) {
             d.data.push(row[d.labelDirty])
         })
     });
-
     var barChartData = {
         labels : rows.map(function(el) { 
             moment.locale('en');
@@ -200,11 +188,8 @@ function monthly_average_performance(rows) {
         data: barChartData,
         options: {
             plugins : {
-                datalabels: {
-                    labels: { // escamotage per evitare sovrascrizioni della label
-                        title: { color:null }
-                    }
-                }
+                // escamotage per evitare sovrascrizioni della label
+                datalabels: { labels: { title: { color:null } } }
             },
             title: { display: true, text: '' },
             responsive: true,
