@@ -7,7 +7,7 @@ if ! [[ $GIT_VERSION =~ .*dirty.* ]]; then
     if [[ $RISPOSTA == "y" ]]; then
         COMANDO="s/\(versione=\)\([a-fA-F0-9]\+\)/\1$GIT_VERSION/"
         INDEX="index.html"
-        sed -ie "$COMANDO" $INDEX
+        sed -i "$COMANDO" $INDEX
         git commit -m "Cambiata automaticamente versione delle chiamate javascript con il commit $GIT_VERSION" $INDEX 
         git diff HEAD^ HEAD $INDEX
     fi
