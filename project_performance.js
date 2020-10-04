@@ -1,8 +1,5 @@
-
 function monthly_performance_chart(project_id) {
 
-    var TITLE = 'Monthly Performance';
-    var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'aperti',
@@ -16,7 +13,7 @@ function monthly_performance_chart(project_id) {
         },
         {
             column: 'chiusi_previuos_month_open',
-            name: 'Closed of opened in the previous months  ',
+            name: 'Closed of opened in the previous months (c)',
             color: 'orange'
         },
         {
@@ -24,9 +21,13 @@ function monthly_performance_chart(project_id) {
             name: 'Ratio (b)/(a)',
             color: '#231964'
         },
+        {
+            column: 'ratio_all_closed',
+            name: 'Ratio [(b)+(c)]/(a)',
+            color: 'orangered'
+        
+        },
     ];
-    var Y_AXIS_1 = 'Bugs'; // y-axis label and label in tooltip
-    var Y_AXIS_2 = 'Ratio'; // y-axis label and label in tooltip
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
     d3.csv(file).then(function(rows) {
@@ -54,6 +55,7 @@ function monthly_performance_chart(project_id) {
                     chiusi_previuos_month_open: g.value.chiusi_assoluto - g.value.chiusi,
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
+                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti) ,
                 }
             });
 
@@ -65,18 +67,23 @@ function monthly_performance_chart(project_id) {
             var order = 1;
             var stacked = 'Stack 1';
             var hidden = false;
-            if (el.column == 'ratio') {
-                type = 'line';
-                yAxisID = 'y-axis-2';
-                order =  0; 
-                stacked = null;
-            }
-            if (el.column == 'aperti') {
-                stacked = 'Stack 0';
-            }
-            if (el.column == 'chiusi_previuos_month_open') {
-                hidden = true;
-            }
+
+            switch (el.column) {
+                case 'ratio_all_closed':    
+                    hidden = true;
+                case 'ratio':
+                    type = 'line';
+                    yAxisID = 'y-axis-2';
+                    order =  0; 
+                    stacked = null;
+                    break;
+                case 'aperti':
+                    stacked = 'Stack 0';
+                    break;
+                case 'chiusi_previuos_month_open':
+                    hidden = true;
+                    break;
+            }        
             return {
                 label: el.name,
                 labelDirty: el.column,
@@ -101,7 +108,7 @@ function monthly_performance_chart(project_id) {
         var barChartData = {
             labels : rows.map(function(el) { 
                 moment.locale('en');
-                return moment(el[LABELS]).format('MMM y');
+                return moment(el['mese']).format('MMM y');
             }),
             datasets: datasets,
 
@@ -119,32 +126,30 @@ function monthly_performance_chart(project_id) {
                         }
                     }
                 },
-                title: { display: true, text: TITLE },
+                title: { display: true, text: 'Monthly Performance' },
                 responsive: true,
                 tooltips: { mode: 'label' },
                 scales: {
                     xAxes: [{
-                        scaleLabel: {
-                            display: false,
-                        },
+                        scaleLabel: { display: false, },
                         gridLines: { display: true, },
                         ticks: {source: 'auto'},
                     }],
                     yAxes: [
                         {	
-                            stacked: true,
+                            stacked: false,
                             position: 'right',
                             id: 'y-axis-2',
                             display: true,
-                            scaleLabel: { display : true, labelString: Y_AXIS_2 },
-                            ticks: { min: 0, max:100,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
+                            scaleLabel: { display : true, labelString: 'Ratio'},
+                            ticks: { precision: 0 , min:0,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
 
                         }, {
                             stacked: true,
                             position: 'left',
                             id: 'y-axis-1',
                             display: true,
-                            scaleLabel: { display : true, labelString: Y_AXIS_1 },
+                            scaleLabel: { display : true, labelString: 'Bugs' },
                             gridLines: { display: false },
                             ticks: { precision: 0, min: 0, maxTicksLimit: 6 }
                         }
@@ -157,7 +162,6 @@ function monthly_performance_chart(project_id) {
 }
 function monthly_average_performance(rows) {
 
-    var LABELS = 'mese';  // Column to define 'bucket' names (x axis)
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'daytoclose',
@@ -186,7 +190,7 @@ function monthly_average_performance(rows) {
     var barChartData = {
         labels : rows.map(function(el) { 
             moment.locale('en');
-            return moment(el[LABELS]).format('MMM y');
+            return moment(el['mese']).format('MMM y');
         }),
         datasets: datasets,
     };
@@ -331,13 +335,16 @@ function yearly_performance(project_id) {
 }
 
 function summarized(value,row) {
+    // la riga con il totale e' grassetto
     if (row.id == 2)
         return '<span class="font-weight-bold">'+value+'</span>';
     else if (row.id == 3)
+    // la riga con le medie di chiusura e' in corsivo
         return '<span class="font-italic">'+value+'</span>';
     return value;
 }
 function summarizedPercent(value) {
+    // le celle sono in corsivo 
    return '<span class="font-italic">'+value+'</span>';
 }
 
