@@ -11,22 +11,22 @@ function monthly_performance_chart(project_id) {
             name: 'Closed of opened in the same month (b) ',
             color: '#FFF014'
         },
-        {
+       /* {
             column: 'chiusi_previuos_month_open',
             name: 'Closed of opened in the previous months (c)',
             color: 'orange'
-        },
+        },*/
         {
             column: 'ratio',
             name: 'Ratio (b)/(a)',
             color: '#231964'
         },
-        {
+      /*  {
             column: 'ratio_all_closed',
             name: 'Ratio [(b)+(c)]/(a)',
             color: 'orangered'
         
-        },
+        },*/
     ];
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
