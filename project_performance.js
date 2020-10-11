@@ -11,23 +11,29 @@ function monthly_performance_chart(project_id,is_high) {
             name: 'Closed of opened in the same month (b) ',
             color: '#FFF014'
         },
-       /* {
-            column: 'chiusi_previuos_month_open',
-            name: 'Closed of opened in the previous months (c)',
-            color: 'orange'
-        },*/
         {
             column: 'ratio',
             name: 'Ratio (b)/(a)',
             color: '#231964'
         },
-      /*  {
+    ];
+
+
+    if (advance_debug) {
+    SERIES = SERIES.concat(   
+        [{
+            column: 'chiusi_previuos_month_open',
+            name: 'Closed of opened in the previous months (c)',
+            color: 'orange'
+        },
+        {
             column: 'ratio_all_closed',
             name: 'Ratio [(b)+(c)]/(a)',
             color: 'orangered'
         
-        },*/
-    ];
+        },]);
+    }
+
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
     d3.csv(file).then(function(rows) {
@@ -241,17 +247,18 @@ function yearly_performance(project_id,is_high) {
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
-                stddev: Math.round(d3.deviation(v, function(d) { return d.deviazione_standard;})),
+                stddev: Math.round(d3.sum(v, function(d) { return d.deviazione_standard;})),
                 aperti_assoluti: d3.sum(v, function(d) { return d.aperti_assoluti;}),
                 chiusi_assoluti: d3.sum(v, function(d) { return d.chiusi_assoluti;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose_assoluti: Math.ceil(d3.mean(v, function(d) { return d.daytoclose_assoluti;})),
-                stddev_assoluti: Math.round(d3.deviation(v, function(d) { return d.deviazione_standard_assoluti;}))
+                stddev_assoluti: Math.round(d3.sum(v, function(d) { return d.deviazione_standard_assoluti;}))
             }; })
             .entries(rows)
         // devo rimappare
             .map(function (g) {
                 return {
+                    conta: g.length,
                     mese: g.key,
                     aperti: g.value.aperti,
                     chiusi: g.value.chiusi,
@@ -268,11 +275,11 @@ function yearly_performance(project_id,is_high) {
             aperti : rows.reduce(function (a,c) { return a + c.aperti; }, initialValue),
             chiusi : rows.reduce(function (a,c) { return a + c.chiusi; }, initialValue),
             daytoclose : rows.reduce(function(a,c) { return (a+  c.daytoclose)/rows.length}, initialValue), 
+            stddev : rows.reduce(function(a,c) { return (a+  c.stddev)}, initialValue), 
             aperti_assoluti : rows.reduce(function (a,c) { return a + c.aperti_assoluti; }, initialValue),
             chiusi_assoluti : rows.reduce(function (a,c) { return a + c.chiusi_assoluti; }, initialValue),
-            stddev : rows.reduce(function(a,c) { return (a+  c.stddev)/rows.length}, initialValue), 
-            stddev_assoluti : rows.reduce(function(a,c) { return (a+  c.stddev_assoluti)/rows.length}, initialValue), 
-            daytoclose_assoluti : rows.reduce(function(a,c) { return (a+  c.daytoclose_assoluti)/rows.length;},initialValue) 
+            daytoclose_assoluti : rows.reduce(function(a,c) { return (a+  c.daytoclose_assoluti);},initialValue), 
+            stddev_assoluti : rows.reduce(function(a,c) { return (a+  c.stddev_assoluti) }, initialValue) 
         }
         // valori finali
         grand_total["totale"]=grand_total.aperti+grand_total.chiusi;
@@ -323,14 +330,16 @@ function yearly_performance(project_id,is_high) {
                 'absolute_value':  grand_total.daytoclose_assoluti,
                 'absolute_percent': '',    
             },
-            { 'id': 4,
-                'label': 'Standard Deviation* ', 
-                'yearly_value':  grand_total.stddev,
-                'yearly_percent': '',    
-                'absolute_value':  grand_total.stddev_assoluti,
-                'absolute_percent': '',    
-            },
         ];
+        if (advance_debug) {
+            valori= valori.concat([{ 'id': 4,
+                'label': 'Sample Standard Deviation ', 
+                'yearly_value':  Math.round(grand_total.stddev/Math.sqrt(grand_total.chiusi-1)),
+                'yearly_percent': '',    
+                'absolute_value':  Math.round(grand_total.stddev_assoluti/Math.sqrt(grand_total.chiusi_assoluti-1)),
+                'absolute_percent': '',    
+            },]);
+        }
         var $table = $('#table');
         $table.bootstrapTable({});
         $table.bootstrapTable("load",valori);
@@ -342,8 +351,8 @@ function summarized(value,row) {
     // la riga con il totale e' grassetto
     if (row.id == 2)
         return '<span class="font-weight-bold">'+value+'</span>';
-    else if (row.id == 3)
-    // la riga con le medie di chiusura e' in corsivo
+    else if (row.id >= 3)
+    // la riga con le medie di chiusura e' in corsivo e tutto il successivo di debug
         return '<span class="font-italic">'+value+'</span>';
     return value;
 }
