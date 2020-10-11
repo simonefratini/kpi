@@ -137,14 +137,14 @@ function monthly_performance_chart(project_id,is_high) {
                             position: 'right',
                             id: 'y-axis-2',
                             scaleLabel: { display : true, labelString: 'Ratio'},
-                            ticks: { precision: 0 , min:0,  maxTicksLimit: 6, callback: function(value){return value+ "%"} }
+                            ticks: { precision: 0 , min:0,  maxTicksLimit: 5, callback: function(value){return value+ "%"} }
 
                         }, {
                             stacked: true,
                             position: 'left',
                             id: 'y-axis-1',
                             scaleLabel: { display : true, labelString: 'Bugs' },
-                            ticks: { precision: 0, min: 0, maxTicksLimit: 6 }
+                            ticks: { precision: 0, min: 0, maxTicksLimit: 5 }
                         }
                     ]
                 }
@@ -241,10 +241,12 @@ function yearly_performance(project_id,is_high) {
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
+                stddev: Math.round(d3.deviation(v, function(d) { return d.deviazione_standard;})),
                 aperti_assoluti: d3.sum(v, function(d) { return d.aperti_assoluti;}),
                 chiusi_assoluti: d3.sum(v, function(d) { return d.chiusi_assoluti;}),
                 // arrotondo per eccesso al giorno superiore
-                daytoclose_assoluti: Math.ceil(d3.mean(v, function(d) { return d.daytoclose_assoluti;}))
+                daytoclose_assoluti: Math.ceil(d3.mean(v, function(d) { return d.daytoclose_assoluti;})),
+                stddev_assoluti: Math.round(d3.deviation(v, function(d) { return d.deviazione_standard_assoluti;}))
             }; })
             .entries(rows)
         // devo rimappare
@@ -254,8 +256,10 @@ function yearly_performance(project_id,is_high) {
                     aperti: g.value.aperti,
                     chiusi: g.value.chiusi,
                     daytoclose: g.value.daytoclose,
+                    stddev: g.value.stddev,
                     aperti_assoluti: g.value.aperti_assoluti,
                     chiusi_assoluti: g.value.chiusi_assoluti,
+                    stddev_assoluti: g.value.stddev_assoluti,
                     daytoclose_assoluti: g.value.daytoclose_assoluti
                 }
             });
@@ -266,6 +270,8 @@ function yearly_performance(project_id,is_high) {
             daytoclose : rows.reduce(function(a,c) { return (a+  c.daytoclose)/rows.length}, initialValue), 
             aperti_assoluti : rows.reduce(function (a,c) { return a + c.aperti_assoluti; }, initialValue),
             chiusi_assoluti : rows.reduce(function (a,c) { return a + c.chiusi_assoluti; }, initialValue),
+            stddev : rows.reduce(function(a,c) { return (a+  c.stddev)/rows.length}, initialValue), 
+            stddev_assoluti : rows.reduce(function(a,c) { return (a+  c.stddev_assoluti)/rows.length}, initialValue), 
             daytoclose_assoluti : rows.reduce(function(a,c) { return (a+  c.daytoclose_assoluti)/rows.length;},initialValue) 
         }
         // valori finali
@@ -315,6 +321,13 @@ function yearly_performance(project_id,is_high) {
                 'yearly_value':  grand_total.daytoclose,
                 'yearly_percent': '',    
                 'absolute_value':  grand_total.daytoclose_assoluti,
+                'absolute_percent': '',    
+            },
+            { 'id': 4,
+                'label': 'Standard Deviation* ', 
+                'yearly_value':  grand_total.stddev,
+                'yearly_percent': '',    
+                'absolute_value':  grand_total.stddev_assoluti,
                 'absolute_percent': '',    
             },
         ];

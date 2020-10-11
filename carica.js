@@ -35,6 +35,18 @@ function setSelect(source_json_file,select_id) {
         });
 }
 
+
+function popola_tutto(project_id=0 ,team_id=0,  is_high=0) {
+// popola dati con valori di tutti     
+// is_high = o equivale a tutti i bugs aperto
+// project_id=0 equivale ad ALL
+// team_id = 0 equivale ad All Teams - One Company
+popola_project(project_id,is_high);
+popola_bugs(project_id,is_high);
+popola_team(team_id,is_high);
+
+}
+
 // selezione dinamica sul select id (mettere this nella chiamata )
 function changeSelect(e) {
     let selected_value = e.options[e.selectedIndex].value;
@@ -48,10 +60,16 @@ function changeSelect(e) {
 
 // selezione dinamica sul checkbox della priorita'
 function changePriority(e) { 
+    is_high = e.checked
     let s = document.getElementById(selectProjectID);
-    popola_bugs(s.options[s.selectedIndex].value,e.checked);
-    popola_project(s.options[s.selectedIndex].value,e.checked);
-    popola_team(s.options[s.selectedIndex].value,e.checked);
+    popola_tutto(s.options[s.selectedIndex].value,is_high);
+};
+
+// selezione dinamica sul checkbox debug come variabile globale
+function changeDebug(e) { 
+    advance_debug = e.checked;
+        document.getElementById(selectProjectID);
+    popola_tutto(0,0,is_high);
 };
 
 
@@ -60,12 +78,7 @@ function start() {
 // popola le select all'avvio
 setSelect(datasource_path+'project.json','selectProject');
 setSelect(datasource_path+'group.json','selectGroup');
-// popola dati con valori di tutti     
-// id=0 equivale ad ALL
-popola_project(0,0);
-popola_team(0,0);
-// is_high = false equivale a tutti i bugs aperto
-popola_bugs(0,0);
+popola_tutto();
 }
 
 

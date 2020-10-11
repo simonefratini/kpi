@@ -7,12 +7,14 @@ BEGIN
 declare i int;
 declare done INT default 0;
 declare previous_id int default null;
+declare previous_is_high int default null;
 declare previous_user_id varchar(255) default null;
 declare previous_aperto datetime default null;
 declare previous_modificato datetime default null;
 declare previous_chiuso datetime default null;
 -- variabili per il cursore
 declare v_id int;
+declare v_is_high int; 
 declare v_user_id varchar(255);
 declare v_previous_user_id varchar(255);
 declare v_aperto datetime;
@@ -20,12 +22,15 @@ declare v_modificato datetime;
 declare v_chiuso datetime;
 DECLARE cursore CURSOR FOR 
 select i.id,
+    y.is_high,
     ifnull(j.user_id,i.assigned_to_id) as user_id,
     j.previous_user_id,
     i.created_on as aperto ,
     j.created_on as modificato ,
     closed_on as chiuso 
 from redmine.issues i 
+-- tengo conto solo dello stato attuale della priorita' non tengo conto di cambi
+join vpriority y on y.priority_id = i.priority_id
 join vproject p on p.id = i.project_id 
 left join(
 select journalized_id as id ,
@@ -46,25 +51,26 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 truncate table  tmp_team_performance;
 open cursore;
 giro:LOOP   
-    FETCH cursore into v_id, v_user_id, v_previous_user_id, v_aperto, v_modificato, v_chiuso;        
+    FETCH cursore into v_id,v_is_high, v_user_id, v_previous_user_id, v_aperto, v_modificato, v_chiuso;        
     if previous_id != v_id and previous_aperto is not null then
 		-- devo inserire riga precedente 
-        call insert_spalmato_sui_mesi(previous_id,previous_user_id,previous_modificato,previous_chiuso);                 
+        call insert_spalmato_sui_mesi(previous_id, previous_is_high, previous_user_id, previous_modificato, previous_chiuso);                 
         set previous_aperto = null;
     end if ;
     if done then 
         if previous_aperto is not null then
 	    	-- devo inserire riga precedente 
-            call insert_spalmato_sui_mesi(previous_id,previous_user_id,previous_modificato,previous_chiuso);                 
+            call insert_spalmato_sui_mesi(previous_id, previous_is_high, previous_user_id, previous_modificato, previous_chiuso);                 
         end if;    
         leave giro; 
     end if;    
     -- se e' senza previous_user_id e previous_modificato allora v_id è unico
      if v_previous_user_id is null and previous_modificato is null then     
 		-- posso inserire 
-        call insert_spalmato_sui_mesi(v_id,v_user_id,v_aperto,v_chiuso);     	        
+        call insert_spalmato_sui_mesi(v_id, v_is_high, v_user_id,v_aperto,v_chiuso);     	        
         -- reset totale
         set previous_id = null;
+        set previous_is_high = null;
         set previous_user_id = null;
         set previous_aperto = null; 
         set previous_chiuso = null; 
@@ -76,8 +82,9 @@ giro:LOOP
 		end if;                        
         set previous_modificato = v_modificato; 
         set previous_chiuso = v_chiuso;-- serve per l'ultima riga
-		call insert_spalmato_sui_mesi(v_id,v_previous_user_id,previous_aperto,previous_modificato);             
+		call insert_spalmato_sui_mesi(v_id,v_is_high,v_previous_user_id,previous_aperto,previous_modificato);             
 		set previous_id = v_id;
+        set previous_is_high = v_is_high;
         set previous_user_id = v_user_id;
 	 end if;
 end loop;
