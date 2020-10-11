@@ -50,7 +50,24 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                 <a class="nav-link" id="team-tab" data-toggle="tab" href="#team" role="tab" aria-controls="team" aria-selected="false">team</a>
             </li>
             <li class="nav-item">
-		    <a class="nav-link" id="faq-tab" data-toggle="tab" href="#faq" role="tab" aria-controls="faq" aria-selected="false"><small><i>note</i></small></a>
+                <a class="nav-link" id="faq-tab" data-toggle="tab" href="#faq" role="tab" aria-controls="faq" aria-selected="false"><small><i>note</i></small></a>
+            </li>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" >
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" onchange="changePriority(this)">
+                        <label class="form-check-label small" for="defaultCheck1"> Priority  &GreaterEqual; High</label>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" >
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" onchange="changeDebug(this)">
+                        <label class="form-check-label small" for="defaultCheck2"> Advanced/Debug</label>
+                    </div>
+                </a>
             </li>
         </ul>
         <div class="tab-content border-left border-right border-bottom" id="myTabContent">
@@ -72,10 +89,6 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                 <div class="row">
                     <div class="col-6">
                         <p class="text-center"><i>Current Numbers<span id="timestamp"></span></i>
-                        <div class="form-check text-center">
-                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" onchange="changePriority(this)">
-                            <label class="form-check-label" for="defaultCheck1"> Priority  &GreaterEqual; High</label>
-                        </div>
                         <canvas id="ciambella"></canvas><hr>
                         <canvas id="pila_bugs"></canvas><hr>
                         <canvas id="stacked_bugs"></canvas>    
@@ -127,7 +140,6 @@ body:after{ content: "beta"; position: fixed; width: 80px; height: 25px; backgro
                                 <tr>
                                     <th data-field="group_id" data-visible=false></th>
                                     <th data-sortable=true data-align="right" data-field="team" data-formatter="grandTotal"><small>Team</small></th>
-
                                     <th data-sortable=true data-align="right" data-field="bugs" data-formatter="grandTotal"><small>Bugs<br> Owned</small></th>
                                     <th data-sortable=true data-align="right" data-field="move_or_close" data-formatter="grandTotal"><small>Bugs Moved<br>or Closed</small></th>
                                     <th data-sortable=true data-align="right" data-field="ratio" data-formatter="grandTotal"><small>Ratio<small></th>
