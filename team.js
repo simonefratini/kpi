@@ -1,6 +1,5 @@
 function team_performance_chart(group_id, is_high) {
 
-
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'bugs',
@@ -211,7 +210,6 @@ function team_performance_annuale(group_id,is_high) {
             .entries(rows)
             // devo rimappare
             .map(function (g) {
-                console.log(g);
                 return {
                     group_id: g.key,
                     team: g.values[0].key,
