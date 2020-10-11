@@ -1,4 +1,4 @@
-function monthly_performance_chart(project_id) {
+function monthly_performance_chart(project_id,is_high) {
 
     var SERIES = [  // For each column representing a series, define its name and color
         {
@@ -33,6 +33,9 @@ function monthly_performance_chart(project_id) {
     d3.csv(file).then(function(rows) {
         if (project_id != 0  ) { // filtro sul progetto 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
+        }
+        if (is_high) { // filtro  sulla priorita' 
+            rows = rows.filter(function(d) { return d.is_high == is_high; })
         }
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
@@ -220,12 +223,15 @@ function changeAllClosed(e) {
     barre.update();
 }
 
-function yearly_performance(project_id) {
+function yearly_performance(project_id,is_high) {
 
     let file=datasource_path+'yearly_performance.csv';
     d3.csv(file).then(function(rows) {
         if (project_id != 0  ) { // filtro sul progetto 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
+        }
+        if (is_high) { // filtro  sulla priorita' 
+            rows = rows.filter(function(d) { return d.is_high == is_high; })
         }
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
