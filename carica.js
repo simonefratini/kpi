@@ -14,8 +14,7 @@ var pila_bugs = null;
 var stacked_bugs_by_team = null;
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
-function random_version() {
-    return Math.round(Math.random()*1E+8);
+function random_version() { return Math.round(Math.random()*1E+8);
 }
 
 // funzione per recuperare i progetti/team ecc chiave valore semplice
@@ -34,13 +33,15 @@ function setSelect(source_json_file,select_id) {
             });
         });
 }
-
-
-function popola_tutto(project_id=0 ,team_id=0,  is_high=0) {
+function popola_tutto() {
 // popola dati con valori di tutti     
 // is_high = o equivale a tutti i bugs aperto
 // project_id=0 equivale ad ALL
 // team_id = 0 equivale ad All Teams - One Company
+let s = document.getElementById(selectProjectID);
+let project_id = s.options[s.selectedIndex].value;
+s = document.getElementById('selectGroup');
+let team_id = s.options[s.selectedIndex].value;
 popola_project(project_id,is_high);
 popola_bugs(project_id,is_high);
 popola_team(team_id,is_high);
@@ -60,19 +61,18 @@ function changeSelect(e) {
 
 // selezione dinamica sul checkbox della priorita'
 function changePriority(e) { 
+    // setto variabile globale
     is_high = e.checked
-    let s = document.getElementById(selectProjectID);
-    popola_tutto(s.options[s.selectedIndex].value,is_high);
+    popola_tutto();
 };
 
 // selezione dinamica sul checkbox debug come variabile globale
 function changeDebug(e) { 
+    if (e.checked)
+        window.alert('This is only for debug! Please, take care.');
     advance_debug = e.checked;
-        document.getElementById(selectProjectID);
-    popola_tutto(0,0,is_high);
+    popola_tutto();
 };
-
-
 
 function start() {
 // popola le select all'avvio
