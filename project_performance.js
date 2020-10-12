@@ -16,16 +16,17 @@ function monthly_performance_chart(project_id,is_high) {
             name: 'Ratio (b)/(a)',
             color: '#231964'
         },
+        {
+            column: 'chiusi_previuos_month_open',
+            name: 'Closed of opened in the previous months (c)',
+            color: 'orange'
+        }
     ];
 
 
     if (advance_debug) {
     SERIES = SERIES.concat(   
-        [{
-            column: 'chiusi_previuos_month_open',
-            name: 'Closed of opened in the previous months (c)',
-            color: 'orange'
-        },
+        [
         {
             column: 'ratio_all_closed',
             name: 'Ratio [(b)+(c)]/(a)',
@@ -51,7 +52,8 @@ function monthly_performance_chart(project_id,is_high) {
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
                 chiusi_assoluto: d3.sum(v, function(d) { return d.chiusi_assoluto;}),
                 // arrotondo per eccesso al giorno superiore
-                daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;}))
+                daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
+                deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
 
             }; })
             .entries(rows)
@@ -65,6 +67,7 @@ function monthly_performance_chart(project_id,is_high) {
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
                     ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti) ,
+                    deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
                 }
             });
 
@@ -88,9 +91,6 @@ function monthly_performance_chart(project_id,is_high) {
                     break;
                 case 'aperti':
                     stacked = 'Stack 0';
-                    break;
-                case 'chiusi_previuos_month_open':
-                    hidden = true;
                     break;
             }        
             return {
@@ -168,6 +168,14 @@ function monthly_average_performance(rows) {
             color: '#231964'
         }
     ];
+    if (advance_debug) {
+        SERIES = SERIES.concat(
+        [{
+            column: 'deviazione_standard',
+            name: 'Standard error',
+            color: 'orangered'
+        }] );
+    };
     var datasets = SERIES.map(function(el) {
         return {
             label: el.name,
@@ -206,7 +214,6 @@ function monthly_average_performance(rows) {
             scales: {
                 xAxes: [{
                     scaleLabel: { display: false, },
-                    ticks: {source: 'auto'},
                 }],
                 yAxes: [
                     {	
@@ -332,8 +339,11 @@ function yearly_performance(project_id,is_high) {
             },
         ];
         if (advance_debug) {
+            
+
+
             valori= valori.concat([{ 'id': 4,
-                'label': 'Sample Standard Deviation ', 
+                'label': ' Standard Error aka<br>Sample Standard Deviation', 
                 'yearly_value':  Math.round(grand_total.stddev/Math.sqrt(grand_total.chiusi-1)),
                 'yearly_percent': '',    
                 'absolute_value':  Math.round(grand_total.stddev_assoluti/Math.sqrt(grand_total.chiusi_assoluti-1)),
