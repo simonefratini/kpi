@@ -33,7 +33,8 @@ function team_performance_chart(group_id, is_high) {
                 bugs: d3.sum(v, function(d) { return d.bugs;}),
                 stillown: d3.sum(v, function(d) { return (d.stillown) ;}),
                 // arrotondo per eccesso al giorno superiore
-                days: Math.ceil(d3.mean(v, function(d) { return d.days;}))
+                days: Math.ceil(d3.mean(v, function(d) { return d.days;})),
+                deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
             }; })
             .entries(rows)
             // devo rimappare
@@ -44,7 +45,8 @@ function team_performance_chart(group_id, is_high) {
                     stillown: g.value.stillown, 
                     unleash: g.value.bugs - g.value.stillown,
                     days: g.value.days,
-                    ratio : Math.round(100 * (1  - g.value.stillown / g.value.bugs)) 
+                    ratio : Math.round(100 * (1  - g.value.stillown / g.value.bugs)), 
+                    deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.bugs - 1))
                 }
             });
         // eseguo la funzione sotto 
@@ -133,6 +135,15 @@ function team_latency(rows) {
             color: '#231964'
         },
     ];
+    if (advance_debug) {
+        SERIES = SERIES.concat(
+        [{
+            column: 'deviazione_standard',
+            name: 'Standard Error*',
+            color: 'orangered'
+        }] );
+    };
+
     var datasets = SERIES.map(function(el) {
         return {
             label: el.name,
