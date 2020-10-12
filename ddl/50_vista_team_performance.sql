@@ -7,6 +7,7 @@ select a.mese
     ,a.team 
     ,a.is_high
     ,ifnull(v.latenza,0) as days
+    ,ifnull(v.deviazione_standard,0) as deviazione_standard
     ,ifnull(v.lavorati,0) as bugs
     ,ifnull(p.incarico,0) as stillown 
 from ( 
@@ -20,7 +21,8 @@ left join
 (select v.group_id,
         v.is_high,
         v.mese,
-        ceil(avg(latenza)/1440) as latenza,
+        round(avg(latenza)/1440) as latenza,
+        round(stddev(latenza)/1440) as deviazione_standard,
         count(1) as lavorati 
   from  (select tp.id,
                 tp.is_high,

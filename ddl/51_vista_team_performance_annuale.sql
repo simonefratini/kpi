@@ -14,8 +14,8 @@ select
 from vgroup g
 left join (select v.group_id,
             v.is_high,
-            ceil(avg(latenza) / 1440) as latenza,
-            ceil(stddev(latenza) / 1440) as devizione_standard,
+            round(avg(latenza) / 1440) as latenza,
+            round(stddev(latenza) / 1440) as devizione_standard,
             count(1) as lavorati,
             sum(move_or_close) as chiuso
        from (select id,
@@ -31,8 +31,8 @@ union all
 select 0 as group_id,
        'All Teams - One Company' as team,
        is_high,
-       ceil(avg(latenza)/1440) as days,
-       ceil(stddev(latenza)/1440) as devizione_standard,
+       round(avg(latenza)/1440) as days,
+       round(stddev(latenza)/1440) as devizione_standard,
        count(1) as bugs,
        sum(move_or_close) as move_or_close,
        round(100*sum(move_or_close)/ifnull(count(1),0)) as ratio
