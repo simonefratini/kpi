@@ -150,6 +150,7 @@ function monthly_performance_chart(project_id,is_high) {
                             position: 'left',
                             id: 'y-axis-1',
                             scaleLabel: { display : true, labelString: 'Bugs' },
+                            gridLines: { display: false },
                             ticks: { precision: 0, min: 0, maxTicksLimit: 5 }
                         }
                     ]
