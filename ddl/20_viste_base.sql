@@ -6,7 +6,7 @@ drop view if exists vproject;
 create view vproject as select p.id, ifnull(p.parent_id,p.id) as project_id, p.name as description
 from redmine.projects p
 join (SELECT id  from redmine.projects
-    where id IN (325,367,338,273,184,198,257)) progetti_padre
+    where id IN (325,367,338,273,184,198,257,259)) progetti_padre
 where p.id = progetti_padre.id
    or p.parent_id  = progetti_padre.id ;
 
