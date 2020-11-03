@@ -170,7 +170,7 @@ function team_latency(rows) {
     };
     var ctx = document.getElementById('barre_latency').getContext('2d');
     barre_latency = new Chart(ctx, {
-        type: 'line',  // default  
+        type: 'bar',  // default  
         data: barChartData,
         options: {
             plugins : {
