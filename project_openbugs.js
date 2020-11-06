@@ -25,7 +25,7 @@ function openbugs(project_id, peso) {
             // high=4, urgent = 5 and immediate = 7 //
             rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
         // uso il filtrato per la ciambella dei bugs di solo develpoment
-        peso_bugs(rows);
+        peso_bugs(rows,project_id);
         bugs_by_team(rows);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
@@ -61,7 +61,7 @@ function openbugs(project_id, peso) {
 };
 
 
-function peso_bugs(rows) {
+function peso_bugs(rows,project_id) {
     // attenzione la label  è statica!!! TODO
     let pesi={ 3 : { color:'lightcyan', label:'Low'},
              4 : { color:'lightgreen', label:'Normal'},
@@ -90,7 +90,8 @@ function peso_bugs(rows) {
         data.push(e.value); 
         totale += parseInt(e.value);
     });
-    var ctx = document.getElementById('pila_bugs').getContext('2d');
+    var canvas = document.getElementById('pila_bugs');
+    var ctx = canvas.getContext('2d');
     pila_bugs = new Chart(ctx, {
         type: 'doughnut',    
         data:  { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne },
@@ -105,7 +106,20 @@ function peso_bugs(rows) {
             }
         }
     });
-    
+    canvas.onclick = function(evt) {
+        if (project_id!=0) {
+            // si puo' applicare solo se project_id non e' all
+            var activePoints = pila_bugs.getElementsAtEvent(evt);
+            if (activePoints[0]) {
+                var chartData = activePoints[0]['_chart'].config.data;
+                var idx = activePoints[0]['_index'];
+                var label = chartData.labels[idx];
+                var priority_id = Object.keys(pesi).find(key => pesi[key].label=== label);
+                var url="http://monitoring-helpdesk.it.abb.com/projects/"+project_id+"/issues?set_filter=1&tracker_id=1&priority_id="+priority_id;
+                window.open(url,'_blank');
+            }
+        }
+    };
 }
 
 function bugs_by_team (rows) {
@@ -179,3 +193,5 @@ function bugs_by_team (rows) {
         }
     });
 }
+
+
