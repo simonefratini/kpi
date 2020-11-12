@@ -81,8 +81,7 @@ function openbugs(project_id, peso) {
                         status_filter +='='+status_id;
                     else
                         status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]=2&v[status_id][]=3&v[status_id][]=4&v[status_id][]=7&v[status_id][]=8";
-                    console.log(status_filter);
-                    var url=redmine_url+"/projects/"+project_id+"/issues?set_filter=1&tracker_id=1"+status_filter;
+                    var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1&tracker_id=1"+status_filter);
                     window.open(url,'_blank');
                 }
             }
@@ -145,7 +144,7 @@ function peso_bugs(rows,project_id) {
                 var idx = activePoints[0]['_index'];
                 var label = chartData.labels[idx];
                 var priority_id = Object.keys(pesi).find(key => pesi[key].label=== label);
-                var url=redmine_url+"/projects/"+project_id+"/issues?set_filter=1&tracker_id=1&priority_id="+priority_id;
+                var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1&tracker_id=1&priority_id=")+priority_id;
                 window.open(url,'_blank');
             }
         }
