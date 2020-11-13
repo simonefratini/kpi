@@ -1,5 +1,5 @@
 let chartColors = {
-	red: 'rgb(255, 99, 132)',
+	red: 'orangered',
 	orange: 'rgb(255, 159, 64)',
 	yellow: 'rgb(255, 205, 86)',
 	green: 'rgb(75, 192, 192)',
@@ -9,8 +9,8 @@ let chartColors = {
 };
 
 let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
-    '1': { label:'Backlog', color: chartColors.green},
-    '9': { label:'Being Validated', color: chartColors.orange},
+    '1': { label:'Backlog', color: chartColors.orange},
+    '9': { label:'Being Validated', color: chartColors.green},
     '2': { label:'Being Fixed', color: chartColors.yellow}
 }
 
