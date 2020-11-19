@@ -1,6 +1,7 @@
 /// definizione globale delle variabili
 var datasource_path='./datasource/';
 Chart.defaults.global.legend.position = 'bottom' ;  
+Chart.defaults.global.legend.labels.usePointStyle = true ;  
 var selectProjectID='selectProject';
 var is_high = false;
 var advance_debug = false;
