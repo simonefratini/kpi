@@ -55,9 +55,11 @@ function team_performance_chart(group_id, is_high) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
             var order = 1;
+            var pointStyle = null;
             if (el.column == 'ratio') {
                 type = 'line';
                 yAxisID = 'y-axis-2';
+                pointStyle = 'line';
                 order =  0; 
             }
             return {
@@ -65,7 +67,7 @@ function team_performance_chart(group_id, is_high) {
                 labelDirty: el.column,
                 backgroundColor: el.color,
     			borderColor: el.color,
-
+                pointStyle: pointStyle,
                 type : type,
                 yAxisID : yAxisID,  
                 fill : false,
@@ -108,15 +110,14 @@ function team_performance_chart(group_id, is_high) {
                         {	
                             position: 'right',
                             id: 'y-axis-2',
+                            gridLines: { display: false },
                             scaleLabel: { display : true, labelString: 'Ratio' },
-                            gridLines: { display: true },
-                            ticks: { precision: 0, min: 0,  maxTicksLimit: 5, callback: function(value){return value+ "%"} }
+                            ticks: { precision: 0, min: 0,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
                         }, {
                             position: 'left',
                             id: 'y-axis-1',
                             scaleLabel: { display : true, labelString: 'Bugs' },
-                            gridLines: { display: false },
-                            ticks: { precision: 0, min : 0, maxTicksLimit: 5 }
+                            ticks: { precision: 0, min : 0, maxTicksLimit: 7 }
                         }
                     ]
                 }
@@ -188,7 +189,7 @@ function team_latency(rows) {
                     {	
                         position: 'right',
                         scaleLabel: { display : true, labelString: 'Days' },
-                        ticks: { precision: 0, min :0, maxTicksLimit: 5 }
+                        ticks: { precision: 0, min :0, maxTicksLimit: 7 }
                     }, 
                 ]
             }

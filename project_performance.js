@@ -79,6 +79,7 @@ function monthly_performance_chart(project_id,is_high) {
             var order = 1;
             var stacked = 'Stack 1';
             var hidden = false;
+            var pointStyle = null;
 
             switch (el.column) {
                 case 'ratio_all_closed':    
@@ -86,8 +87,9 @@ function monthly_performance_chart(project_id,is_high) {
                 case 'ratio':
                     type = 'line';
                     yAxisID = 'y-axis-2';
-                    order =  0; 
+                    order = 0; 
                     stacked = null;
+                    pointStyle = 'line';
                     break;
                 case 'aperti':
                     stacked = 'Stack 0';
@@ -105,6 +107,7 @@ function monthly_performance_chart(project_id,is_high) {
                 lineTension: 0.2,
                 stack: stacked,
                 hidden: hidden,
+                pointStyle: pointStyle,
                 data: []
             }
         });
@@ -142,16 +145,16 @@ function monthly_performance_chart(project_id,is_high) {
                         {	
                             position: 'right',
                             id: 'y-axis-2',
+                            gridLines: { display: false },
                             scaleLabel: { display : true, labelString: 'Ratio'},
-                            ticks: { precision: 0 , min:0,  maxTicksLimit: 5, callback: function(value){return value+ "%"} }
+                            ticks: { precision: 0 , min:0,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
 
                         }, {
                             stacked: true,
                             position: 'left',
                             id: 'y-axis-1',
                             scaleLabel: { display : true, labelString: 'Bugs' },
-                            gridLines: { display: false },
-                            ticks: { precision: 0, min: 0, maxTicksLimit: 5 }
+                            ticks: { precision: 0, min: 0, maxTicksLimit: 7 }
                         }
                     ]
                 }
@@ -220,7 +223,7 @@ function monthly_average_performance(rows) {
                     {	
                         position: 'right',
                         scaleLabel: { display : true, labelString: 'Days' },
-                        ticks: { precision: 0, min : 0, maxTicksLimit: 5 }
+                        ticks: { precision: 0, min : 0, maxTicksLimit: 7 }
                     }
                 ]
             }
