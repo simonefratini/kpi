@@ -76,8 +76,6 @@ function openbugs(project_id, peso) {
                     var idx = activePoints[0]['_index'];
                     var label = chartData.labels[idx];
                     var status_id = Object.keys(issues_statues).find(key => issues_statues[key].label== label);
-                    console.log(label);
-                    console.log(issues_statues);
                     var status_filter='&status_id';
                     if (status_id != '2' )
                         status_filter +='='+status_id;
