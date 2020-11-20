@@ -8,7 +8,7 @@ var advance_debug = false;
 // necessarie per distruggere i grafico vecchio
 var barre = null;
 var barre_average = null;
-var barre_team = null;
+var bar_team_performance = null;
 var barre_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
@@ -117,8 +117,8 @@ function popola_project(pid, is_high) {
 }
 
 function popola_team(gid, is_high) {
-    if (barre_team != undefined)
-        barre_team.destroy();
+    if (bar_team_performance != undefined)
+        bar_team_performance.destroy();
     if (barre_latency != undefined)
         barre_latency.destroy();
     team_performance_chart(gid, is_high);

@@ -88,8 +88,8 @@ function team_performance_chart(group_id, is_high) {
             }),
             datasets: datasets,
         };
-        var ctx = document.getElementById('barre_team').getContext('2d');
-        barre_team = new Chart(ctx, {
+        var ctx = document.getElementById('bar_team_performance').getContext('2d');
+        bar_team_performance = new Chart(ctx, {
             type: 'bar',  // default  
             data: barChartData,
             options: {
