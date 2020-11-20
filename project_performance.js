@@ -123,8 +123,8 @@ function monthly_performance_chart(project_id,is_high) {
             }),
             datasets: datasets,
         };
-        var ctx = document.getElementById('barre').getContext('2d');
-        barre = new Chart(ctx, {
+        var ctx = document.getElementById('bar_bugs_monthly_performance').getContext('2d');
+        bar_bugs_monthly_performance = new Chart(ctx, {
             type: 'bar',  // default  
             data: barChartData,
             options: {
@@ -233,11 +233,11 @@ function monthly_average_performance(rows) {
 
 function changeAllClosed(e) {
     if (e.checked) {
-        barre.getDatasetMeta(2).hidden=true;
+        bar_bugs_monthly_performance.getDatasetMeta(2).hidden=true;
     } else {
-        barre.getDatasetMeta(2).hidden=false;
+        bar_bugs_monthly_performance.getDatasetMeta(2).hidden=false;
     }
-    barre.update();
+    bar_bugs_monthly_performance.update();
 }
 
 function yearly_performance(project_id,is_high) {
