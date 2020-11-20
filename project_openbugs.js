@@ -121,9 +121,9 @@ function peso_bugs(rows,project_id) {
         data.push(e.value); 
         totale += parseInt(e.value);
     });
-    var canvas = document.getElementById('pila_bugs');
+    var canvas = document.getElementById('doughnut_bugs_priority');
     var ctx = canvas.getContext('2d');
-    pila_bugs = new Chart(ctx, {
+    doughnut_bugs_priority = new Chart(ctx, {
         type: 'doughnut',    
         data:  { datasets : [ { data : data , backgroundColor: backgroundColor } ], labels: colonne },
         options: {
@@ -140,7 +140,7 @@ function peso_bugs(rows,project_id) {
     canvas.onclick = function(evt) {
         if (project_id!=0) {
             // si puo' applicare solo se project_id non e' all
-            var activePoints = pila_bugs.getElementsAtEvent(evt);
+            var activePoints = doughnut_bugs_priority.getElementsAtEvent(evt);
             if (activePoints[0]) {
                 var chartData = activePoints[0]['_chart'].config.data;
                 var idx = activePoints[0]['_index'];
