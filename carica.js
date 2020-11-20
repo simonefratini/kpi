@@ -12,8 +12,8 @@ var bar_team_performance = null;
 var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
-var stacked_bugs_by_team = null;
-var stacked_bugs_by_category = null;
+var horizontalbar_bugs_by_team = null;
+var horizontalbar_bugs_by_category = null;
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
 function random_version() { return Math.round(Math.random()*1E+8);
@@ -99,10 +99,10 @@ function popola_bugs(pid, is_high) {
         doughnut_bugs_open_by_status.destroy();
     if (doughnut_bugs_priority != undefined)
         doughnut_bugs_priority.destroy();
-    if (stacked_bugs_by_team != undefined)
-        stacked_bugs_by_team.destroy();
-    if (stacked_bugs_by_category != undefined)
-        stacked_bugs_by_category.destroy();
+    if (horizontalbar_bugs_by_team != undefined)
+        horizontalbar_bugs_by_team.destroy();
+    if (horizontalbar_bugs_by_category != undefined)
+        horizontalbar_bugs_by_category.destroy();
     openbugs(pid,is_high);
     getTimestamp();
 }

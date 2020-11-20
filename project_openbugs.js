@@ -203,8 +203,8 @@ function bugs_by_team (rows) {
             data: data_validated 
         }]
     };
-    var ctx = document.getElementById('stacked_bugs').getContext('2d');
-    stacked_bugs_by_team = new Chart(ctx, {
+    var ctx = document.getElementById('horizontalbar_bugs_by_team').getContext('2d');
+    horizontalbar_bugs_by_team = new Chart(ctx, {
         type: 'horizontalBar',
         data: barChartData,
         options: {
@@ -276,12 +276,12 @@ function bugs_by_category (rows) {
             data: data_validated 
         }]
     };
-    var ctx = document.getElementById('stacked_category').getContext('2d');
-    stacked_bugs_by_category = new Chart(ctx, {
+    var ctx = document.getElementById('horizontalbar_bugs_by_category').getContext('2d');
+    horizontalbar_bugs_by_category = new Chart(ctx, {
         type: 'horizontalBar',
         data: barChartData,
         options: {
-            title: { display: true, text: 'Bugs by Category' },
+            title: { display: true, text: 'Bugs by category' },
             tooltips: { mode: 'index', intersect: false },
             responsive: true,
             scales: {
