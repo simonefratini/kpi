@@ -169,8 +169,8 @@ function team_latency(rows) {
         datasets: datasets,
 
     };
-    var ctx = document.getElementById('barre_latency').getContext('2d');
-    barre_latency = new Chart(ctx, {
+    var ctx = document.getElementById('bar_team_latency').getContext('2d');
+    bar_team_latency = new Chart(ctx, {
         type: 'bar',  // default  
         data: barChartData,
         options: {

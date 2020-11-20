@@ -9,7 +9,7 @@ var advance_debug = false;
 var barre = null;
 var barre_average = null;
 var bar_team_performance = null;
-var barre_latency = null;
+var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
 var stacked_bugs_by_team = null;
@@ -119,8 +119,8 @@ function popola_project(pid, is_high) {
 function popola_team(gid, is_high) {
     if (bar_team_performance != undefined)
         bar_team_performance.destroy();
-    if (barre_latency != undefined)
-        barre_latency.destroy();
+    if (bar_team_latency != undefined)
+        bar_team_latency.destroy();
     team_performance_chart(gid, is_high);
     team_performance_annuale(gid, is_high);
 }
