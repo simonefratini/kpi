@@ -7,7 +7,7 @@ var is_high = false;
 var advance_debug = false;
 // necessarie per distruggere i grafico vecchio
 var barre = null;
-var barre_average = null;
+var bar_bugs_average_to_close = null;
 var bar_team_performance = null;
 var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
@@ -110,8 +110,8 @@ function popola_bugs(pid, is_high) {
 function popola_project(pid, is_high) {
     if (barre != undefined)
         barre.destroy();
-    if (barre_average != undefined)
-        barre_average.destroy();
+    if (bar_bugs_average_to_close != undefined)
+        bar_bugs_average_to_close.destroy();
     monthly_performance_chart(pid, is_high);
     yearly_performance(pid, is_high);
 }

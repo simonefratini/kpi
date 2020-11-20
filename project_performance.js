@@ -203,8 +203,8 @@ function monthly_average_performance(rows) {
         }),
         datasets: datasets,
     };
-    var ctx = document.getElementById('barre_average').getContext('2d');
-    barre_average = new Chart(ctx, {
+    var ctx = document.getElementById('bar_bugs_average_to_close').getContext('2d');
+    bar_bugs_average_to_close = new Chart(ctx, {
         type: 'bar',
         data: barChartData,
         options: {
