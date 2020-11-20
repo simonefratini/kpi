@@ -51,9 +51,9 @@ function openbugs(project_id, peso) {
             backgroundColor.push(issues_statues[e.key].color);
             totale += parseInt(e.value);
         });
-        var canvas = document.getElementById('ciambella');
+        var canvas = document.getElementById('doughnut_bugs_open_by_status');
         var ctx = canvas.getContext('2d');
-        ciambella = new Chart(ctx, {
+        doughnut_bugs_open_by_status = new Chart(ctx, {
             type: 'doughnut',    
             data: { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne },
             options: {
@@ -70,7 +70,7 @@ function openbugs(project_id, peso) {
         canvas.onclick = function(evt) {
             if (project_id!=0) {
                 // si puo' applicare solo se project_id non e' all
-                var activePoints = ciambella.getElementsAtEvent(evt);
+                var activePoints = doughnut_bugs_open_by_status.getElementsAtEvent(evt);
                 if (activePoints[0]) {
                     var chartData = activePoints[0]['_chart'].config.data;
                     var idx = activePoints[0]['_index'];

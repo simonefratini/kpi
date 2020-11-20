@@ -10,7 +10,7 @@ var barre = null;
 var barre_average = null;
 var barre_team = null;
 var barre_latency = null;
-var ciambella = null;
+var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
 var stacked_bugs_by_team = null;
 var stacked_bugs_by_category = null;
@@ -95,8 +95,8 @@ function setFocus() {
 }
 
 function popola_bugs(pid, is_high) {
-    if (ciambella != undefined)
-        ciambella.destroy();
+    if (doughnut_bugs_open_by_status != undefined)
+        doughnut_bugs_open_by_status.destroy();
     if (doughnut_bugs_priority != undefined)
         doughnut_bugs_priority.destroy();
     if (stacked_bugs_by_team != undefined)
