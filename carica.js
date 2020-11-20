@@ -13,6 +13,7 @@ var barre_latency = null;
 var ciambella = null;
 var pila_bugs = null;
 var stacked_bugs_by_team = null;
+var stacked_bugs_by_category = null;
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
 function random_version() { return Math.round(Math.random()*1E+8);
@@ -100,6 +101,8 @@ function popola_bugs(pid, is_high) {
         pila_bugs.destroy();
     if (stacked_bugs_by_team != undefined)
         stacked_bugs_by_team.destroy();
+    if (stacked_bugs_by_category != undefined)
+        stacked_bugs_by_category.destroy();
     openbugs(pid,is_high);
     getTimestamp();
 }
