@@ -12,6 +12,11 @@ function team_performance_chart(group_id, is_high) {
             color: '#FFF014'
         },
         {
+            column: 'newthismonth',
+            name: 'New bug owned in the month (c) ',
+            color: 'orange'
+        },
+        {
             column: 'ratio',
             name: 'Ratio (b)/(a) ',
             color: '#231964'
@@ -32,6 +37,7 @@ function team_performance_chart(group_id, is_high) {
             .rollup(function(v) { return {
                 bugs: d3.sum(v, function(d) { return d.bugs;}),
                 stillown: d3.sum(v, function(d) { return (d.stillown) ;}),
+                newthismonth: d3.sum(v, function(d) { return (d.newthismonth) ;}),
                 // arrotondo per eccesso al giorno superiore
                 days: Math.ceil(d3.mean(v, function(d) { return d.days;})),
                 deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
@@ -43,6 +49,7 @@ function team_performance_chart(group_id, is_high) {
                     mese: g.key,
                     bugs: g.value.bugs,
                     stillown: g.value.stillown, 
+                    newthismonth: g.value.newthismonth, 
                     unleash: g.value.bugs - g.value.stillown,
                     days: g.value.days,
                     ratio : Math.round(100 * (1  - g.value.stillown / g.value.bugs)), 
