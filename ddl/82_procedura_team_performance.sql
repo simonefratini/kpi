@@ -27,8 +27,9 @@ select i.id,
     j.previous_user_id,
     i.created_on as aperto ,
     j.created_on as modificato ,
-    closed_on as chiuso 
+    if(s.is_closed=1,closed_on,null) as chiuso 
 from redmine.issues i 
+join redmine.issue_statuses s on i.status_id=s.id
 -- tengo conto solo dello stato attuale della priorita' non tengo conto di cambi
 join vpriority y on y.priority_id = i.priority_id
 join vproject p on p.id = i.project_id 

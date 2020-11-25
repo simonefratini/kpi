@@ -34,12 +34,14 @@ group by p.project_id,y.is_high, mese) as j on a.mese = j.mese and a.project_id 
 -- chiusi nello stesso mese di apertura "ATTENZIONE RESTRIZIONE FORTE"
 left join (select p.project_id,y.is_high, date_format(closed_on,'%Y-%m') as mese, count(1)  as chiusi
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on y.priority_id = ri.priority_id
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
 and ri.created_on >= (select day_min from day_minimun) 
 and year(closed_on) = year(created_on)
 and month(closed_on) = month(created_on)
+and s.is_closed=1 
 group by p.project_id,y.is_high, mese) as c on a.mese = c.mese and a.project_id = c.project_id and a.is_high = c.is_high
 -- tempo medio di chiusura indipendente che siano stati aperti lo stesso mese
 left join (select p.project_id,y.is_high, date_format(closed_on,'%Y-%m') as mese,
@@ -47,10 +49,11 @@ left join (select p.project_id,y.is_high, date_format(closed_on,'%Y-%m') as mese
                   round(avg(TIMESTAMPDIFF(day,created_on,closed_on))) daytoclose,
                   round(stddev(TIMESTAMPDIFF(day,created_on,closed_on))) deviazione_standard
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on y.priority_id = ri.priority_id
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
 and ri.created_on >= (select day_min from day_minimun) 
-and ri.closed_on is not null 
+and s.is_closed=1 
 group by p.project_id,y.is_high, mese) as tm on a.mese = tm.mese and a.project_id = tm.project_id and a.is_high = tm.is_high
 order by a.mese;

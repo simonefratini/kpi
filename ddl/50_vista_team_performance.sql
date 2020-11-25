@@ -30,8 +30,10 @@ left join
                 date_format(aperto,'%Y-%m') as mese,
                 sum(if (aperto > date_add(date_sub(date_add(last_day(aperto),interval 1 day),interval 1 month), interval 0 second),1,0)) newthismonth 
            from tmp_team_performance tp 
-           join vteam g on tp.user_id = g.user_id
-         group  by tp.id,is_high, g.group_id, mese
+           -- con questa recupero la data di creazione del bugs  
+           join (select tpm.id, gm.group_id, min(aperto) as creato from tmp_team_performance tpm join vteam gm on tpm.user_id=gm.user_id  group by tpm.id,gm.group_id) tc on tc.id=tp.id 
+           join vteam g on tp.user_id = g.user_id and tc.group_id= g.group_id
+         group by tp.id,is_high, g.group_id, mese
         ) as v
   group by v.group_id,v.is_high,v.mese) as v on v.mese = a.mese and v.group_id = a.group_id and v.is_high = a.is_high
 -- posseduti alla fine del mese
