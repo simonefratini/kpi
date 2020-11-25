@@ -28,9 +28,9 @@ left join
                 tp.is_high,
                 g.group_id,
                 date_format(aperto,'%Y-%m') as mese,
-                sum(timestampdiff(minute,tc.creato,ifnull(chiuso,now()))) latenza 
+                sum(timestampdiff(minute,tp.aperto,ifnull(chiuso,now()))) latenza 
            from tmp_team_performance tp 
-           -- con questa recupero la data di creazione del bugs 
+           -- con questa recupero la data di creazione del bugs TODO e' sbagliato manca incrocio con gruppo 
            join (select id, min(aperto) as creato from tmp_team_performance group by id) tc on tc.id=tp.id
            join vteam g on tp.user_id = g.user_id
          group  by tp.id,is_high, g.group_id, mese

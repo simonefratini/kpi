@@ -17,9 +17,10 @@ left join (
 -- aperti
 select p.project_id,
     y.is_high,
-    sum(if(closed_on is not null,1,0)) as chiusi,
-    sum(if(closed_on is null,1,0)) as aperti
+    sum(s.is_closed) as chiusi,
+    sum(1-s.is_closed) as aperti
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
@@ -31,19 +32,21 @@ left join (select p.project_id,
     round(avg(TIMESTAMPDIFF(day,created_on,closed_on))) daytoclose,
     round(stddev(TIMESTAMPDIFF(day,created_on,closed_on))) deviazione_standard
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where tracker_id = 1 -- tracker bugs
 and ri.created_on >= (select day_min from day_minimun) 
-and closed_on is not null
+and s.is_closed=1
 group by p.project_id, y.is_high) as tm on a.project_id = tm.project_id and a.is_high =tm.is_high
 left join (
 -- aperti assoluti
 select p.project_id,
     y.is_high,
-    sum(if(closed_on is not null,1,0)) as chiusi,
-    sum(if(closed_on is null,1,0)) as aperti
+    sum(s.is_closed) as chiusi,
+    sum(1-s.is_closed) as aperti
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
@@ -55,8 +58,9 @@ select p.project_id,
        round(avg(TIMESTAMPDIFF(day,created_on,closed_on))) daytoclose,
        round(stddev(TIMESTAMPDIFF(day,created_on,closed_on))) deviazione_standard 
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where tracker_id = 1 -- tracker bugs
-and closed_on is not null
+and s.is_closed=1
 group by p.project_id, y.is_high) as z on a.project_id = z.project_id and a.is_high = z.is_high

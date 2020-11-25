@@ -63,7 +63,7 @@ select 39 as priority_id ,0 is_high  -- not set
 -- vista dei mesi 
 drop view if exists v12months;
 create view v12months as 
-select date_format(mese, '%Y-%m-01') as first_day from 
+select cast(date_format(mese, '%Y-%m-01') as date) as first_day from 
 (select date_sub(now(), interval 0 month) as mese union all
 select date_sub(now(), interval 1 month)  as mese union all
 select date_sub(now(), interval 2 month)  as mese union all
