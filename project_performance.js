@@ -4,23 +4,28 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'aperti',
             name: 'Opened in the month (a)',
-            color: 'lightblue'
+            color: 'orangered'
+        },
+        {
+            column: 'aperti_previuos_month',
+            name: 'Opened in the previous months (d)',
+            color: 'orange'
+        },
+        {
+            column: 'chiusi_previuos_month_open',
+            name: 'Closed of opened in the previous months (c)',
+            color: 'lightgreen'
         },
         {
             column: 'chiusi',
             name: 'Closed of opened in the same month (b) ',
-            color: '#FFF014'
+            color: 'green'
         },
         {
             column: 'ratio',
             name: 'Ratio (b)/(a)',
             color: '#231964'
         },
-        {
-            column: 'chiusi_previuos_month_open',
-            name: 'Closed of opened in the previous months (c)',
-            color: 'orange'
-        }
     ];
 
 
@@ -29,12 +34,11 @@ function monthly_performance_chart(project_id,is_high) {
         [
         {
             column: 'ratio_all_closed',
-            name: 'Ratio [(b)+(c)]/(a)',
+            name: 'Ratio [b+c]/[a+d]',
             color: 'orangered'
         
         },]);
     }
-
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
     d3.csv(file).then(function(rows) {
@@ -51,6 +55,7 @@ function monthly_performance_chart(project_id,is_high) {
                 aperti: d3.sum(v, function(d) { return d.aperti;}),
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
                 chiusi_assoluto: d3.sum(v, function(d) { return d.chiusi_assoluto;}),
+                aperti_assoluto: d3.sum(v, function(d) { return d.aperti_assoluto;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
                 deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
@@ -64,9 +69,10 @@ function monthly_performance_chart(project_id,is_high) {
                     aperti: g.value.aperti,
                     chiusi: g.value.chiusi,
                     chiusi_previuos_month_open: g.value.chiusi_assoluto - g.value.chiusi,
+                    aperti_previuos_month:  g.value.aperti_assoluto - g.value.aperti, 
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
-                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti) ,
+                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti_assoluto) ,
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
                 }
             });
@@ -92,6 +98,7 @@ function monthly_performance_chart(project_id,is_high) {
                     pointStyle = 'line';
                     break;
                 case 'aperti':
+                case 'aperti_previuos_month':
                     stacked = 'Stack 0';
                     break;
             }        
