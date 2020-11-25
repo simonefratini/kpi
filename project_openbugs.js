@@ -76,12 +76,18 @@ function openbugs(project_id, peso) {
                     var idx = activePoints[0]['_index'];
                     var label = chartData.labels[idx];
                     var status_id = Object.keys(issues_statues).find(key => issues_statues[key].label== label);
-                    var status_filter='&status_id';
+                    console.log((status_id));
+                    var priority_filter='';
+                    if (is_high)
+                        var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
+                    var status_filter='';
                     if (status_id != '2' )
-                        status_filter +='='+status_id;
+                        status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]="+status_id;
                     else
                         status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]=2&v[status_id][]=3&v[status_id][]=4&v[status_id][]=7&v[status_id][]=8";
-                    var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1&tracker_id=1"+status_filter);
+                    // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
+                    var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
+                    var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+status_filter+priority_filter);
                     window.open(url,'_blank');
                 }
             }
