@@ -29,7 +29,7 @@ function monthly_performance_chart(project_id,is_high) {
     ];
 
 
-    if (advance_debug) {
+    if (1 || advance_debug) {
     SERIES = SERIES.concat(   
         [
         {
@@ -72,7 +72,8 @@ function monthly_performance_chart(project_id,is_high) {
                     aperti_previuos_month:  g.value.aperti_assoluto - g.value.aperti, 
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
-                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti_assoluto) ,
+                    //ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti_assoluto) ,
+                    ratio_all_closed: g.value.aperti_assoluto - g.value.chiusi_assoluto,
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
                 }
             });
@@ -89,7 +90,7 @@ function monthly_performance_chart(project_id,is_high) {
 
             switch (el.column) {
                 case 'ratio_all_closed':    
-                    hidden = true;
+                    hidden = false;
                 case 'ratio':
                     type = 'line';
                     yAxisID = 'y-axis-2';
@@ -179,7 +180,7 @@ function monthly_average_performance(rows) {
             color: '#231964'
         }
     ];
-    if (advance_debug) {
+    if (1 || advance_debug) {
         SERIES = SERIES.concat(
         [{
             column: 'deviazione_standard',

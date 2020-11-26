@@ -22,15 +22,15 @@ where ri.tracker_id = 1 -- tracker bugs
 and ri.created_on >= (select day_min from day_minimun) 
 group by p.project_id,y.is_high, mese) as i on a.mese = i.mese and a.project_id = i.project_id and a.is_high = i.is_high
 -- aperti assoluti
-left join (select p.project_id,y.is_high, date_format(cast(m.first_day as date),'%Y-%m') as mese, count(1) aperti_assoluti
+left join (select p.project_id,y.is_high, date_format(m.first_day,'%Y-%m') as mese, count(1) aperti_assoluti
 from redmine.issues ri
 join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on y.priority_id = ri.priority_id
 join vproject p on p.id = ri.project_id
 join v12months m -- creazione del cartesiano sui 12 mesi 
 where ri.tracker_id = 1 -- tracker bugs
-and ri.created_on <= last_day(cast(first_day as date))  -- creato nel mese
-and (ri.closed_on is null or ri.closed_on>=cast(first_day as date)) -- chiuso nel mese corrente e/o successivo oppure ancora aperto
+and ri.created_on < date_add(last_day(m.first_day),interval 1 day)  -- creato nel mese
+and (ri.closed_on is null or ri.closed_on>=m.first_day) -- chiuso nel mese corrente e/o successivo oppure ancora aperto
 group by p.project_id,y.is_high, mese) as j on a.mese = j.mese and a.project_id = j.project_id and a.is_high = j.is_high
 -- chiusi nello stesso mese di apertura "ATTENZIONE RESTRIZIONE FORTE"
 left join (select p.project_id,y.is_high, date_format(closed_on,'%Y-%m') as mese, count(1)  as chiusi

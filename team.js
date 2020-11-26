@@ -2,19 +2,25 @@ function team_performance_chart(group_id, is_high) {
 
     var SERIES = [  // For each column representing a series, define its name and color
         {
-            column: 'bugs',
-            name: 'Bug owned in the month (a) ',
-            color: 'lightblue'
-        },
-        {
-            column: 'close_this_month',
-            name: 'Bug moved or closed in the month (b) ',
-            color: '#FFF014'
+            column: 'open_previous_month',
+            name: 'Bug owned in previous month (d) ',
+            color: 'orange'
+
         },
         {
             column: 'open_this_month',
-            name: 'New bug owned in the month (c) ',
-            color: 'orange'
+            name: 'Bugs owned in month (a) ',
+            color: 'orangered'
+        },
+        {
+            column: 'close_previous_month_open',
+            name: 'Bug moved or closed open in previous month (c) ',
+            color: 'lightgreen'
+        },
+        {
+            column: 'close_this_month',
+            name: 'Bug moved or closed open in month (b) ',
+            color: 'green'
         },
         {
             column: 'ratio',
@@ -22,6 +28,19 @@ function team_performance_chart(group_id, is_high) {
             color: '#231964'
         }
     ];
+
+    if (true || advance_debug) {
+    SERIES = SERIES.concat(   
+        [
+        {
+            column: 'ratio_all_closed',
+            name: 'Ratio [b+c]/[a+d]',
+            color: 'red'
+        
+        },]);
+    }
+
+
     // Read data file and create a chart
     let file=datasource_path+'team_performance.csv';
     d3.csv(file).then(function(rows) {
@@ -35,7 +54,8 @@ function team_performance_chart(group_id, is_high) {
         rows = d3.nest()
             .key(function(d) { return d.mese;})
             .rollup(function(v) { return {
-                bugs: d3.sum(v, function(d) { return d.bugs;}),
+                open_absolute: d3.sum(v, function(d) { return d.open_absolute;}),
+                close_absolute: d3.sum(v, function(d) { return d.close_absolute;}),
                 close_this_month: d3.sum(v, function(d) { return (d.close_this_month) ;}),
                 open_this_month: d3.sum(v, function(d) { return (d.open_this_month) ;}),
                 // arrotondo per eccesso al giorno superiore
@@ -47,41 +67,61 @@ function team_performance_chart(group_id, is_high) {
             .map(function (g) {
                 return {
                     mese: g.key,
-                    bugs: g.value.bugs,
+                    open_previous_month: g.value.open_absolute - g.value.open_this_month,
+                    close_previous_month_open:  g.value.close_absolute - g.value.close_this_month,
                     close_this_month: g.value.close_this_month, 
                     open_this_month: g.value.open_this_month, 
                     days: g.value.days,
-                    ratio : Math.round(100 * (1  - g.value.close_this_month / g.value.bugs)), 
-                    deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.bugs - 1))
+                    ratio : Math.round(100 * (g.value.close_this_month / g.value.open_this_month)), 
+                    //ratio_all_closed : Math.round(100 * (g.value.close_absolute / g.value.open_absolute)), 
+                    ratio_all_closed : g.value.open_absolute -  g.value.close_absolute, 
+                    deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.open_previous_month - 1))
                 }
             });
         // eseguo la funzione sotto 
         team_latency(rows);
+
+        // 
         var datasets = SERIES.map(function(el) {
             var type = 'bar';
             var yAxisID = 'y-axis-1';
             var order = 1;
+            var stacked = 'Stack 1';
+            var hidden = false;
             var pointStyle = null;
-            if (el.column == 'ratio') {
-                type = 'line';
-                yAxisID = 'y-axis-2';
-                pointStyle = 'line';
-                order =  0; 
+
+            switch (el.column) {
+                case 'ratio_all_closed':
+                    hidden = false;
+                case 'ratio':
+                    type = 'line';
+                    yAxisID = 'y-axis-2';
+                    order = 0;
+                    stacked = null;
+                    pointStyle = 'line';
+                    break;
+                case 'open_this_month':
+                case 'open_previous_month':
+                    stacked = 'Stack 0';
+                    break;
             }
             return {
                 label: el.name,
                 labelDirty: el.column,
                 backgroundColor: el.color,
-    			borderColor: el.color,
-                pointStyle: pointStyle,
+                borderColor: el.color,
                 type : type,
-                yAxisID : yAxisID,  
+                yAxisID : yAxisID,
                 fill : false,
                 order: order,
                 lineTension: 0.2,
+                stack: stacked,
+                hidden: hidden,
+                pointStyle: pointStyle,
                 data: []
             }
         });
+
         rows.map(function(row) {
             datasets.map(function(d) {
                 d.data.push(row[d.labelDirty])
