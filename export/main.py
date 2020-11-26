@@ -71,7 +71,7 @@ cursor = redmine.execute('call team_performance')
 # vantaggio se la procedura ha qualche errore di overflow, per qualche motivo entra in loop di insert infinto, non si sporca filesystem
 # riempe filesystem, poi la sessione va in crash e dovrebbe poi rilasciare lo spazio occupato
 # svantaggio se devi fare debug dei dati devi ricaricare la tabella lanciando la procedura
-#redmine.db.commit();
+redmine.db.commit();
 cursor = redmine.execute('select * from team_performance')
 scrivi_csv(csv_output_path+'team_performance.csv',cursor);
 ## aggregazione 

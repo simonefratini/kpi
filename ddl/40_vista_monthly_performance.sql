@@ -24,6 +24,7 @@ group by p.project_id,y.is_high, mese) as i on a.mese = i.mese and a.project_id 
 -- aperti assoluti
 left join (select p.project_id,y.is_high, date_format(cast(m.first_day as date),'%Y-%m') as mese, count(1) aperti_assoluti
 from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on y.priority_id = ri.priority_id
 join vproject p on p.id = ri.project_id
 join v12months m -- creazione del cartesiano sui 12 mesi 

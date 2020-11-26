@@ -2,14 +2,14 @@ function monthly_performance_chart(project_id,is_high) {
 
     var SERIES = [  // For each column representing a series, define its name and color
         {
-            column: 'aperti',
-            name: 'Opened in the month (a)',
-            color: 'orangered'
-        },
-        {
             column: 'aperti_previuos_month',
             name: 'Opened in the previous months (d)',
             color: 'orange'
+        },
+        {
+            column: 'aperti',
+            name: 'Opened in the month (a)',
+            color: 'orangered'
         },
         {
             column: 'chiusi_previuos_month_open',
@@ -18,7 +18,7 @@ function monthly_performance_chart(project_id,is_high) {
         },
         {
             column: 'chiusi',
-            name: 'Closed of opened in the same month (b) ',
+            name: 'Closed of opened in the month (b) ',
             color: 'green'
         },
         {

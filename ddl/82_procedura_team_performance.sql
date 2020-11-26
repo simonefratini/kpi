@@ -60,13 +60,13 @@ giro:LOOP
     end if ;
     if done then 
         if previous_aperto is not null then
-	    	-- devo inserire riga precedente 
+	    	-- devo inserire riga precedente  dell'ultimo giro
             call insert_spalmato_sui_mesi(previous_id, previous_is_high, previous_user_id, previous_modificato, previous_chiuso);                 
         end if;    
         leave giro; 
     end if;    
     -- se e' senza previous_user_id e previous_modificato allora v_id è unico
-     if v_previous_user_id is null and previous_modificato is null then     
+     if v_previous_user_id is null and v_modificato is null then     
 		-- posso inserire 
         call insert_spalmato_sui_mesi(v_id, v_is_high, v_user_id,v_aperto,v_chiuso);     	        
         -- reset totale

@@ -7,12 +7,12 @@ function team_performance_chart(group_id, is_high) {
             color: 'lightblue'
         },
         {
-            column: 'unleash',
+            column: 'close_this_month',
             name: 'Bug moved or closed in the month (b) ',
             color: '#FFF014'
         },
         {
-            column: 'newthismonth',
+            column: 'open_this_month',
             name: 'New bug owned in the month (c) ',
             color: 'orange'
         },
@@ -36,8 +36,8 @@ function team_performance_chart(group_id, is_high) {
             .key(function(d) { return d.mese;})
             .rollup(function(v) { return {
                 bugs: d3.sum(v, function(d) { return d.bugs;}),
-                stillown: d3.sum(v, function(d) { return (d.stillown) ;}),
-                newthismonth: d3.sum(v, function(d) { return (d.newthismonth) ;}),
+                close_this_month: d3.sum(v, function(d) { return (d.close_this_month) ;}),
+                open_this_month: d3.sum(v, function(d) { return (d.open_this_month) ;}),
                 // arrotondo per eccesso al giorno superiore
                 days: Math.ceil(d3.mean(v, function(d) { return d.days;})),
                 deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
@@ -48,11 +48,10 @@ function team_performance_chart(group_id, is_high) {
                 return {
                     mese: g.key,
                     bugs: g.value.bugs,
-                    stillown: g.value.stillown, 
-                    newthismonth: g.value.newthismonth, 
-                    unleash: g.value.bugs - g.value.stillown,
+                    close_this_month: g.value.close_this_month, 
+                    open_this_month: g.value.open_this_month, 
                     days: g.value.days,
-                    ratio : Math.round(100 * (1  - g.value.stillown / g.value.bugs)), 
+                    ratio : Math.round(100 * (1  - g.value.close_this_month / g.value.bugs)), 
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.bugs - 1))
                 }
             });

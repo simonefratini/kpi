@@ -20,12 +20,11 @@ left join (select v.group_id,
             sum(move_or_close) as chiuso
        from (select id,
                 tp.is_high,
-                g.group_id,
+                tp.group_id,
                 sum(timestampdiff(minute, aperto, ifnull(chiuso, now()))) latenza,
                 min(if( isnull(chiuso), 0, 1)) as move_or_close
            from tmp_team_performance tp
-           join vteam g on tp.user_id = g.user_id
-          group by tp.id, tp.is_high, g.group_id) as v
+          group by tp.id, tp.is_high, tp.group_id) as v
     group by v.group_id,v.is_high) as w on w.group_id = g.group_id
 union all  
 select 0 as group_id,
