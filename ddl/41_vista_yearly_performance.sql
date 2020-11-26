@@ -44,7 +44,7 @@ left join (
 select p.project_id,
     y.is_high,
     sum(s.is_closed) as chiusi,
-    sum(1-s.is_closed) as aperti
+    sum((1-s.is_closed)) as aperti
 from redmine.issues ri
 join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id

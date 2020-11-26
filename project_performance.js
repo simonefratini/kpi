@@ -4,12 +4,14 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'aperti_previuos_month',
             name: 'Opened in the previous months (d)',
-            color: 'orange'
+            color: colore('orange',.7),
+            borderColor : colore('red',1)
         },
         {
             column: 'aperti',
             name: 'Opened in the month (a)',
-            color: 'orangered'
+            color: colore('orangered',.9),
+            borderColor : colore('red',1)
         },
         {
             column: 'chiusi_previuos_month_open',
@@ -35,7 +37,7 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'ratio_all_closed',
             name: 'Ratio [b+c]/[a+d]',
-            color: 'orangered'
+            color: 'blue'
         
         },]);
     }
@@ -55,7 +57,7 @@ function monthly_performance_chart(project_id,is_high) {
                 aperti: d3.sum(v, function(d) { return d.aperti;}),
                 chiusi: d3.sum(v, function(d) { return d.chiusi;}),
                 chiusi_assoluto: d3.sum(v, function(d) { return d.chiusi_assoluto;}),
-                aperti_assoluto: d3.sum(v, function(d) { return d.aperti_assoluto;}),
+                aperti_mesi_precedenti: d3.sum(v, function(d) { return d.aperti_mesi_precedenti;}),
                 // arrotondo per eccesso al giorno superiore
                 daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
                 deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
@@ -69,11 +71,11 @@ function monthly_performance_chart(project_id,is_high) {
                     aperti: g.value.aperti,
                     chiusi: g.value.chiusi,
                     chiusi_previuos_month_open: g.value.chiusi_assoluto - g.value.chiusi,
-                    aperti_previuos_month:  g.value.aperti_assoluto - g.value.aperti, 
+                    aperti_previuos_month:  g.value.aperti_mesi_precedenti , 
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
-                    //ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti_assoluto) ,
-                    ratio_all_closed: g.value.aperti_assoluto - g.value.chiusi_assoluto,
+                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti_mesi_precedenti) ,
+                    //ratio_all_closed: g.value.aperti+g.value.aperti_mesi_precedenti  - g.value.chiusi_assoluto,
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
                 }
             });
@@ -107,7 +109,7 @@ function monthly_performance_chart(project_id,is_high) {
                 label: el.name,
                 labelDirty: el.column,
                 backgroundColor: el.color,
-           		borderColor: el.color,
+           		borderColor: el.borderColor,
                 type : type,
                 yAxisID : yAxisID,  
                 fill : false,
