@@ -18,7 +18,7 @@ let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
 // locale?
 var redmine_url = 'http://'+location.hostname;
 if (location.hostname == 'ktulu')
-    redmine_url = 'http://monitoring-helpdesk.it.abb.com';
+    redmine_url = 'http://monitoring-helpdesk.fimer.com';
 
 function openbugs(project_id, peso) {
     let file=datasource_path+'open_bugs.csv'
