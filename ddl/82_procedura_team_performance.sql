@@ -23,7 +23,7 @@ declare v_chiuso datetime;
 DECLARE cursore CURSOR FOR 
 select i.id,
     y.is_high,
-    ifnull(j.user_id,i.assigned_to_id) as user_id,
+    ifnull(j.user_id,ifnull(i.assigned_to_id,-1)) as user_id,
     j.previous_user_id,
     i.created_on as aperto ,
     j.created_on as modificato ,
@@ -44,7 +44,7 @@ select journalized_id as id ,
          and d.property = 'attr' 
          and d.prop_key = 'assigned_to_id' ) j on j.id = i.id        
 where i.tracker_id = 1  
-and i.created_on > date_add(last_day(date_sub(now(), interval 1 year)), interval 1 day)
+and ((i.closed_on >= (select day_min from day_minimun) and s.is_closed=1) or s.is_closed=0)
 order by id, j.created_on;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 -- fine cursore

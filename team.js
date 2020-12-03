@@ -4,13 +4,13 @@ function team_performance_chart(group_id, is_high) {
         {
             column: 'open_previous_month',
             name: 'Bug owned in previous month (d) ',
-            color: 'orange'
+            color: colore('orange',.8),
 
         },
         {
             column: 'open_this_month',
             name: 'Bugs owned in month (a) ',
-            color: 'orangered'
+            color: colore('orangered',.9),
         },
         {
             column: 'close_previous_month_open',
@@ -35,7 +35,7 @@ function team_performance_chart(group_id, is_high) {
         {
             column: 'ratio_all_closed',
             name: 'Ratio [b+c]/[a+d]',
-            color: 'red'
+            color: 'blue'
         
         },]);
     }
@@ -54,7 +54,7 @@ function team_performance_chart(group_id, is_high) {
         rows = d3.nest()
             .key(function(d) { return d.mese;})
             .rollup(function(v) { return {
-                open_absolute: d3.sum(v, function(d) { return d.open_absolute;}),
+                open_previous_month: d3.sum(v, function(d) { return d.open_previous_month;}),
                 close_absolute: d3.sum(v, function(d) { return d.close_absolute;}),
                 close_this_month: d3.sum(v, function(d) { return (d.close_this_month) ;}),
                 open_this_month: d3.sum(v, function(d) { return (d.open_this_month) ;}),
@@ -67,14 +67,13 @@ function team_performance_chart(group_id, is_high) {
             .map(function (g) {
                 return {
                     mese: g.key,
-                    open_previous_month: g.value.open_absolute - g.value.open_this_month,
+                    open_previous_month: g.value.open_previous_month,
                     close_previous_month_open:  g.value.close_absolute - g.value.close_this_month,
                     close_this_month: g.value.close_this_month, 
                     open_this_month: g.value.open_this_month, 
                     days: g.value.days,
                     ratio : Math.round(100 * (g.value.close_this_month / g.value.open_this_month)), 
-                    //ratio_all_closed : Math.round(100 * (g.value.close_absolute / g.value.open_absolute)), 
-                    ratio_all_closed : g.value.open_absolute -  g.value.close_absolute, 
+                    ratio_all_closed : Math.round(100 * (g.value.close_absolute / (g.value.open_this_month+ g.value.open_previous_month))), 
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.open_previous_month - 1))
                 }
             });

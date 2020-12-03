@@ -11,7 +11,7 @@ select
     ifnull(w.lavorati, 0) as bugs,
     ifnull(w.chiuso,0) as move_or_close, 
     round(100*w.chiuso/nullif(w.lavorati,0)) as ratio
-from vgroup g
+from (select distinct group_id, description from vteam) g
 left join (select v.group_id,
             v.is_high,
             round(avg(latenza) / 1440) as latenza,
@@ -38,6 +38,7 @@ select 0 as group_id,
   from (select id,
                is_high,
                sum(timestampdiff(minute, aperto, ifnull(chiuso, now()))) latenza,
+               -- se e' chiuso porta 1 se aperto 0, il minimo tra 0 e 1  
                min(if( isnull(chiuso), 0, 1)) as move_or_close
          from  tmp_team_performance tp
          group by id, is_high) as v

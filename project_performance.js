@@ -4,29 +4,27 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'aperti_previuos_month',
             name: 'Opened in the previous months (d)',
-            color: colore('orange',.7),
-            borderColor : colore('red',1)
+            color: colore('orange',.8),
         },
         {
             column: 'aperti',
             name: 'Opened in the month (a)',
             color: colore('orangered',.9),
-            borderColor : colore('red',1)
         },
         {
             column: 'chiusi_previuos_month_open',
             name: 'Closed of opened in the previous months (c)',
-            color: 'lightgreen'
+            color: 'lightgreen',
         },
         {
             column: 'chiusi',
             name: 'Closed of opened in the month (b) ',
-            color: 'green'
+            color: 'green',
         },
         {
             column: 'ratio',
             name: 'Ratio (b)/(a)',
-            color: '#231964'
+            color: '#231964',
         },
     ];
 
@@ -37,7 +35,7 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'ratio_all_closed',
             name: 'Ratio [b+c]/[a+d]',
-            color: 'blue'
+            color: 'blue',
         
         },]);
     }
@@ -74,8 +72,7 @@ function monthly_performance_chart(project_id,is_high) {
                     aperti_previuos_month:  g.value.aperti_mesi_precedenti , 
                     daytoclose : g.value.daytoclose,
                     ratio: Math.round(100*g.value.chiusi/g.value.aperti),
-                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/g.value.aperti_mesi_precedenti) ,
-                    //ratio_all_closed: g.value.aperti+g.value.aperti_mesi_precedenti  - g.value.chiusi_assoluto,
+                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/(g.value.aperti+g.value.aperti_mesi_precedenti)),
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
                 }
             });
@@ -109,7 +106,7 @@ function monthly_performance_chart(project_id,is_high) {
                 label: el.name,
                 labelDirty: el.column,
                 backgroundColor: el.color,
-           		borderColor: el.borderColor,
+           		borderColor: el.color,
                 type : type,
                 yAxisID : yAxisID,  
                 fill : false,
