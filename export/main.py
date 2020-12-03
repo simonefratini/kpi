@@ -40,7 +40,7 @@ f.close
 # #################################
 # estrazione nomi dei gruppi 
 # #################################
-cursor = redmine.execute('select description, group_id from vgroup order by description')
+cursor = redmine.execute('select distinct description, group_id from vteam order by description')
 group = {}
 for p in  cursor.fetchall():
     group[p[0]]=p[1]
