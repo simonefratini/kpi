@@ -42,8 +42,13 @@ from vgroup v
 join redmine.groups_users gu on v.group_id = gu.group_id
 union all
 select group_id,description, group_id as user_id from vgroup
+-- aggiungo gruppi necessari alla corretta visualizzazioni
+-- nel caso dei bug dei progetti mi serve la distinzione tra non assigned e others
+-- nel caso dei bug dei team mi server solo others come contenitore generico
 union all 
-select 0, 'Not Assigned', 0;
+select -1, 'Not Assigned', -1
+union all 
+select -2, 'Others', -2;
 
 
 
