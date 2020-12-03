@@ -10,7 +10,7 @@ v.peso,
 count(1) as bugs
 from 
 (select p.project_id ,
-ifnull(i.assigned_to_id,0) as user_id,
+ifnull(i.assigned_to_id,-1) as user_id,
 ifnull(c.category,'default') as category,
 -- gli stati che mi interessa sono
 -- 9 under test
