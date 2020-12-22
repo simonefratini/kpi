@@ -24,7 +24,7 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'ratio',
             name: 'Ratio (b)/(a)',
-            color: '#231964',
+            color: 'blue',
         },
     ];
 
@@ -35,7 +35,7 @@ function monthly_performance_chart(project_id,is_high) {
         {
             column: 'ratio_all_closed',
             name: 'Ratio [b+c]/[a+d]',
-            color: 'blue',
+            color: 'fuchsia',
         
         },]);
     }
@@ -89,7 +89,7 @@ function monthly_performance_chart(project_id,is_high) {
 
             switch (el.column) {
                 case 'ratio_all_closed':    
-                    hidden = false;
+                    hidden = true;
                 case 'ratio':
                     type = 'line';
                     yAxisID = 'y-axis-2';
@@ -179,7 +179,7 @@ function monthly_average_performance(rows) {
             color: '#231964'
         }
     ];
-    if (1 || advance_debug) {
+    if ( advance_debug) {
         SERIES = SERIES.concat(
         [{
             column: 'deviazione_standard',

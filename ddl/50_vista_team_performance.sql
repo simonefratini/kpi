@@ -35,7 +35,7 @@ select v.group_id,
 	   v.is_high,       
        v.mese,
        count(1) as open_this_month 
-  from (select distinct tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp) v 
+  from (select distinct tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp ) v 
   group by v.is_high, v.group_id, mese) as y on y.mese = a.mese and y.group_id = a.group_id and y.is_high = a.is_high
 -- chiusi nel mese 
 left join (
@@ -43,8 +43,7 @@ select v.group_id,
 	   v.is_high,       
        mese,
        count(1) as close_this_month
- from (select distinct  tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp  
-                                                                                      where last_day(chiuso) = last_day(aperto)) as v
+ from (select distinct tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp  where last_day(chiuso) = last_day(aperto) and chiuso is not null) as v
   group by v.is_high, v.group_id, mese) as x on x.mese = a.mese and x.group_id = a.group_id and x.is_high = a.is_high
 -- chiusi assoluti nel mese 
 left join (
@@ -52,7 +51,7 @@ select v.group_id,
 	   v.is_high,       
        mese,
        count(1) as close_absolute
- from (select distinct  tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp ) as v
+ from (select distinct  tp.id, tp.is_high, tp.group_id, date_format(chiuso,'%Y-%m') as mese from tmp_team_performance tp where chiuso is not null ) as v
   group by v.is_high, v.group_id, mese) as w on w.mese = a.mese and w.group_id = a.group_id and w.is_high = a.is_high
 -- latenza chiusi assoluti
 left join

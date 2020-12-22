@@ -25,17 +25,17 @@ function team_performance_chart(group_id, is_high) {
         {
             column: 'ratio',
             name: 'Ratio (b)/(a) ',
-            color: '#231964'
+            color: 'blue'
         }
     ];
 
-    if (true || advance_debug) {
+    if (1 ||advance_debug) {
     SERIES = SERIES.concat(   
         [
         {
             column: 'ratio_all_closed',
             name: 'Ratio [b+c]/[a+d]',
-            color: 'blue'
+            color: 'fuchsia'
         
         },]);
     }
@@ -272,6 +272,7 @@ function team_performance_annuale(group_id,is_high) {
                     team: g.values[0].key,
                     bugs: g.values[0].value.bugs,
                     move_or_close: g.values[0].value.move_or_close, 
+                    delta : g.values[0].value.bugs - g.values[0].value.move_or_close, 
                     days: g.values[0].value.days, 
                     // questo si ricalcola 
                     ratio : Math.round(100 * (g.values[0].value.move_or_close / g.values[0].value.bugs)) 
@@ -289,7 +290,8 @@ function team_performance_annuale(group_id,is_high) {
 }
 // formatter 
 function grandTotal(value,row) {
+    var grassetto=''
     if (row.group_id == 0)
-        return '<span class="font-weight-bold">'+value+'</span>';
-    return value;
+        grassetto="font-weight-bold"
+    return '<span class="small '+grassetto+'">'+value+'</span>';
 }
