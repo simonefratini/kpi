@@ -4,7 +4,7 @@ create view yearly_performance
 as
 select a.project_id
     ,a.is_high
-    ,ifnull(i.chiusi,0) as chiusi
+    ,ifnull(i.chiusi,0)+ ifnull(j.chiusi,0) as chiusi
     ,ifnull(i.aperti,0) as aperti
     ,ifnull(tm.daytoclose,0) as daytoclose
     ,ifnull(tm.deviazione_standard,0) as deviazione_standard
@@ -14,7 +14,7 @@ select a.project_id
     ,ifnull(z.deviazione_standard,0) as deviazione_standard_assoluti
 from (select distinct p.project_id,y.is_high from vproject p join vpriority y) a
 left join (
--- aperti
+-- aperti negli ultimi 12 mesi (e di questi i chiusi) 
 select p.project_id,
     y.is_high,
     sum(s.is_closed) as chiusi,
@@ -26,6 +26,20 @@ join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
 and ri.created_on >= (select day_min from day_minimun) 
 group by p.project_id, y.is_high) as i on a.project_id = i.project_id and a.is_high =i.is_high
+left join (
+-- aperti prima di 12 mesi e chiusi dopo  chiusi) 
+select p.project_id,
+    y.is_high,
+    count(1) as chiusi
+from redmine.issues ri
+join redmine.issue_statuses s on ri.status_id=s.id
+join vpriority y on ri.priority_id = y.priority_id
+join vproject p on p.id = ri.project_id
+where ri.tracker_id = 1 -- tracker bugs
+and s.is_closed=1
+and ri.created_on < (select day_min from day_minimun) 
+and ri.closed_on >= (select day_min from day_minimun) -- debole potrebbe essere stato riaperto
+group by p.project_id, y.is_high) as j on a.project_id = j.project_id and a.is_high =j.is_high
 -- tempo medio di chiusura
 left join (select p.project_id,
     y.is_high,
