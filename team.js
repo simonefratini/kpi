@@ -252,33 +252,33 @@ function team_performance_annuale(group_id,is_high) {
         // filtro  sulla priorita'
         if (is_high)  
             rows = rows.filter(function(d) { return d.is_high == is_high; })
-        else {
-            // devo aggregare sul is_high
-            // doppia aggregazione per gruppo e team non riesco a farlo in una botta sola
-            rows = d3.nest()
-            .key(function(d) { return d.group_id ;})
-            .key(function(d) { return d.team ;})
-            .rollup(function(v) { return {
-                bugs: d3.sum(v, function(d) { return d.bugs;}),
-                move_or_close: d3.sum(v, function(d) { return (d.move_or_close) ;}),
-                // qui si ricalcola nel caso non c'è filtro
-                days: Math.ceil(d3.mean(v, function(d) { return d.days;}))
-            }; })
-            .entries(rows)
-            // devo rimappare
-            .map(function (g) {
-                return {
-                    group_id: g.key,
-                    team: g.values[0].key,
-                    bugs: g.values[0].value.bugs,
-                    move_or_close: g.values[0].value.move_or_close, 
-                    delta : g.values[0].value.bugs - g.values[0].value.move_or_close, 
-                    days: g.values[0].value.days, 
-                    // questo si ricalcola 
-                    ratio : Math.round(100 * (g.values[0].value.move_or_close / g.values[0].value.bugs)) 
-                }
-            });
-        }
+
+        // devo aggregare sul is_high
+        // doppia aggregazione per gruppo e team non riesco a farlo in una botta sola
+        rows = d3.nest()
+        .key(function(d) { return d.group_id ;})
+        .key(function(d) { return d.team ;})
+        .rollup(function(v) { return {
+            bugs: d3.sum(v, function(d) { return d.bugs;}),
+            move_or_close: d3.sum(v, function(d) { return (d.move_or_close) ;}),
+            // qui si ricalcola nel caso non c'è filtro
+            days: Math.ceil(d3.mean(v, function(d) { return d.days;}))
+        }; })
+        .entries(rows)
+        // devo rimappare
+        .map(function (g) {
+            return {
+                group_id: g.key,
+                team: g.values[0].key,
+                bugs: g.values[0].value.bugs,
+                move_or_close: g.values[0].value.move_or_close, 
+                delta : g.values[0].value.bugs - g.values[0].value.move_or_close, 
+                days: g.values[0].value.days, 
+                // questo si ricalcola 
+                ratio : Math.round(100 * (g.values[0].value.move_or_close / g.values[0].value.bugs)) 
+            }
+        });
+        
         // ordinamento
         rows.sort(function(x, y){ return d3.ascending(x.team, y.team); })
         // aggiungo il percento a questo oggetto perverso del d3 csv -- usare json invece che csv TODO
