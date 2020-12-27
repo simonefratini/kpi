@@ -89,7 +89,7 @@ function monthly_performance_chart(project_id,is_high) {
 
             switch (el.column) {
                 case 'ratio_all_closed':    
-                    hidden = true;
+                    hidden = false;
                 case 'ratio':
                     type = 'line';
                     yAxisID = 'y-axis-2';
