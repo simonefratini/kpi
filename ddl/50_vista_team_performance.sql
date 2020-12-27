@@ -11,7 +11,7 @@ select a.mese
     ,ifnull(y.open_this_month,0) as open_this_month
     ,ifnull(z.open_previous_month,0) as open_previous_month
     ,ifnull(x.close_this_month,0) as close_this_month 
-    ,ifnull(w.close_absolute,0) as close_absolute
+    ,ifnull(u.close_previous_month,0) as close_previous_month 
 from ( 
 select g.group_id, y.is_high, g.description as team, date_format(m.first_day,'%Y-%m') as mese from
 v12months m
@@ -37,23 +37,28 @@ select v.group_id,
        count(1) as open_this_month 
   from (select distinct tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp ) v 
   group by v.is_high, v.group_id, mese) as y on y.mese = a.mese and y.group_id = a.group_id and y.is_high = a.is_high
--- chiusi nel mese 
+-- chiusi nel mese corrente
+-- attenzione a quei singoli ticket che possono essere aperti e chiusi piu' volte nel mese
+-- es. aperto e chiuso e poi ancora aperto nel mese ma chiuso in un mese successivo.
+-- questo non deve essere contato come chiuso nel mese
 left join (
 select v.group_id,
 	   v.is_high,       
        mese,
        count(1) as close_this_month
- from (select distinct tp.id, tp.is_high, tp.group_id, date_format(aperto,'%Y-%m') as mese from tmp_team_performance tp  where last_day(chiuso) = last_day(aperto) and chiuso is not null) as v
+ from (select id, is_high, group_id, date_format(aperto,'%Y-%m') as mese, max(date_format(ifnull(chiuso,date_add(now(), interval 1 month)) ,'%Y-%m')) chiuso_nel_mese from tmp_team_performance group by id, is_high, group_id, mese) as v
+  where mese = chiuso_nel_mese
   group by v.is_high, v.group_id, mese) as x on x.mese = a.mese and x.group_id = a.group_id and x.is_high = a.is_high
--- chiusi assoluti nel mese 
+-- chiusi ma aperto in un mese precedente
 left join (
 select v.group_id,
 	   v.is_high,       
        mese,
-       count(1) as close_absolute
- from (select distinct  tp.id, tp.is_high, tp.group_id, date_format(chiuso,'%Y-%m') as mese from tmp_team_performance tp where chiuso is not null ) as v
-  group by v.is_high, v.group_id, mese) as w on w.mese = a.mese and w.group_id = a.group_id and w.is_high = a.is_high
+       count(1) as close_previous_month
+    from (select distinct tp.id, tp.is_high, tp.group_id, date_format(chiuso,'%Y-%m') as mese from tmp_team_performance tp where last_day(aperto)<last_day(chiuso) ) v 
+  group by v.is_high, v.group_id, mese) as u on u.mese = a.mese and u.group_id = a.group_id and u.is_high = a.is_high
 -- latenza chiusi assoluti
+-- in questo caso caso contribuiscono tutte quelle righe che hanno "chiuso" valorizzato
 left join
 (select v.group_id,
         v.is_high,

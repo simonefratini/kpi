@@ -55,7 +55,7 @@ function team_performance_chart(group_id, is_high) {
             .key(function(d) { return d.mese;})
             .rollup(function(v) { return {
                 open_previous_month: d3.sum(v, function(d) { return d.open_previous_month;}),
-                close_absolute: d3.sum(v, function(d) { return d.close_absolute;}),
+                close_previous_month_open: d3.sum(v, function(d) { return d.close_previous_month}),
                 close_this_month: d3.sum(v, function(d) { return (d.close_this_month) ;}),
                 open_this_month: d3.sum(v, function(d) { return (d.open_this_month) ;}),
                 // arrotondo per eccesso al giorno superiore
@@ -68,12 +68,12 @@ function team_performance_chart(group_id, is_high) {
                 return {
                     mese: g.key,
                     open_previous_month: g.value.open_previous_month,
-                    close_previous_month_open:  g.value.close_absolute - g.value.close_this_month,
+                    close_previous_month_open:  g.value.close_previous_month_open,
                     close_this_month: g.value.close_this_month, 
                     open_this_month: g.value.open_this_month, 
                     days: g.value.days,
                     ratio : Math.round(100 * (g.value.close_this_month / g.value.open_this_month)), 
-                    ratio_all_closed : Math.round(100 * (g.value.close_absolute / (g.value.open_this_month+ g.value.open_previous_month))), 
+                    ratio_all_closed : Math.round(100 * ( g.value.close_previous_month_open + g.value.close_this_month )/ (g.value.open_this_month+ g.value.open_previous_month)), 
                     deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.open_previous_month - 1))
                 }
             });
