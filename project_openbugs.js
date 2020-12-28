@@ -33,8 +33,8 @@ function openbugs(project_id, peso) {
         // uso il filtrato per la ciambella dei bugs di solo develpoment
         peso_bugs(rows,project_id);
         bugs_by_team(rows);
-        if (project_id !=0 )
-            bugs_by_category(rows);
+        //if (project_id !=0 )
+        //    bugs_by_category(rows);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.stato;})
@@ -207,7 +207,8 @@ function bugs_by_team (rows) {
             data: data_validated 
         }]
     };
-    var ctx = document.getElementById('horizontalbar_bugs_by_team').getContext('2d');
+    var canvas = document.getElementById('horizontalbar_bugs_by_team');
+    var ctx = canvas.getContext('2d');
     horizontalbar_bugs_by_team = new Chart(ctx, {
         type: 'horizontalBar',
         data: barChartData,
@@ -229,7 +230,7 @@ function bugs_by_team (rows) {
     });
 }
 
-
+/*
 function bugs_by_category (rows) {
     rows = d3.nest()
         .key(function(d) { return d.category;})
@@ -301,4 +302,4 @@ function bugs_by_category (rows) {
         }
     });
 }
-
+*/

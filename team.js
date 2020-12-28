@@ -3,43 +3,35 @@ function team_performance_chart(group_id, is_high) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'open_previous_month',
-            name: 'Bug owned in previous month (d) ',
+            name: 'Bug owned from previous month (a)',
             color: colore('orange',.8),
-
         },
         {
             column: 'open_this_month',
-            name: 'Bugs owned in month (a) ',
+            name: 'Bug owned from current month (b)',
             color: colore('orangered',.9),
         },
         {
             column: 'close_previous_month_open',
-            name: 'Bug moved or closed open in previous month (c) ',
+            name: 'Bug moved or closed from previous month (c)',
             color: 'lightgreen'
         },
         {
             column: 'close_this_month',
-            name: 'Bug moved or closed open in month (b) ',
+            name: 'Bug moved or closed from current month (d)',
             color: 'green'
         },
         {
             column: 'ratio',
-            name: 'Ratio (b)/(a) ',
+            name: 'Ratio (b)/(d) ',
             color: 'blue'
-        }
-    ];
-
-    if (1 ||advance_debug) {
-    SERIES = SERIES.concat(   
-        [
+        },
         {
             column: 'ratio_all_closed',
-            name: 'Ratio [b+c]/[a+d]',
+            name: 'Ratio [a+b]/[c+d]',
             color: 'fuchsia'
-        
-        },]);
-    }
-
+        }
+    ];
 
     // Read data file and create a chart
     let file=datasource_path+'team_performance.csv';
@@ -91,7 +83,6 @@ function team_performance_chart(group_id, is_high) {
 
             switch (el.column) {
                 case 'ratio_all_closed':
-                    hidden = false;
                 case 'ratio':
                     type = 'line';
                     yAxisID = 'y-axis-2';
@@ -177,7 +168,7 @@ function team_latency(rows) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'days',
-            name: 'Average days a bug is in charge',
+            name: 'Average days a bug was owned',
             color: '#231964'
         },
     ];

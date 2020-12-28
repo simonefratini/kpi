@@ -3,42 +3,36 @@ function monthly_performance_chart(project_id,is_high) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'aperti_previuos_month',
-            name: 'Opened in the previous months (d)',
+            name: 'Opened from previuos month (a)',
             color: colore('orange',.8),
         },
         {
             column: 'aperti',
-            name: 'Opened in the month (a)',
+            name: 'Opened in month (b)',
             color: colore('orangered',.9),
         },
         {
             column: 'chiusi_previuos_month_open',
-            name: 'Closed of opened in the previous months (c)',
+            name: 'Closed of opened from previous month (c)',
             color: 'lightgreen',
         },
         {
             column: 'chiusi',
-            name: 'Closed of opened in the month (b) ',
+            name: 'Closed of opened in the same month (d)',
             color: 'green',
         },
         {
             column: 'ratio',
-            name: 'Ratio (b)/(a)',
+            name: 'Ratio (b)/(d)',
             color: 'blue',
         },
-    ];
-
-
-    if (1 || advance_debug) {
-    SERIES = SERIES.concat(   
-        [
         {
             column: 'ratio_all_closed',
-            name: 'Ratio [b+c]/[a+d]',
+            name: 'Ratio [a+b]/[c+d]',
             color: 'fuchsia',
-        
-        },]);
-    }
+
+        },
+    ];
     // Read data file and create a chart
     let file=datasource_path+'monthly_performance.csv';
     d3.csv(file).then(function(rows) {
