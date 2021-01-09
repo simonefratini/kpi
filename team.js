@@ -8,7 +8,7 @@ function team_performance_chart(group_id, is_high) {
         },
         {
             column: 'open_this_month',
-            name: 'Bug owned from current month (b)',
+            name: 'Bug owned from month (b)',
             color: colore('orangered',.9),
         },
         {
@@ -18,7 +18,7 @@ function team_performance_chart(group_id, is_high) {
         },
         {
             column: 'close_this_month',
-            name: 'Bug moved or closed from current month (d)',
+            name: 'Bug moved or closed from month (d)',
             color: 'green'
         },
         {
