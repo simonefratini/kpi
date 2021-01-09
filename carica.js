@@ -1,3 +1,4 @@
+
 /// definizione globale delle variabili
 var datasource_path='./datasource/';
 Chart.defaults.global.legend.position = 'bottom' ;  
@@ -13,7 +14,8 @@ var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
 var horizontalbar_bugs_by_team = null;
-var horizontalbar_bugs_by_category = null;
+var horizontalbar_close_bugs_by_root_cause = null;
+
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
 function random_version() { return Math.round(Math.random()*1E+8);
@@ -101,8 +103,8 @@ function popola_bugs(pid, is_high) {
         doughnut_bugs_priority.destroy();
     if (horizontalbar_bugs_by_team != undefined)
         horizontalbar_bugs_by_team.destroy();
-    if (horizontalbar_bugs_by_category != undefined)
-        horizontalbar_bugs_by_category.destroy();
+    if (horizontalbar_close_bugs_by_root_cause != undefined)
+        horizontalbar_close_bugs_by_root_cause.destroy();
     openbugs(pid,is_high);
     getTimestamp();
 }

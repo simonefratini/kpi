@@ -33,10 +33,8 @@ function openbugs(project_id, peso) {
         // uso il filtrato per la ciambella dei bugs di solo develpoment
         peso_bugs(rows,project_id);
         bugs_by_team(rows);
-
         if (project_id != 0 ) 
-            bugs_by_category(project_id,peso);
-
+            close_bugs_by_root_cause(project_id,peso);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.stato;})
@@ -78,7 +76,6 @@ function openbugs(project_id, peso) {
                     var idx = activePoints[0]['_index'];
                     var label = chartData.labels[idx];
                     var status_id = Object.keys(issues_statues).find(key => issues_statues[key].label== label);
-                    console.log((status_id));
                     var priority_filter='';
                     if (is_high)
                         var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
@@ -233,14 +230,13 @@ function bugs_by_team (rows) {
 }
 
 
-function bugs_by_category (project_id,peso) {
+function close_bugs_by_root_cause (project_id,peso) {
     let file=datasource_path+'close_bugs_root_cause.csv';
     d3.csv(file).then(function(rows) {
         // filtro sul progetto 
         rows = rows.filter(function(d) { return d.project_id == project_id; })
         if (peso)
-            // filtro sul peso  
-            // high=5, urgent = 6 and immediate = 7 //
+            // filtro sul peso  high=5, urgent = 6 and immediate = 7 //
             rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
         // aggregazione di tutti i progetti sulla causa 
         rows = d3.nest()
@@ -259,26 +255,19 @@ function bugs_by_category (project_id,peso) {
             colonne.push(e.key);
             data.push(e.value); 
         });
-
         var barChartData = {
             labels: colonne,
-            datasets: [ { label: 'Closed Bugs',  data : data, backgroundColor : 'lightblue'}]
+            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
         };
-
-        console.log(barChartData);
-        var ctx = document.getElementById('horizontalbar_bugs_by_category').getContext('2d');
-        horizontalbar_bugs_by_category = new Chart(ctx, {
+        var ctx = document.getElementById('horizontalbar_close_bugs_by_root_cause').getContext('2d');
+        horizontalbar_close_bugs_by_root_cause = new Chart(ctx, {
             type: 'horizontalBar',
             data: barChartData,
             options: {
-                title: { display: true, text: 'Closed Bugs by Root Cause ' },
+                title: { display: true, text: 'Closed bugs by root cause ' },
                 tooltips: { mode: 'index', intersect: false },
                 responsive: true,
-                scales: {
-                    xAxes: [{
-                        ticks: { precision: 0, min :0, maxTicksLimit: 7 },
-                    }],
-                }
+                scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
             }
         });
     });
