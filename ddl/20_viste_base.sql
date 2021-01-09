@@ -88,16 +88,5 @@ create view day_minimun as
 select min(first_day) as `day_min` from v12months;
 
 
--- vista categorie
-drop view if exists vcategory;
-create view vcategory as 
-select c.id as category_id,
-c.project_id,
-trim(concat(if(cp.name is not null,concat(cp.name,' '),''),c.name)) as category
-  from redmine.issue_categories c
-  left join redmine.issue_categories cp on c.parent_id = cp.id
-  join vproject p on p.project_id = c.project_id
-order by 1;
-
 
 
