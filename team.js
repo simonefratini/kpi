@@ -3,22 +3,22 @@ function team_performance_chart(group_id, is_high) {
     var SERIES = [  // For each column representing a series, define its name and color
         {
             column: 'open_previous_month',
-            name: 'Bug owned from previous month (a)',
+            name: 'Owned from previous month (a)',
             color: colore('orange',.8),
         },
         {
             column: 'open_this_month',
-            name: 'Bug owned from month (b)',
+            name: 'Owned from month (b)',
             color: colore('orangered',.9),
         },
         {
             column: 'close_previous_month_open',
-            name: 'Bug moved or closed from previous month (c)',
+            name: 'Moved or closed from previous month (c)',
             color: 'lightgreen'
         },
         {
             column: 'close_this_month',
-            name: 'Bug moved or closed from month (d)',
+            name: 'Moved or closed from month (d)',
             color: 'green'
         },
         {
