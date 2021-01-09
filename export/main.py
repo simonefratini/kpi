@@ -53,6 +53,11 @@ f.close
 cursor = redmine.execute('select * from open_bugs')
 scrivi_csv(csv_output_path+'open_bugs.csv',cursor);
 # #################################
+# estrazione bugs chiusi per root cause 
+# #################################
+cursor = redmine.execute('select * from close_bugs_root_cause')
+scrivi_csv(csv_output_path+'close_bugs_root_cause.csv',cursor);
+# #################################
 # estrazione  performance mensili
 # #################################
 cursor = redmine.execute('select * from monthly_performance')
@@ -62,6 +67,14 @@ scrivi_csv(csv_output_path+'monthly_performance.csv',cursor);
 # #################################
 cursor = redmine.execute('select * from yearly_performance')
 scrivi_csv(csv_output_path+'yearly_performance.csv',cursor);
+# #################################
+# estrazione milestone 
+# #################################
+cursor = redmine.execute('select * from ecl_milestone')
+p = cursor.fetchone()
+f = open(csv_output_path+'ecl_milestone.json','w')
+f.write(p[0])
+f.close
 # #################################
 # performance mensili per team 
 # prima occorre lanciare la stored procedure
@@ -83,4 +96,7 @@ a = { "timestamp": datetime.now().strftime(' %Y-%m-%d %I:%M %p')}
 f = open(csv_output_path+'timestamp.json','w')
 f.write(json.dumps(a))
 f.close
+
+
+
 logger.info("Finish")
