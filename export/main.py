@@ -68,7 +68,8 @@ scrivi_csv(csv_output_path+'monthly_performance.csv',cursor);
 cursor = redmine.execute('select * from yearly_performance')
 scrivi_csv(csv_output_path+'yearly_performance.csv',cursor);
 # #################################
-# estrazione milestone 
+# estrazione milestone unica cella con json formattato
+# idea futura e' usare questo o php-cli con json_encode e non questa roba di python
 # #################################
 cursor = redmine.execute('select * from ecl_milestone')
 p = cursor.fetchone()
@@ -96,7 +97,5 @@ a = { "timestamp": datetime.now().strftime(' %Y-%m-%d %I:%M %p')}
 f = open(csv_output_path+'timestamp.json','w')
 f.write(json.dumps(a))
 f.close
-
-
 
 logger.info("Finish")

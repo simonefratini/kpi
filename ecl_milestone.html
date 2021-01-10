@@ -28,6 +28,7 @@
                         <th data-sortable="true" data-field="relation">relation</th>
                         <th data-sortable="true" data-field="id"  data-formatter="redminelink">#</th>
                         <th data-sortable="true" data-field="assigned">Assigned</th>
+                        <th data-sortable="true" data-field="due_date">Due Date</th>
                     </tr>
                 </thead>
             </table>
@@ -41,7 +42,7 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
     <script>
     function redminelink(value,row,index) { redmine_url = 'http://monitoring-helpdesk.fimer.com';
-          return '<a href="'+redmine_url+'/'+value+'">'+value+'</a>' 
+          return '<a href="'+redmine_url+'/issues/'+value+'">'+value+'</a>' 
         }
     </script>
     <footer>
