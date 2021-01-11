@@ -63,8 +63,5 @@ sql2jsonfile($dao,$query,$output_path.'team_performance.json');
 $query='select * from team_performance_annuale';
 sql2jsonfile($dao,$query,$output_path.'team_performance_annuale.json');
 //# Salvo il timestamp dell'estrazioni in formato json
-$tmp["timestamp"] = date("Y-m-d g:i A");
-file_put_contents($output_path.'timestamp.json' ,json_encode($tmp));
-
-
-
+$query='select date_format(now(),"%Y-%m-%d %h:%i %p") as timestamp';
+sql2jsonfile($dao,$query,$output_path.'timstamp.json');
