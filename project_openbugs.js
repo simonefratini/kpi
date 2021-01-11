@@ -22,7 +22,10 @@ if (location.hostname == 'ktulu')
 
 function openbugs(project_id, peso) {
     let file=datasource_path+'open_bugs.csv'
-    d3.csv(file).then(function(rows) {
+    let url = '/datasource2/open_bugs.csv';
+    fetch(url).then(response => response.json())
+    .then( function (rows) {
+        console.log(rows);
         if (project_id != 0  ) 
             // filtro sul progetto 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
@@ -51,6 +54,14 @@ function openbugs(project_id, peso) {
             backgroundColor.push(issues_statues[e.key].color);
             totale += parseInt(e.value);
         });
+
+
+        // 
+
+
+
+
+
         var canvas = document.getElementById('doughnut_bugs_open_by_status');
         var ctx = canvas.getContext('2d');
         doughnut_bugs_open_by_status = new Chart(ctx, {
