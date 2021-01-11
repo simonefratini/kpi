@@ -1,15 +1,12 @@
 create or replace view ecl_milestone as
 select
-json_arrayagg(
-    json_merge(
-json_object('milestone',i.subject),
-json_object('description',i.description),
-json_object('project',v.project), 
-json_object('relation',v.relation_type),
-json_object('assigned',v.assigned),
-json_object('id',v.id),
-json_object('due_date',v.due_date)
-)) as json
+i.subject as milestone,
+i.description,
+v.project, 
+v.relation_type as relation,
+v.assigned,
+v.id,
+v.due_date
 from redmine.issues i
 left join (
     select r.issue_to_id, -- relazione di partenza

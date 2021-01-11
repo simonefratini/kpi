@@ -1,9 +1,9 @@
 cwd=$(pwd)
 echo "creazione schema kpi"
 cd ddl
-. go.sh
+. install.sh
 cd $cwd
-cd export
+cd backend 
 echo "estrazione datasource"
-. go.sh
+. run.sh
 cd $cwd

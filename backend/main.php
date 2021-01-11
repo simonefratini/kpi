@@ -49,9 +49,7 @@ sql2jsonfile($dao,$query,$output_path.'yearly_performance.json');
 // estrazione milestone unica cella con json formattato
 // #################################
 $query='select * from ecl_milestone';
-$statment = $dao->pdo->prepare($query);	
-$tmp = $statment->execute();
-file_put_contents($output_path.'ecl_milestone.json' ,$tmp);
+sql2jsonfile($dao,$query,$output_path.'ecl_milestone.json');
 // #################################
 // performance mensili per team 
 // prima occorre lanciare la stored procedure
