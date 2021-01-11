@@ -4,6 +4,7 @@ var datasource_path='./datasource/';
 Chart.defaults.global.legend.position = 'bottom' ;  
 Chart.defaults.global.legend.labels.usePointStyle = true ;  
 var selectProjectID='selectProject';
+var selectGroupID='selectGroup';
 var is_high = false;
 var advance_debug = false;
 // necessarie per distruggere i grafico vecchio
@@ -14,7 +15,7 @@ var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
 var horizontalbar_bugs_by_team = null;
-var horizontalbar_close_bugs_by_root_cause = null;
+var horizontalbar_close_bugs_root_cause = null;
 
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
@@ -27,12 +28,17 @@ function setSelect(source_json_file,select_id) {
         .then(response => response.json())
         .then( function (list) { 
             let selettore = document.getElementById(select_id);
-            const objectArray = Object.entries(list);
-            objectArray.sort(); // ordinamento
-            objectArray.forEach ( function (v) {
+            list.sort(); // ordinamento
+            
+            list.forEach ( function (v) {
+                console.log(v)
                 option = document.createElement("option");
-                option.text = v[0];
-                option.value = v[1];
+                option.text = v.description;
+                if (select_id == selectProjectID)
+                    option.value = v.project_id;
+                else
+                    option.value = v.group_id;
+
                 selettore.add(option);
             });
         });
@@ -103,8 +109,8 @@ function popola_bugs(pid, is_high) {
         doughnut_bugs_priority.destroy();
     if (horizontalbar_bugs_by_team != undefined)
         horizontalbar_bugs_by_team.destroy();
-    if (horizontalbar_close_bugs_by_root_cause != undefined)
-        horizontalbar_close_bugs_by_root_cause.destroy();
+    if (horizontalbar_close_bugs_root_cause != undefined)
+        horizontalbar_close_bugs_root_cause.destroy();
     openbugs(pid,is_high);
     getTimestamp();
 }

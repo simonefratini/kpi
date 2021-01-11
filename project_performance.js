@@ -34,135 +34,137 @@ function monthly_performance_chart(project_id,is_high) {
         },
     ];
     // Read data file and create a chart
-    let file=datasource_path+'monthly_performance.csv';
-    d3.csv(file).then(function(rows) {
-        if (project_id != 0  ) { // filtro sul progetto 
-            rows = rows.filter(function(d) { return d.project_id == project_id; })
-        }
-        if (is_high) { // filtro  sulla priorita' 
-            rows = rows.filter(function(d) { return d.is_high == is_high; })
-        }
-        // aggregazione di tutti i progetti sulla data
-        rows = d3.nest()
-            .key(function(d) { return d.mese;})
-            .rollup(function(v) { return {
-                aperti: d3.sum(v, function(d) { return d.aperti;}),
-                chiusi: d3.sum(v, function(d) { return d.chiusi;}),
-                chiusi_assoluto: d3.sum(v, function(d) { return d.chiusi_assoluto;}),
-                aperti_mesi_precedenti: d3.sum(v, function(d) { return d.aperti_mesi_precedenti;}),
-                // arrotondo per eccesso al giorno superiore
-                daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
-                deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
+    let url = datasource_path+'monthly_performance.json';
+    fetch(url)
+    .then(response => response.json())
+        .then( function (rows) {
+            if (project_id != 0  ) { // filtro sul progetto 
+                rows = rows.filter(function(d) { return d.project_id == project_id; })
+            }
+            if (is_high) { // filtro  sulla priorita' 
+                rows = rows.filter(function(d) { return d.is_high == is_high; })
+            }
+            // aggregazione di tutti i progetti sulla data
+            rows = d3.nest()
+                .key(function(d) { return d.mese;})
+                .rollup(function(v) { return {
+                    aperti: d3.sum(v, function(d) { return d.aperti;}),
+                    chiusi: d3.sum(v, function(d) { return d.chiusi;}),
+                    chiusi_assoluto: d3.sum(v, function(d) { return d.chiusi_assoluto;}),
+                    aperti_mesi_precedenti: d3.sum(v, function(d) { return d.aperti_mesi_precedenti;}),
+                    // arrotondo per eccesso al giorno superiore
+                    daytoclose: Math.ceil(d3.mean(v, function(d) { return d.daytoclose;})),
+                    deviazione_standard: d3.sum(v, function(d) { return d.deviazione_standard;})
 
-            }; })
-            .entries(rows)
+                }; })
+                .entries(rows)
             // devo rimappare
-            .map(function (g) {
+                .map(function (g) {
+                    return {
+                        mese: g.key,
+                        aperti: g.value.aperti,
+                        chiusi: g.value.chiusi,
+                        chiusi_previuos_month_open: g.value.chiusi_assoluto - g.value.chiusi,
+                        aperti_previuos_month:  g.value.aperti_mesi_precedenti , 
+                        daytoclose : g.value.daytoclose,
+                        ratio: Math.round(100*g.value.chiusi/g.value.aperti),
+                        ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/(g.value.aperti+g.value.aperti_mesi_precedenti)),
+                        deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
+                    }
+                });
+
+            monthly_average_performance(rows);
+
+            var datasets = SERIES.map(function(el) {
+                var type = 'bar';
+                var yAxisID = 'y-axis-1';
+                var order = 1;
+                var stacked = 'Stack 1';
+                var hidden = false;
+                var pointStyle = null;
+
+                switch (el.column) {
+                    case 'ratio_all_closed':    
+                        hidden = false;
+                    case 'ratio':
+                        type = 'line';
+                        yAxisID = 'y-axis-2';
+                        order = 0; 
+                        stacked = null;
+                        pointStyle = 'line';
+                        break;
+                    case 'aperti':
+                    case 'aperti_previuos_month':
+                        stacked = 'Stack 0';
+                        break;
+                }        
                 return {
-                    mese: g.key,
-                    aperti: g.value.aperti,
-                    chiusi: g.value.chiusi,
-                    chiusi_previuos_month_open: g.value.chiusi_assoluto - g.value.chiusi,
-                    aperti_previuos_month:  g.value.aperti_mesi_precedenti , 
-                    daytoclose : g.value.daytoclose,
-                    ratio: Math.round(100*g.value.chiusi/g.value.aperti),
-                    ratio_all_closed: Math.round(100*g.value.chiusi_assoluto/(g.value.aperti+g.value.aperti_mesi_precedenti)),
-                    deviazione_standard : Math.round(g.value.deviazione_standard / Math.sqrt(g.value.chiusi_assoluto-1))
+                    label: el.name,
+                    labelDirty: el.column,
+                    backgroundColor: el.color,
+                    borderColor: el.color,
+                    type : type,
+                    yAxisID : yAxisID,  
+                    fill : false,
+                    order: order,
+                    lineTension: 0.2,
+                    stack: stacked,
+                    hidden: hidden,
+                    pointStyle: pointStyle,
+                    data: []
                 }
             });
+            rows.map(function(row) {
+                datasets.map(function(d) {
+                    d.data.push(row[d.labelDirty])
+                })
+            });
+            var barChartData = {
+                labels : rows.map(function(el) { 
+                    moment.locale('en');
+                    return moment(el['mese']).format('MMM y');
+                }),
+                datasets: datasets,
+            };
+            var ctx = document.getElementById('bar_bugs_monthly_performance').getContext('2d');
+            bar_bugs_monthly_performance = new Chart(ctx, {
+                type: 'bar',  // default  
+                data: barChartData,
+                options: {
+                    plugins : {
+                        // escamotage per evitare sovrascrizioni della label
+                        datalabels: { labels: { title: { color:null } } } 
+                    },
+                    title: { display: true, text: 'Monthly Performance' },
+                    responsive: true,
+                    tooltips: { mode: 'label' },
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: { display: false, },
+                            gridLines: { display: true, },
+                            ticks: {source: 'auto'},
+                        }],
+                        yAxes: [
+                            {	
+                                position: 'right',
+                                id: 'y-axis-2',
+                                gridLines: { display: false },
+                                scaleLabel: { display : true, labelString: 'Ratio'},
+                                ticks: { precision: 0 , min:0,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
 
-        monthly_average_performance(rows);
+                            }, {
+                                stacked: true,
+                                position: 'left',
+                                id: 'y-axis-1',
+                                scaleLabel: { display : true, labelString: 'Bugs' },
+                                ticks: { precision: 0, min: 0, maxTicksLimit: 7 }
+                            }
+                        ]
+                    }
 
-        var datasets = SERIES.map(function(el) {
-            var type = 'bar';
-            var yAxisID = 'y-axis-1';
-            var order = 1;
-            var stacked = 'Stack 1';
-            var hidden = false;
-            var pointStyle = null;
-
-            switch (el.column) {
-                case 'ratio_all_closed':    
-                    hidden = false;
-                case 'ratio':
-                    type = 'line';
-                    yAxisID = 'y-axis-2';
-                    order = 0; 
-                    stacked = null;
-                    pointStyle = 'line';
-                    break;
-                case 'aperti':
-                case 'aperti_previuos_month':
-                    stacked = 'Stack 0';
-                    break;
-            }        
-            return {
-                label: el.name,
-                labelDirty: el.column,
-                backgroundColor: el.color,
-           		borderColor: el.color,
-                type : type,
-                yAxisID : yAxisID,  
-                fill : false,
-                order: order,
-                lineTension: 0.2,
-                stack: stacked,
-                hidden: hidden,
-                pointStyle: pointStyle,
-                data: []
-            }
-        });
-        rows.map(function(row) {
-            datasets.map(function(d) {
-                d.data.push(row[d.labelDirty])
-            })
-        });
-        var barChartData = {
-            labels : rows.map(function(el) { 
-                moment.locale('en');
-                return moment(el['mese']).format('MMM y');
-            }),
-            datasets: datasets,
-        };
-        var ctx = document.getElementById('bar_bugs_monthly_performance').getContext('2d');
-        bar_bugs_monthly_performance = new Chart(ctx, {
-            type: 'bar',  // default  
-            data: barChartData,
-            options: {
-                plugins : {
-                    // escamotage per evitare sovrascrizioni della label
-                    datalabels: { labels: { title: { color:null } } } 
-                },
-                title: { display: true, text: 'Monthly Performance' },
-                responsive: true,
-                tooltips: { mode: 'label' },
-                scales: {
-                    xAxes: [{
-                        scaleLabel: { display: false, },
-                        gridLines: { display: true, },
-                        ticks: {source: 'auto'},
-                    }],
-                    yAxes: [
-                        {	
-                            position: 'right',
-                            id: 'y-axis-2',
-                            gridLines: { display: false },
-                            scaleLabel: { display : true, labelString: 'Ratio'},
-                            ticks: { precision: 0 , min:0,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
-
-                        }, {
-                            stacked: true,
-                            position: 'left',
-                            id: 'y-axis-1',
-                            scaleLabel: { display : true, labelString: 'Bugs' },
-                            ticks: { precision: 0, min: 0, maxTicksLimit: 7 }
-                        }
-                    ]
                 }
-
-            }
+            });
         });
-    });
 }
 function monthly_average_performance(rows) {
 
@@ -243,8 +245,10 @@ function changeAllClosed(e) {
 
 function yearly_performance(project_id,is_high) {
 
-    let file=datasource_path+'yearly_performance.csv';
-    d3.csv(file).then(function(rows) {
+    let url = datasource_path+'yearly_performance.json';
+    fetch(url)
+    .then(response => response.json())
+        .then( function (rows) {
         if (project_id != 0  ) { // filtro sul progetto 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
         }

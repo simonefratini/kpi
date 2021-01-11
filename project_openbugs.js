@@ -21,11 +21,9 @@ if (location.hostname == 'ktulu')
     redmine_url = 'http://monitoring-helpdesk.fimer.com';
 
 function openbugs(project_id, peso) {
-    let file=datasource_path+'open_bugs.csv'
-    let url = '/datasource2/open_bugs.csv';
+    let url = datasource_path+'open_bugs.json';
     fetch(url).then(response => response.json())
     .then( function (rows) {
-        console.log(rows);
         if (project_id != 0  ) 
             // filtro sul progetto 
             rows = rows.filter(function(d) { return d.project_id == project_id; })
@@ -37,7 +35,7 @@ function openbugs(project_id, peso) {
         peso_bugs(rows,project_id);
         bugs_by_team(rows);
         if (project_id != 0 ) 
-            close_bugs_by_root_cause(project_id,peso);
+            close_bugs_root_cause(project_id,peso);
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.stato;})
@@ -54,13 +52,6 @@ function openbugs(project_id, peso) {
             backgroundColor.push(issues_statues[e.key].color);
             totale += parseInt(e.value);
         });
-
-
-        // 
-
-
-
-
 
         var canvas = document.getElementById('doughnut_bugs_open_by_status');
         var ctx = canvas.getContext('2d');
@@ -241,47 +232,48 @@ function bugs_by_team (rows) {
 }
 
 
-function close_bugs_by_root_cause (project_id,peso) {
-    let file=datasource_path+'close_bugs_root_cause.csv';
-    d3.csv(file).then(function(rows) {
-        // filtro sul progetto 
-        rows = rows.filter(function(d) { return d.project_id == project_id; })
-        if (peso)
-            // filtro sul peso  high=5, urgent = 6 and immediate = 7 //
-            rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
-        // aggregazione di tutti i progetti sulla causa 
-        rows = d3.nest()
-            .key(function(d) { return d.cause;})
-            .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-            .entries(rows);
-        // ordinamento per nome
-        rows.sort(function (a,b) {
-            if (a.key > b.key) 
-                return 1;
-            return -1;
-        });
-        let colonne = [];
-        let data = [];
-        rows.forEach(function (e) {
-            colonne.push(e.key);
-            data.push(e.value); 
-        });
-        var barChartData = {
-            labels: colonne,
-            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
-        };
-        var ctx = document.getElementById('horizontalbar_close_bugs_by_root_cause').getContext('2d');
-        horizontalbar_close_bugs_by_root_cause = new Chart(ctx, {
-            type: 'horizontalBar',
-            data: barChartData,
-            options: {
-                title: { display: true, text: 'Closed bugs by root cause ' },
-                tooltips: { mode: 'index', intersect: false },
-                responsive: true,
-                scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
-            }
-        });
-    });
+function close_bugs_root_cause (project_id,peso) {
 
-
+    let url = datasource_path+'close_bugs_root_cause.json';
+    fetch(url)
+    .then(response => response.json())
+        .then( function (rows) {
+            // filtro sul progetto 
+            rows = rows.filter(function(d) { return d.project_id == project_id; })
+            if (peso)
+                // filtro sul peso  high=5, urgent = 6 and immediate = 7 //
+                rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
+            // aggregazione di tutti i progetti sulla causa 
+            rows = d3.nest()
+                .key(function(d) { return d.cause;})
+                .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+                .entries(rows);
+            // ordinamento per nome
+            rows.sort(function (a,b) {
+                if (a.key > b.key) 
+                    return 1;
+                return -1;
+            });
+            let colonne = [];
+            let data = [];
+            rows.forEach(function (e) {
+                colonne.push(e.key);
+                data.push(e.value); 
+            });
+            var barChartData = {
+                labels: colonne,
+                datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
+            };
+            var ctx = document.getElementById('horizontalbar_close_bugs_root_cause').getContext('2d');
+            horizontalbar_close_bugs_root_cause = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: barChartData,
+                options: {
+                    title: { display: true, text: 'Closed bugs by root cause ' },
+                    tooltips: { mode: 'index', intersect: false },
+                    responsive: true,
+                    scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
+                }
+            });
+        });
 }

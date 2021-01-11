@@ -1,7 +1,7 @@
 <?php
 require_once('./dao.php');
 $dao  = new Dao();
-$output_path='../datasource2/';
+$output_path='../datasource/';
 function sql2jsonfile($connection, $query,$filepath) {
     try {
         echo $query.PHP_EOL;
@@ -47,7 +47,6 @@ $query='select * from yearly_performance';
 sql2jsonfile($dao,$query,$output_path.'yearly_performance.json');
 // #################################
 // estrazione milestone unica cella con json formattato
-// idea futura e' usare questo o php-cli con json_encode e non questa roba di python
 // #################################
 $query='select * from ecl_milestone';
 $statment = $dao->pdo->prepare($query);	
