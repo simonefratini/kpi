@@ -29,9 +29,7 @@ function setSelect(source_json_file,select_id) {
         .then( function (list) { 
             let selettore = document.getElementById(select_id);
             list.sort(); // ordinamento
-            
             list.forEach ( function (v) {
-                console.log(v)
                 option = document.createElement("option");
                 option.text = v.description;
                 if (select_id == selectProjectID)
@@ -134,11 +132,13 @@ function popola_team(gid, is_high) {
 }
 
 function getTimestamp() {
-// funzione per recuperare il timestamp in cui e' avvenuta estrazione dei dati
-fetch(datasource_path+'timestamp.json'+'?v='+random_version())
-  .then(response => response.json())
-  .then( function (d) { document.getElementById('timestamp').innerHTML = ' @ '+d.timestamp; }
-  );
+    // funzione per recuperare il timestamp in cui e' avvenuta estrazione dei dati
+    let url=datasource_path+'timestamp.json';
+    fetch(url+'?v='+random_version())
+        .then(response => response.json())
+        .then( function (list) { 
+                document.getElementById('timestamp').innerHTML = ' @ '+list[0].timestamp;
+        });
 }
 
 
