@@ -5,6 +5,7 @@ create view open_bugs as
 select v.project_id ,
 v.stato,
 IFNULL(`g`.`description`, 'Others') AS `team`,
+IFNULL(g.group_id,-2) as group_id,
 v.peso,
 count(1) as bugs
 from 
@@ -23,4 +24,4 @@ where tracker_id = 1 -- tracker bugs
 and s.is_closed=0 -- bugs open
 ) as v 
 left join vteam g on g.user_id = v.user_id
-group by v.project_id,v.stato,team,v.peso;
+group by v.project_id,v.stato,team,group_id,v.peso;
