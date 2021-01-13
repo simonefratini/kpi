@@ -28,12 +28,12 @@ function sql2excel($connection, $query,$filepath) {
         // titolo con data della creazione 
         $spreadsheet->getActiveSheet()->setTitle(date("Ymd_Hi"));
         // Header
-        $sheet = $spreadsheet->getActiveSheet()->fromArray(array_keys(current($cursor)),null,'A1');
+        $spreadsheet->getActiveSheet()->fromArray(array_keys(current($cursor)),null,'A1');
         // bold prima riga con gli header
         $spreadsheet->getActiveSheet()->getStyle('1:1')->getFont()->setBold(true);
+        $spreadsheet->getActiveSheet()->fromArray($cursor,null,'A2');
         // filtro automatico 
         $spreadsheet->getActiveSheet()->setAutoFilter($spreadsheet->getActiveSheet()->calculateWorksheetDimension());
-        $spreadsheet->getActiveSheet()->fromArray($cursor,null,'A2');
         $writer = new Xlsx($spreadsheet);
         $writer->save($filepath);
         echo "write file $filepath".PHP_EOL;
