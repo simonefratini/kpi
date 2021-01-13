@@ -33,7 +33,7 @@ function openbugs(project_id, peso) {
             rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
         // uso il filtrato per la ciambella dei bugs di solo develpoment
         peso_bugs(rows,project_id);
-        bugs_by_team(rows);
+        bugs_by_team(rows,project_id);
         if (project_id != 0 ) 
             close_bugs_root_cause(project_id,peso);
         // aggregazione di tutti i progetti sulla data
@@ -158,12 +158,22 @@ function peso_bugs(rows,project_id) {
     };
 }
 
-function bugs_by_team (rows) {
+function bugs_by_team (rows,project_id) {
+   
+
+    var groupArray = [];
+    rows.forEach(function(item){
+        var i = groupArray.findIndex(x => x.team == item.team);
+        if(i <= -1){
+            groupArray.push({group_id: item.group_id, team: item.team});
+        }
+    });
     rows = d3.nest()
-        .key(function(d) { return d.team;})
+        .key(function(d) { return d.team})
         .key(function(d) { return d.stato;})
         .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
         .entries(rows)
+    
     // devo rimappare
     let colonne = [];
     let data_new = [];
@@ -229,6 +239,58 @@ function bugs_by_team (rows) {
             }
         }
     });
+    canvas.onclick = function(evt) {
+        if (project_id!=0) {
+            // si puo' applicare solo se project_id non e' all
+            var activePoints = horizontalbar_bugs_by_team.getElementsAtEvent(evt);
+            if (activePoints[0]) {
+
+                var chartData = activePoints[0]['_chart'].config.data;
+                // indice delle ascisse
+                var idx = activePoints[0]['_index'];
+                var team = chartData.labels[idx];
+                var group_id = parseInt(groupArray.find( x => x.team == team).group_id);
+
+                var status_filter = "&f[]=status_id&op[status_id]=o"; // per adesso prendo tutti gli aperti
+
+                var datasetIndex = activePoints[0]['_datasetIndex'];
+                var stato = chartData.datasets[0].label;
+                var status_id = Object.keys(issues_statues).find(key => issues_statues[key].label== stato);
+                console.log(stato,status_id,datasetIndex,idx);
+                // recupero pos nella barra TODO
+                /*
+                if (status_id != '2' )
+                    status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]="+status_id;
+                else
+                    status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]=2&v[status_id][]=3&v[status_id][]=4&v[status_id][]=7&v[status_id][]=8";
+                */
+                var priority_filter='';
+                if (is_high)
+                    var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
+                var member_of_filter='';
+                switch (group_id) { 
+                    case -1:
+                        member_of_filter='&f[]=assigned_to_id&op[assigned_to_id]=!*';
+                        break;
+                    case -2:
+                        member_of_filter='&f[]=assigned_to_id&op[assigned_to_id]=*'; // deve essere valorizzato l'assegnatario
+                        member_of_filter+='&f[]=member_of_group&op[member_of_group]=!'; // ma non deve essere nei gruppi reali
+                        groupArray.forEach( function (g){
+                            if (parseInt(g.group_id) > 0 )
+                                member_of_filter += '&v[member_of_group][]='+g.group_id;
+                        });
+                        break;
+                    default:
+                        member_of_filter='&f[]=member_of_group&op[member_of_group]==&v[member_of_group][]='+group_id;
+                        break;
+                }
+                var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
+                // voglio anche che siano aperti 
+                var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+status_filter+member_of_filter+priority_filter);
+                window.open(url,'_blank');
+            }
+        }
+    };
 }
 
 
