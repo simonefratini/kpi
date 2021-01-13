@@ -1,7 +1,7 @@
 create or replace view ecl_milestone as
 
 select
-concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/"',i.id,'","',i.id,'")') as milestone_id,
+concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/',i.id,'","',i.id,'")') as milestone_id,
 i.subject as milestone,
 i.description,
 v.project, 
