@@ -250,15 +250,13 @@ function bugs_by_team (rows,project_id) {
                 var idx = activePoints[0]['_index'];
                 var team = chartData.labels[idx];
                 var group_id = parseInt(groupArray.find( x => x.team == team).group_id);
-
                 var status_filter = "&f[]=status_id&op[status_id]=o"; // per adesso prendo tutti gli aperti
-
+                /*
                 var datasetIndex = activePoints[0]['_datasetIndex'];
                 var stato = chartData.datasets[0].label;
                 var status_id = Object.keys(issues_statues).find(key => issues_statues[key].label== stato);
-                console.log(stato,status_id,datasetIndex,idx);
-                // recupero pos nella barra TODO
-                /*
+                // recupero pos nella barra TODO non funziona prende sempre posizione zero
+                // console.log(stato,status_id,datasetIndex,idx);
                 if (status_id != '2' )
                     status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]="+status_id;
                 else
