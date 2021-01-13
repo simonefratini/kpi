@@ -235,45 +235,64 @@ function bugs_by_team (rows) {
 function close_bugs_root_cause (project_id,peso) {
 
     let url = datasource_path+'close_bugs_root_cause.json';
-    fetch(url)
-    .then(response => response.json())
-        .then( function (rows) {
-            // filtro sul progetto 
-            rows = rows.filter(function(d) { return d.project_id == project_id; })
-            if (peso)
-                // filtro sul peso  high=5, urgent = 6 and immediate = 7 //
-                rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
-            // aggregazione di tutti i progetti sulla causa 
-            rows = d3.nest()
-                .key(function(d) { return d.cause;})
-                .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
-                .entries(rows);
-            // ordinamento per nome
-            rows.sort(function (a,b) {
-                if (a.key > b.key) 
-                    return 1;
-                return -1;
-            });
-            let colonne = [];
-            let data = [];
-            rows.forEach(function (e) {
-                colonne.push(e.key);
-                data.push(e.value); 
-            });
-            var barChartData = {
-                labels: colonne,
-                datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
-            };
-            var ctx = document.getElementById('horizontalbar_close_bugs_root_cause').getContext('2d');
-            horizontalbar_close_bugs_root_cause = new Chart(ctx, {
-                type: 'horizontalBar',
-                data: barChartData,
-                options: {
-                    title: { display: true, text: 'Closed bugs by root cause ' },
-                    tooltips: { mode: 'index', intersect: false },
-                    responsive: true,
-                    scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
-                }
-            });
+    fetch(url).then(response => response.json()).then(function (rows) {
+        // filtro sul progetto 
+        rows = rows.filter(function(d) { return d.project_id == project_id; })
+        if (peso)
+            // filtro sul peso  high=5, urgent = 6 and immediate = 7 //
+            rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
+        // aggregazione di tutti i progetti sulla causa 
+        rows = d3.nest()
+            .key(function(d) { return d.cause;})
+            .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+            .entries(rows);
+        // ordinamento per nome
+        rows.sort(function (a,b) {
+            if (a.key > b.key) 
+                return 1;
+            return -1;
         });
+        let colonne = [];
+        let data = [];
+        rows.forEach(function (e) {
+            colonne.push(e.key);
+            data.push(e.value); 
+        });
+        var barChartData = {
+            labels: colonne,
+            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
+        };
+        var canvas = document.getElementById('horizontalbar_close_bugs_root_cause');
+        var ctx = canvas.getContext('2d');
+        horizontalbar_close_bugs_root_cause = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: barChartData,
+            options: {
+                title: { display: true, text: 'Closed bugs by root cause ' },
+                tooltips: { mode: 'index', intersect: false },
+                responsive: true,
+                scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
+            }
+        });
+        canvas.onclick = function(evt) {
+            var activePoints = horizontalbar_close_bugs_root_cause.getElementsAtEvent(evt);
+            if (activePoints[0]) {
+                var chartData = activePoints[0]['_chart'].config.data;
+                var idx = activePoints[0]['_index'];
+                var cf_32 = chartData.labels[idx];
+                // root cause e' cf_32
+                var priority_filter='';
+                if (is_high)
+                    var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
+                var root_cause_filter = "&f[]=cf_32&op[cf_32]==&v[cf_32][]="+cf_32;
+                // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
+                var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
+                // voglio anche che siano chiusi 
+                tracker_filter += "&f[]=status_id&op[status_id]=c";
+                var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+root_cause_filter+priority_filter);
+                window.open(url,'_blank');
+            }
+        };
+    });
 }
+

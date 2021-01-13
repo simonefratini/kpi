@@ -26,7 +26,7 @@ function sql2excel($connection, $query,$filepath) {
 
         $spreadsheet = new Spreadsheet();
         // titolo con data della creazione 
-        $spreadsheet->getActiveSheet()->setTitle(date("YmdHi"));
+        $spreadsheet->getActiveSheet()->setTitle(date("Ymd_Hi"));
         // Header
         $sheet = $spreadsheet->getActiveSheet()->fromArray(array_keys(current($cursor)),null,'A1');
         // bold prima riga con gli header
