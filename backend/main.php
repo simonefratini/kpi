@@ -1,5 +1,8 @@
 <?php
 require_once('./dao.php');
+require 'vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $dao  = new Dao();
 $output_path='../datasource/';
 function sql2jsonfile($connection, $query,$filepath) {
@@ -10,6 +13,31 @@ function sql2jsonfile($connection, $query,$filepath) {
         $cursor= $statment->fetchAll(PDO::FETCH_ASSOC);                   
         file_put_contents($filepath ,json_encode($cursor));
         echo "write file $filepath".PHP_EOL;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    } 
+}
+function sql2excel($connection, $query,$filepath) {
+    try {
+        echo $query.PHP_EOL;
+        $statment = $connection->pdo->prepare($query);	
+        $statment->execute();
+        $cursor= $statment->fetchAll(PDO::FETCH_ASSOC);                   
+
+        $spreadsheet = new Spreadsheet();
+        // titolo con data della creazione 
+        $spreadsheet->getActiveSheet()->setTitle(date("YmdHi"));
+        // Header
+        $sheet = $spreadsheet->getActiveSheet()->fromArray(array_keys(current($cursor)),null,'A1');
+        // bold prima riga con gli header
+        $spreadsheet->getActiveSheet()->getStyle('1:1')->getFont()->setBold(true);
+        // filtro automatico 
+        $spreadsheet->getActiveSheet()->setAutoFilter($spreadsheet->getActiveSheet()->calculateWorksheetDimension());
+        $spreadsheet->getActiveSheet()->fromArray($cursor,null,'A2');
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filepath);
+        echo "write file $filepath".PHP_EOL;
+
     } catch (PDOException $e) {
         echo $e->getMessage();
     } 
@@ -50,6 +78,7 @@ sql2jsonfile($dao,$query,$output_path.'yearly_performance.json');
 // #################################
 $query='select * from ecl_milestone';
 sql2jsonfile($dao,$query,$output_path.'ecl_milestone.json');
+sql2excel($dao,$query,$output_path.'ecl_milestone.xlsx');
 // #################################
 // performance mensili per team 
 // prima occorre lanciare la stored procedure
@@ -65,3 +94,5 @@ sql2jsonfile($dao,$query,$output_path.'team_performance_annuale.json');
 //# Salvo il timestamp dell'estrazioni in formato json
 $query='select date_format(now(),"%Y-%m-%d %h:%i %p") as timestamp';
 sql2jsonfile($dao,$query,$output_path.'timestamp.json');
+
+
