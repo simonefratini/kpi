@@ -1,9 +1,8 @@
 create or replace view ecl_milestone as
-
 select
 concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/',i.id,'","',i.id,'")') as milestone_id,
 i.subject as milestone,
-i.description,
+v.description,
 v.project, 
 v.relation_type as relation,
 v.assigned,
@@ -17,6 +16,7 @@ from redmine.issues i
 left join (
     select r.issue_to_id, -- relazione di partenza
            b.id,
+           b.subject as description,
            ifnull(concat(u.lastname,' ',u.firstname),'Not Assigned') as assigned,
            p.name as project,
            r.relation_type,
