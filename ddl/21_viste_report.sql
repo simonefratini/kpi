@@ -2,7 +2,7 @@ use kpi;
 -- vista per report ecl
 create or replace view vproject_custom as
 select p.name as project,
-       p.project_id as project_id,
+       p.id as project_id,
        c.wbs as wbs,
        c.lob as lob,
        c.project_manager,
