@@ -2,8 +2,7 @@ use kpi;
 
 
 -- progetti
-drop view if exists vproject;
-create view vproject as select p.id, ifnull(p.parent_id,p.id) as project_id, p.name as description
+create or replace view vproject as select p.id, ifnull(p.parent_id,p.id) as project_id, p.name as description
 from redmine.projects p
 join (SELECT id  from redmine.projects
     where id IN (325,367,338,273,184,198,257,259)) progetti_padre
@@ -13,8 +12,7 @@ where p.id = progetti_padre.id
 
 
 -- vista di appoggio per i gruppi statici
-drop view if exists vgroup;
-create view  vgroup as 
+create or replace view  vgroup as 
 select id as group_id, lastname as description  from redmine.users
 where type = 'Group'
 and lastname in (
@@ -33,8 +31,7 @@ and lastname in (
 
 
 -- vista dei team comprensivi dei gruppi come utente
-drop view if exists vteam;
-create view vteam as 
+create or replace view vteam as 
 select v.group_id,
 v.description,
 gu.user_id
@@ -53,8 +50,7 @@ select -2, 'Others', -2;
 
 
 -- vista priority semplificata 
-drop view if exists vpriority;
-create view vpriority as 
+create or replace view vpriority as 
 select priority_id, is_high from
 (select 3 as priority_id ,0 is_high union all -- low
 select  4 as priority_id ,0 is_high union all -- normal
@@ -66,8 +62,7 @@ select 39 as priority_id ,0 is_high  -- not set
 
 
 -- vista dei mesi 
-drop view if exists v12months;
-create view v12months as 
+create or replace view v12months as 
 select cast(date_format(mese, '%Y-%m-01') as date) as first_day from 
 (select date_sub(now(), interval 0 month) as mese union all
 select date_sub(now(), interval 1 month)  as mese union all
@@ -83,10 +78,8 @@ select date_sub(now(), interval 10 month) as mese union all
 select date_sub(now(), interval 11 month) as mese) as v;
 
 -- vista limite inferiore 12 mesi fa, dal primo del mese
-drop view if exists day_minimun;
-create view day_minimun as 
-select min(first_day) as `day_min` from v12months;
-
+create or replace view day_minimun as 
+select min(first_day) as day_min from v12months;
 
 
 
