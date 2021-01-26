@@ -8,15 +8,15 @@ v.project_manager as "Project Manager",
 v.Site as "Site",
 concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/',v.id,'","',v.id,'")') as "Milestone Number",
 v.project as "Milastone Redmine Project", 
-v.subject as  "Milestone Name",
+convert(v.subject using ascii) as  "Milestone Name",
 v.assigned "Milestone Owner",
 v.assigned_team "Milestone Team Owner",
-v.description "Milestone Description",
+convert(v.description using ascii) "Milestone Description",
 v.status as "Status",
 v.due_date as "Due Date",
 v.closed_at as "Actual Date",
 concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/',v.container_id,'","',v.container_id,'")') as "Container ID",
-v.container as "Container"
+convert(v.container using ascii) as "Container"
 from redmine.issues i
 left join (
     select r.issue_to_id, -- relazione di partenza
