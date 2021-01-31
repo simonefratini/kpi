@@ -308,7 +308,7 @@ function close_bugs_root_cause (project_id,peso) {
             .entries(rows);
         // ordinamento per nome
         rows.sort(function (a,b) {
-            if (a.key > b.key) 
+            if (a.value > b.value) 
                 return 1;
             return -1;
         });
@@ -324,8 +324,7 @@ function close_bugs_root_cause (project_id,peso) {
         rows.forEach(function (e,index) {
             colonne.push(e.key);
             data.push(Math.round(100*(e.value/totale),1)); 
-            //data.push(e.value); 
-            backgroundColor.push("#" + Math.round(16777215*0.1+(index/count)*16777215*0.8).toString(16).padStart(6, '0'));
+            backgroundColor.push("#" + Math.round(16777215*0.05+(index/count)*16777215).toString(16).padStart(6, '0'));
 
         });
 
@@ -350,9 +349,14 @@ function close_bugs_root_cause (project_id,peso) {
             data: barChartData,
             options: {
                 title: { display: true, text: 'Closed bugs by root cause ' },
-                tooltips: { mode: 'index', intersect: false },
+                tooltips: { enabled: true },
                 responsive: true,
-            },
+                plugins: { datalabels: {
+                       formatter: (value, ctx) => { return value+"%";},
+                       color: '#fff'}
+                }
+            }
+
         });
         canvas.onclick = function(evt) {
             var activePoints = horizontalbar_close_bugs_root_cause.getElementsAtEvent(evt);
