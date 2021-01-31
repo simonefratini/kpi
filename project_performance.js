@@ -150,7 +150,7 @@ function monthly_performance_chart(project_id,is_high) {
                                 id: 'y-axis-2',
                                 gridLines: { display: false },
                                 scaleLabel: { display : true, labelString: 'Ratio'},
-                                ticks: { precision: 0 , min:0,  maxTicksLimit: 7, callback: function(value){return value+ "%"} }
+                                ticks: { precision: 0 , min:0,  maxTicksLimit: 5, callback: function(value){return value+ "%"} }
 
                             }, {
                                 stacked: true,

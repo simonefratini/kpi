@@ -308,19 +308,25 @@ function close_bugs_root_cause (project_id,peso) {
             .entries(rows);
         // ordinamento per nome
         rows.sort(function (a,b) {
-            if (a.key > b.key) 
+            if (a.value < b.value) 
                 return 1;
             return -1;
         });
         let colonne = [];
         let data = [];
+        let backgroundColor = [];
+        let count = Object.keys(rows).length;
+        let totale = 0; 
         rows.forEach(function (e) {
+            totale += e.value;
+        });
+        rows.forEach(function (e,index) {
             colonne.push(e.key);
-            data.push(e.value); 
+            data.push(Math.round(100*e.value/totale)); 
         });
         var barChartData = {
             labels: colonne,
-            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
+            datasets: [ { label: 'Root Cause Percentage',  data : data, backgroundColor : 'lightblue'}]
         };
         var canvas = document.getElementById('horizontalbar_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
@@ -329,9 +335,11 @@ function close_bugs_root_cause (project_id,peso) {
             data: barChartData,
             options: {
                 title: { display: true, text: 'Closed bugs by root cause ' },
-                tooltips: { mode: 'index', intersect: false },
+                tooltips: { mode: 'index', intersect: false ,
+                             callbacks: { label: function(tooltipItems, data) { return " "+tooltipItems.value+"%"} }
+                    },
                 responsive: true,
-                scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
+                scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7, callback: function(value){return value+ "%"}  },}],}
             }
         });
         canvas.onclick = function(evt) {
