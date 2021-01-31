@@ -314,25 +314,45 @@ function close_bugs_root_cause (project_id,peso) {
         });
         let colonne = [];
         let data = [];
+        let backgroundColor = [];
+        let count = Object.keys(rows).length;
+        let totale = 0; 
         rows.forEach(function (e) {
-            colonne.push(e.key);
-            data.push(e.value); 
+            totale += e.value;
         });
+
+        rows.forEach(function (e,index) {
+            colonne.push(e.key);
+            data.push(Math.round(100*(e.value/totale),1)); 
+            //data.push(e.value); 
+            backgroundColor.push("#" + Math.round(16777215*0.1+(index/count)*16777215*0.8).toString(16).padStart(6, '0'));
+
+        });
+
+        var colors = [];
+        while (colors.length < 100) {
+    do {
+        var color = Math.floor((Math.random()*1000000)+1);
+    } while (colors.indexOf(color) >= 0);
+    colors.push("#" + ("000000" + color.toString(16)).slice(-6));
+}
+
+
+        console.log(backgroundColor);
         var barChartData = {
             labels: colonne,
-            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : 'lightblue'}]
+            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : backgroundColor}]
         };
         var canvas = document.getElementById('horizontalbar_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
         horizontalbar_close_bugs_root_cause = new Chart(ctx, {
-            type: 'horizontalBar',
+            type: 'doughnut',
             data: barChartData,
             options: {
                 title: { display: true, text: 'Closed bugs by root cause ' },
                 tooltips: { mode: 'index', intersect: false },
                 responsive: true,
-                scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7 },}],}
-            }
+            },
         });
         canvas.onclick = function(evt) {
             var activePoints = horizontalbar_close_bugs_root_cause.getElementsAtEvent(evt);
