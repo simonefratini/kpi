@@ -338,6 +338,10 @@ function close_bugs_root_cause (project_id,peso) {
                 tooltips: { mode: 'index', intersect: false ,
                              callbacks: { label: function(tooltipItems, data) { return " "+tooltipItems.value+"%"} }
                     },
+                plugins: { datalabels: {
+                       formatter: (value, ctx) => { return value+"%";},
+                       color: 'black'}
+                },
                 responsive: true,
                 scales: { xAxes: [{ ticks: { precision: 0, min :0, maxTicksLimit: 7, callback: function(value){return value+ "%"}  },}],}
             }
