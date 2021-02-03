@@ -85,7 +85,7 @@ function openbugs(project_id, peso) {
                     if (status_id != '2' )
                         status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]="+status_id;
                     else
-                        status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]=2&v[status_id][]=3&v[status_id][]=4&v[status_id][]=7&v[status_id][]=8";
+                        status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]=2&v[status_id][]=3&v[status_id][]=4&v[status_id][]=8";
                     // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
                     var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
                     var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+status_filter+priority_filter);
@@ -251,17 +251,6 @@ function bugs_by_team (rows,project_id) {
                 var team = chartData.labels[idx];
                 var group_id = parseInt(groupArray.find( x => x.team == team).group_id);
                 var status_filter = "&f[]=status_id&op[status_id]=o"; // per adesso prendo tutti gli aperti
-                /*
-                var datasetIndex = activePoints[0]['_datasetIndex'];
-                var stato = chartData.datasets[0].label;
-                var status_id = Object.keys(issues_statues).find(key => issues_statues[key].label== stato);
-                // recupero pos nella barra TODO non funziona prende sempre posizione zero
-                // console.log(stato,status_id,datasetIndex,idx);
-                if (status_id != '2' )
-                    status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]="+status_id;
-                else
-                    status_filter = "&f[]=status_id&op[status_id]==&v[status_id][]=2&v[status_id][]=3&v[status_id][]=4&v[status_id][]=7&v[status_id][]=8";
-                */
                 var priority_filter='';
                 if (is_high)
                     var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
