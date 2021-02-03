@@ -308,7 +308,7 @@ function close_bugs_root_cause (project_id,peso) {
             .entries(rows);
         // ordinamento per nome
         rows.sort(function (a,b) {
-            if (a.value > b.value) 
+            if (a.value < b.value) 
                 return 1;
             return -1;
         });
@@ -318,14 +318,13 @@ function close_bugs_root_cause (project_id,peso) {
         let count = Object.keys(rows).length;
         let totale = 0; 
         rows.forEach(function (e) {
-            totale += e.value;
+            totale += 1;
         });
 
         rows.forEach(function (e,index) {
             colonne.push(e.key);
             data.push(Math.round(100*(e.value/totale),1)); 
-            backgroundColor.push("#" + Math.round(16777215*0.05+(index/count)*16777215).toString(16).padStart(6, '0'));
-
+            backgroundColor.push("hsl(" + Math.round(360 * index / totale) + ",80%,60%)");
         });
 
         var colors = [];
@@ -345,16 +344,21 @@ function close_bugs_root_cause (project_id,peso) {
         var canvas = document.getElementById('horizontalbar_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
         horizontalbar_close_bugs_root_cause = new Chart(ctx, {
-            type: 'doughnut',
+            type: 'pie',
             data: barChartData,
             options: {
-                title: { display: true, text: 'Closed bugs by root cause ' },
+                legend: { display: true, position: 'right' },
+                title: { display: true, text: 'Closed bugs by root cause' },
                 tooltips: { enabled: true },
                 responsive: true,
                 plugins: { datalabels: {
+                       borderRadius: 10,
+                       align: 'center',
+                       anchor: 'end',
                        formatter: (value, ctx) => { return value+"%";},
-                       color: '#fff'}
-                }
+                       backgroundColor: 'white', 
+                       color: 'black'}
+                },
             }
 
         });
