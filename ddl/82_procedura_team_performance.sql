@@ -44,6 +44,7 @@ select journalized_id as id ,
          and d.property = 'attr' 
          and d.prop_key = 'assigned_to_id' ) j on j.id = i.id        
 where i.tracker_id = 1  
+and i.status_id !=7 -- escludo gli on-hold
 and ((i.closed_on >= (select day_min from day_minimun) and s.is_closed=1) or s.is_closed=0)
 order by id, j.created_on;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;

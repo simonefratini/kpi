@@ -21,6 +21,7 @@ from redmine.issues i
 join redmine.issue_statuses s on i.status_id = s.id
 join vproject p on p.id = i.project_id
 where tracker_id = 1 -- tracker bugs
+and i.status_id !=7 -- escludo gli on-hold
 and s.is_closed=0 -- bugs open
 ) as v 
 left join vteam g on g.user_id = v.user_id

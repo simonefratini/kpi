@@ -24,6 +24,7 @@ join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
+and ri.status_id !=7 -- escludo gli on-hold
 and ri.created_on >= (select day_min from day_minimun) 
 group by p.project_id, y.is_high) as i on a.project_id = i.project_id and a.is_high =i.is_high
 left join (
@@ -36,6 +37,7 @@ join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where ri.tracker_id = 1 -- tracker bugs
+and ri.status_id !=7 -- escludo gli on-hold
 and s.is_closed=1
 and ri.created_on < (select day_min from day_minimun) 
 and ri.closed_on >= (select day_min from day_minimun) -- debole potrebbe essere stato riaperto
@@ -50,6 +52,7 @@ join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where tracker_id = 1 -- tracker bugs
+and ri.status_id !=7 -- escludo gli on-hold
 and ri.created_on >= (select day_min from day_minimun) 
 and s.is_closed=1
 group by p.project_id, y.is_high) as tm on a.project_id = tm.project_id and a.is_high =tm.is_high
@@ -76,5 +79,6 @@ join redmine.issue_statuses s on ri.status_id=s.id
 join vpriority y on ri.priority_id = y.priority_id
 join vproject p on p.id = ri.project_id
 where tracker_id = 1 -- tracker bugs
+and ri.status_id !=7 -- escludo gli on-hold
 and s.is_closed=1
 group by p.project_id, y.is_high) as z on a.project_id = z.project_id and a.is_high = z.is_high
