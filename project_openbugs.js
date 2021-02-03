@@ -317,14 +317,16 @@ function close_bugs_root_cause (project_id,peso) {
         let backgroundColor = [];
         let count = Object.keys(rows).length;
         let totale = 0; 
+        let cardinalita = 0
         rows.forEach(function (e) {
-            totale += 1;
+            totale += e.value;
+            cardinalita++;
         });
 
         rows.forEach(function (e,index) {
             colonne.push(e.key);
             data.push(Math.round(100*(e.value/totale),1)); 
-            backgroundColor.push("hsl(" + Math.round(360 * index / totale) + ",80%,60%)");
+            backgroundColor.push("hsl(" + Math.round(360 * index / cardinalita) + ",80%,60%)");
         });
 
         var colors = [];
