@@ -14,7 +14,7 @@ v.assigned_team "Milestone Team Owner",
 convert(v.description using ascii) "Milestone Description",
 v.status as "Status",
 v.due_date as "Due Date",
-v.closed_at as "Actual Date",
+date(v.closed_at) as "Actual Date",
 concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/',v.container_id,'","',v.container_id,'")') as "Container ID",
 convert(v.container using ascii) as "Container"
 from redmine.issues i
