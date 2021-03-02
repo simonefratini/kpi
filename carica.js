@@ -16,6 +16,7 @@ var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
 var horizontalbar_bugs_by_team = null;
 var horizontalbar_close_bugs_root_cause = null;
+var horizontalbar_close_bugs_root_cause_DVT = null;
 
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
@@ -109,6 +110,8 @@ function popola_bugs(pid, is_high) {
         horizontalbar_bugs_by_team.destroy();
     if (horizontalbar_close_bugs_root_cause != undefined)
         horizontalbar_close_bugs_root_cause.destroy();
+    if (horizontalbar_close_bugs_root_cause_DVT != undefined)
+        horizontalbar_close_bugs_root_cause_DVT.destroy();
     openbugs(pid,is_high);
     getTimestamp();
 }
