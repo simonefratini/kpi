@@ -15,8 +15,8 @@ var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
 var horizontalbar_bugs_by_team = null;
-var horizontalbar_close_bugs_root_cause = null;
-var horizontalbar_close_bugs_root_cause_DVT = null;
+var torta_close_bugs_root_cause = null;
+var torta_close_bugs_root_cause_DVT = null;
 
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
@@ -108,10 +108,10 @@ function popola_bugs(pid, is_high) {
         doughnut_bugs_priority.destroy();
     if (horizontalbar_bugs_by_team != undefined)
         horizontalbar_bugs_by_team.destroy();
-    if (horizontalbar_close_bugs_root_cause != undefined)
-        horizontalbar_close_bugs_root_cause.destroy();
-    if (horizontalbar_close_bugs_root_cause_DVT != undefined)
-        horizontalbar_close_bugs_root_cause_DVT.destroy();
+    if (torta_close_bugs_root_cause != undefined)
+        torta_close_bugs_root_cause.destroy();
+    if (torta_close_bugs_root_cause_DVT != undefined)
+        torta_close_bugs_root_cause_DVT.destroy();
     openbugs(pid,is_high);
     getTimestamp();
 }

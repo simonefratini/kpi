@@ -342,9 +342,9 @@ function close_bugs_root_cause (project_id,peso) {
             labels: colonne,
             datasets: [ { label: 'Close bugs',  data : percentRound(data,0), backgroundColor : backgroundColor}]
         };
-        var canvas = document.getElementById('horizontalbar_close_bugs_root_cause');
+        var canvas = document.getElementById('torta_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
-        horizontalbar_close_bugs_root_cause = new Chart(ctx, {
+        torta_close_bugs_root_cause = new Chart(ctx, {
             type: 'pie',
             data: barChartData,
             options: {
@@ -364,7 +364,7 @@ function close_bugs_root_cause (project_id,peso) {
 
         });
         canvas.onclick = function(evt) {
-            var activePoints = horizontalbar_close_bugs_root_cause.getElementsAtEvent(evt);
+            var activePoints = torta_close_bugs_root_cause.getElementsAtEvent(evt);
             if (activePoints[0]) {
                 var chartData = activePoints[0]['_chart'].config.data;
                 var idx = activePoints[0]['_index'];
@@ -455,9 +455,9 @@ function close_bugs_root_cause_DVT (project_id,peso) {
             labels: colonne,
             datasets: [ { label: '',  data : percentRound(data), backgroundColor : backgroundColor}]
         };
-        var canvas = document.getElementById('horizontalbar_close_bugs_root_cause_DVT');
+        var canvas = document.getElementById('torta_close_bugs_root_cause_DVT');
         var ctx = canvas.getContext('2d');
-        horizontalbar_close_bugs_root_cause_DVT = new Chart(ctx, {
+        torta_close_bugs_root_cause_DVT = new Chart(ctx, {
             type: 'pie',
             data: barChartData,
             options: {
@@ -477,7 +477,7 @@ function close_bugs_root_cause_DVT (project_id,peso) {
 
         });
         canvas.onclick = function(evt) {
-            var activePoints = horizontalbar_close_bugs_root_cause_DVT.getElementsAtEvent(evt);
+            var activePoints = torta_close_bugs_root_cause_DVT.getElementsAtEvent(evt);
             if (activePoints[0]) {
                 var chartData = activePoints[0]['_chart'].config.data;
                 var idx = activePoints[0]['_index'];
