@@ -34,8 +34,11 @@ function openbugs(project_id, peso) {
         // uso il filtrato per la ciambella dei bugs di solo develpoment
         peso_bugs(rows,project_id);
         bugs_by_team(rows,project_id);
-        if (project_id != 0 ) 
+        if (project_id != 0 ) { 
             close_bugs_root_cause(project_id,peso);
+            close_bugs_root_cause_DVT(project_id,peso)
+        }
+            
         // aggregazione di tutti i progetti sulla data
         rows = d3.nest()
             .key(function(d) { return d.stato;})
@@ -308,8 +311,6 @@ function close_bugs_root_cause (project_id,peso) {
         if (project_id=367) {
             const regex= /^(?!DVT)/i;
             rows = rows.filter(function(d) { return (d.key.match(regex))});
-
-            close_bugs_root_cause_DVT(project_id,tutti);
         }
 
         let colonne = [];
@@ -324,7 +325,7 @@ function close_bugs_root_cause (project_id,peso) {
 
         rows.forEach(function (e,index) {
             colonne.push(e.key);
-            data.push(Math.round(100*(e.value/totale),1)); 
+            data.push(e.value); 
             backgroundColor.push("hsl(" + Math.round(360 * index / cardinalita) + ",80%,60%)");
         });
 
@@ -339,7 +340,7 @@ function close_bugs_root_cause (project_id,peso) {
 
         var barChartData = {
             labels: colonne,
-            datasets: [ { label: 'Close bugs',  data : data, backgroundColor : backgroundColor}]
+            datasets: [ { label: 'Close bugs',  data : percentRound(data,0), backgroundColor : backgroundColor}]
         };
         var canvas = document.getElementById('horizontalbar_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
@@ -384,94 +385,116 @@ function close_bugs_root_cause (project_id,peso) {
     });
 }
 
-function close_bugs_root_cause_DVT (project_id,righe) {
+function close_bugs_root_cause_DVT (project_id,peso) {
 
-    const regex= /^(?!DVT)/i;
-    righe.forEach(function (item, index) {
-        if (item.key.match(regex))
-            righe[index].key='Other Causes';
-    });
+    if (project_id!=367) 
+        return false;
+
+    let url = datasource_path+'close_bugs_root_cause.json';
+    fetch(url).then(response => response.json()).then(function (rows) {
+        // filtro sul progetto 
+        rows = rows.filter(function(d) { return d.project_id == project_id; })
+        if (peso)
+            // filtro sul peso  high=5, urgent = 6 and immediate = 7 //
+            rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
+        // aggregazione di tutti i progetti sulla causa 
+        rows = d3.nest()
+            .key(function(d) { return d.cause;})
+            .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+            .entries(rows);
+        // ordinamento per nome
+        rows.sort(function (a,b) {
+            if (a.value < b.value) 
+                return 1;
+            return -1;
+        });
+
+        const regex= /^(?!DVT)/i;
     
-
-    // tutto quello che non e' DVT deve essere aggregato
-    righe = d3.nest().key(function(d) { return d.key;})
+        rows.forEach(function (item, index) {
+            if (item.key.match(regex))
+                rows[index].key='Other Causes';
+        });
+        // tutto quello che non e' DVT deve essere aggregato
+        rows = d3.nest().key(function(d) { return d.key;})
             .rollup(function(v) { return d3.sum(v, function(d) { return d.value;})}) 
-            .entries(righe);
-    // ordinamento per nome
-    righe.sort(function (a,b) {
-        if (a.value < b.value) 
-            return 1;
-        return -1;
-    });
+            .entries(rows);
+        // ordinamento per nome
+        rows.sort(function (a,b) {
+            if (a.value < b.value) 
+                return 1;
+            return -1;
+        });
 
-    let colonne2 = [];
-    let data2 = [];
-    let backgroundColor = [];
-    let totale = 0; 
-    let cardinalita = 0
-    righe.forEach(function (e) {
-        totale += e.value;
-        cardinalita++;
-    });
+        let colonne = [];
+        let data = [];
+        let backgroundColor = [];
+        let totale = 0; 
+        let cardinalita = 0
+        rows.forEach(function (e) {
+            totale += e.value;
+            cardinalita++;
+        });
 
-    righe.forEach(function (e,index) {
-        colonne2.push(e.key);
-        data2.push(Math.round(100*(e.value/totale),8)); 
-        backgroundColor.push("hsl(" + Math.round(360 * index / cardinalita) + ",80%,60%)");
-    });
+        rows.forEach(function (e,index) {
+            colonne.push(e.key);
+            data.push(e.value);
+            backgroundColor.push("hsl(" + Math.round(360 * index / cardinalita) + ",80%,60%)");
+        });
 
 
-    var colors = [];
-    while (colors.length < 100) {
-        do {
-            var color = Math.floor((Math.random()*1000000)+1);
-        } while (colors.indexOf(color) >= 0);
-        colors.push("#" + ("000000" + color.toString(16)).slice(-6));
-    }
-
-    var barChartData2 = {
-        labels: colonne2,
-        datasets: [ { label: 'qualcosa',  data : data2, backgroundColor : backgroundColor}]
-    };
-    var canvas = document.getElementById('horizontalbar_close_bugs_root_cause_DVT');
-    var ctx = canvas.getContext('2d');
-    horizontalbar_close_bugs_root_cause_DVT = new Chart(ctx, {
-        type: 'pie',
-        data: barChartData2,
-        options: {
-            legend: { display: true, position: 'right' },
-            title: { display: true, text: 'Closed bugs by root cause DVT' },
-            tooltips: { enabled: true },
-            responsive: true,
-            plugins: { datalabels: {
-                borderRadius: 10,
-                align: 'center',
-                anchor: 'end',
-                formatter: (value, ctx) => { return value+"%";},
-                backgroundColor: 'white', 
-                color: 'black'}
-            },
+        var colors = [];
+        while (colors.length < 100) {
+            do {
+                var color = Math.floor((Math.random()*1000000)+1);
+            } while (colors.indexOf(color) >= 0);
+            colors.push("#" + ("000000" + color.toString(16)).slice(-6));
         }
 
+        var barChartData = {
+            labels: colonne,
+            datasets: [ { label: '',  data : percentRound(data), backgroundColor : backgroundColor}]
+        };
+        var canvas = document.getElementById('horizontalbar_close_bugs_root_cause_DVT');
+        var ctx = canvas.getContext('2d');
+        horizontalbar_close_bugs_root_cause_DVT = new Chart(ctx, {
+            type: 'pie',
+            data: barChartData,
+            options: {
+                legend: { display: true, position: 'right' },
+                title: { display: true, text: 'Closed bugs by root cause DVT' },
+                tooltips: { enabled: true },
+                responsive: true,
+                plugins: { datalabels: {
+                    borderRadius: 10,
+                    align: 'center',
+                    anchor: 'end',
+                    formatter: (value, ctx) => { return value+"%";},
+                    backgroundColor: 'white', 
+                    color: 'black'}
+                },
+            }
+
+        });
+        canvas.onclick = function(evt) {
+            var activePoints = horizontalbar_close_bugs_root_cause_DVT.getElementsAtEvent(evt);
+            if (activePoints[0]) {
+                var chartData = activePoints[0]['_chart'].config.data;
+                var idx = activePoints[0]['_index'];
+                var cf_32 = chartData.labels[idx];
+                // root cause e' cf_32
+                var priority_filter='';
+                if (is_high)
+                    var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
+                var root_cause_filter = "&f[]=cf_32&op[cf_32]==&v[cf_32][]="+cf_32;
+                // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
+                var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
+                // voglio anche che siano chiusi 
+                tracker_filter += "&f[]=status_id&op[status_id]=c";
+                var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+root_cause_filter+priority_filter);
+                window.open(url,'_blank');
+            }
+        };
     });
-    canvas.onclick = function(evt) {
-        var activePoints = horizontalbar_close_bugs_root_cause_DVT.getElementsAtEvent(evt);
-        if (activePoints[0]) {
-            var chartData = activePoints[0]['_chart'].config.data;
-            var idx = activePoints[0]['_index'];
-            var cf_32 = chartData.labels[idx];
-            // root cause e' cf_32
-            var priority_filter='';
-            if (is_high)
-                var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
-            var root_cause_filter = "&f[]=cf_32&op[cf_32]==&v[cf_32][]="+cf_32;
-            // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
-            var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
-            // voglio anche che siano chiusi 
-            tracker_filter += "&f[]=status_id&op[status_id]=c";
-            var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+root_cause_filter+priority_filter);
-            window.open(url,'_blank');
-        }
-    };
 }
 
