@@ -410,10 +410,12 @@ function close_bugs_root_cause_DVT (project_id,peso) {
         });
 
         const regex= /^(?!DVT)/i;
+        const label_altre_cause = 'Other Causes'
     
         rows.forEach(function (item, index) {
             if (item.key.match(regex))
-                rows[index].key='Other Causes';
+                rows[index].key=label_altre_cause;
+
         });
         // tutto quello che non e' DVT deve essere aggregato
         rows = d3.nest().key(function(d) { return d.key;})
@@ -482,17 +484,20 @@ function close_bugs_root_cause_DVT (project_id,peso) {
                 var chartData = activePoints[0]['_chart'].config.data;
                 var idx = activePoints[0]['_index'];
                 var cf_32 = chartData.labels[idx];
-                // root cause e' cf_32
-                var priority_filter='';
-                if (is_high)
-                    var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
-                var root_cause_filter = "&f[]=cf_32&op[cf_32]==&v[cf_32][]="+cf_32;
-                // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
-                var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
-                // voglio anche che siano chiusi 
-                tracker_filter += "&f[]=status_id&op[status_id]=c";
-                var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+root_cause_filter+priority_filter);
-                window.open(url,'_blank');
+                // faccio il click solo su root cause vere
+                if (cf_32 != label_altre_cause) {
+                    // root cause e' cf_32
+                    var priority_filter='';
+                    if (is_high)
+                        var priority_filter = "&f[]=priority_id&op[priority_id]==&v[priority_id][]=5&v[priority_id][]=6&v[priority_id][]=7";
+                    var root_cause_filter = "&f[]=cf_32&op[cf_32]==&v[cf_32][]="+cf_32;
+                    // causa filtri multipli sembra necessario anche sul tracker anche se e' sempre bugs=1
+                    var tracker_filter= "&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]=1";
+                    // voglio anche che siano chiusi 
+                    tracker_filter += "&f[]=status_id&op[status_id]=c";
+                    var url=redmine_url+"/projects/"+project_id+encodeURI("/issues?set_filter=1"+tracker_filter+root_cause_filter+priority_filter);
+                    window.open(url,'_blank');
+                }
             }
         };
     });
