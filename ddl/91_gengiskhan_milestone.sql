@@ -1,7 +1,7 @@
 create or replace view gengiskhan_milestone as
 select 
-if (isnull(i.due_date),'MILESTONE - TBA',
-concat('=HYPERLINK("http://monitoring-helpdesk.fimer.com/issues/',i.id,'","',date_format(i.due_date,"MILESTONE - %M %Y"),'")')) as "Month",
+
+as "Month",
 p.project_alias as "Project",
 p.WBS as "WBS",
 p.LOB as "LOB",
@@ -24,7 +24,7 @@ join vproject_custom p on p.project_id=i.project_id
 left join redmine.issues ct on ct.id=i.parent_id and ct.tracker_id = 4                 
 left join redmine.users u on u.id=i.assigned_to_id
 left join kpi.vteam t on t.user_id = i.assigned_to_id    
-where i.project_id in (384,403,406) -- ECL Gengiskhan
+where i.project_id in (384,406) -- ECL Gengiskhan
 and i.tracker_id = 2 -- feature
 order by i.due_date
 
