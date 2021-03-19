@@ -80,6 +80,12 @@ $query='select * from ecl_milestone';
 sql2jsonfile($dao,$query,$output_path.'ecl_milestone.json');
 sql2excel($dao,$query,$output_path.'ecl_milestone.xlsx');
 // #################################
+// estrazione progetti gengiskhan unica cella con json formattato
+// #################################
+$query='select * from gengiskhan_milestone';
+sql2jsonfile($dao,$query,$output_path.'gengiskhan_milestone.json');
+sql2excel($dao,$query,$output_path.'gengiskhan_milestone.xlsx');
+// #################################
 // performance mensili per team 
 // prima occorre lanciare la stored procedure
 // #################################
