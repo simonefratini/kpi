@@ -25,6 +25,7 @@ left join redmine.issues ct on ct.id=i.parent_id and ct.tracker_id = 4
 left join redmine.users u on u.id=i.assigned_to_id
 left join kpi.vteam t on t.user_id = i.assigned_to_id    
 where i.project_id in (384,403,406) -- ECL Gengiskhan
+and i.tracker_id = 2 -- feature
 order by i.due_date
 
     
