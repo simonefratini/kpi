@@ -14,6 +14,25 @@ let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
     '2': { label:'Being Fixed', color: chartColors.yellow}
 }
 
+let root_cause_tooltip =  {
+ "Component Issue": "sporadic failure (evento singolo o sporadico su singolo componente per cui si ritiene che rientri nelle tipiche statistiche di failure)"
+,"Connectivity": "Team"
+,"Customer Induced": "tampering, wrong use, NDF"
+,"DVT Functional": "Team"
+,"DVT Integration": "Team"
+,"DVT Reliability": "Team"
+,"Digital Hardware": "Team"
+,"Embedded Control-Firmware": "Team"
+,"Marketing": "Team"
+,"Mechanical Designer": "Team"
+,"Power Hardware": "Team"
+,"Process Issue":"incoming, handling, soldering, assembly, testing, packaging"
+,"Product Engineering": "Team"
+,"Project Management": "Team"
+,"Quality & Failure Analysis": "Team"
+,"Sourcing Issue":"obsolescence, deviations, abandoned vendors"
+,"Vendor Issue":"systematic, epidemic, relationship"
+}
 
 // locale?
 var redmine_url = 'http://'+location.hostname;
@@ -348,7 +367,26 @@ function close_bugs_root_cause (project_id,peso) {
             type: 'pie',
             data: barChartData,
             options: {
-                legend: { display: true, position: 'right' },
+                legend: {
+                    position: 'right',
+                    onHover: function(event, legendItem) {
+                        console.log(legendItem);
+                        let chart = this.chart;
+                        let index = legendItem.index;
+                        let segment = chart.getDatasetMeta(0).data[index];
+                        chart.tooltip._active = [segment]
+                        chart.tooltip.update()
+                        chart.draw()
+                    },
+                    onLeave: function() {
+                        let chart = this.chart;
+                        chart.tooltip._active = []
+                        chart.tooltip.update()
+                        chart.draw()
+                    }
+                },
+
+
                 title: { display: true, text: 'Closed bugs by root cause' },
                 tooltips: { enabled: true },
                 responsive: true,
