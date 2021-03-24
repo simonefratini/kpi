@@ -15,23 +15,24 @@ let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
 }
 
 let root_cause_tooltip =  {
- "Component Issue": "sporadic failure (evento singolo o sporadico su singolo componente per cui si ritiene che rientri nelle tipiche statistiche di failure)"
-,"Connectivity": "Team"
-,"Customer Induced": "tampering, wrong use, NDF"
-,"DVT Functional": "Team"
-,"DVT Integration": "Team"
-,"DVT Reliability": "Team"
-,"Digital Hardware": "Team"
-,"Embedded Control-Firmware": "Team"
-,"Marketing": "Team"
-,"Mechanical Designer": "Team"
-,"Power Hardware": "Team"
-,"Process Issue":"incoming, handling, soldering, assembly, testing, packaging"
-,"Product Engineering": "Team"
-,"Project Management": "Team"
-,"Quality & Failure Analysis": "Team"
-,"Sourcing Issue":"obsolescence, deviations, abandoned vendors"
-,"Vendor Issue":"systematic, epidemic, relationship"
+ "Not Set": "Root Cause not set"
+,"Component Issue": " It is sporadic failure"
+,"Connectivity": "It is a team cause"
+,"Customer Induced": "Tampering, wrong use or NDF"
+,"DVT Functional": "It is a team cause"
+,"DVT Integration": "It is a team cause"
+,"DVT Reliability": "It is a team cause"
+,"Digital Hardware": "It is a team cause"
+,"Embedded Control-Firmware": "It is a team cause"
+,"Marketing": "It is a team cause"
+,"Mechanical Designer": "It is a team cause"
+,"Power Hardware": "It is a team cause"
+,"Process Issue":"Incoming, handling, soldering, assembly, testing, packaging"
+,"Product Engineering": "It is a team cause"
+,"Project Management": "It is a team cause"
+,"Quality & Failure Analysis": "It is a team cause"
+,"Sourcing Issue":"Obsolescence, deviations, abandoned vendors"
+,"Vendor Issue":" Systematic, epidemic, relationship"
 }
 
 // locale?
@@ -363,6 +364,9 @@ function close_bugs_root_cause (project_id,peso) {
         };
         var canvas = document.getElementById('torta_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
+        let hovering = false;
+        let tooltip = document.getElementById("legendRootCause"),
+
         torta_close_bugs_root_cause = new Chart(ctx, {
             type: 'pie',
             data: barChartData,
@@ -370,19 +374,18 @@ function close_bugs_root_cause (project_id,peso) {
                 legend: {
                     position: 'right',
                     onHover: function(event, legendItem) {
-                        console.log(legendItem);
-                        let chart = this.chart;
-                        let index = legendItem.index;
-                        let segment = chart.getDatasetMeta(0).data[index];
-                        chart.tooltip._active = [segment]
-                        chart.tooltip.update()
-                        chart.draw()
+                        if (hovering) {
+                         return;
+                        }
+                        hovering = true;
+                    console.log(event);
+                        tooltip.innerHTML = root_cause_tooltip[legendItem.text];
+                        tooltip.style.left = (event.layerX+30) + "px"; 
+                        tooltip.style.top = (event.layerY-30) +"px";
                     },
                     onLeave: function() {
-                        let chart = this.chart;
-                        chart.tooltip._active = []
-                        chart.tooltip.update()
-                        chart.draw()
+                        hovering = false;
+                        tooltip.innerHTML = "";
                     }
                 },
 

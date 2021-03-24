@@ -37,6 +37,13 @@
     <style>
 /* beta banner */
 body:after{ content: "v=00F"; position: fixed; width: 80px; height: 25px; background: #231964; top: 7px; left: -20px; text-align: center; font-size: 13px; font-family: sans-serif;  font-weight: bold; color: #FFF014; line-height: 27px; transform:rotate(-45deg); }
+
+#legendRootCause {
+  background-color: #001;
+  color: #fff;
+  position: absolute;
+}
+
     </style>
 </head>
 <body onload="start()">
@@ -106,12 +113,15 @@ body:after{ content: "v=00F"; position: fixed; width: 80px; height: 25px; backgr
                 <div class="row">
                     <div class="col-8">
                         <canvas id="torta_close_bugs_root_cause"></canvas>    
+                        <div id="legendRootCause"  ></div>
+
                     </div>
                 </div>
                 <hr>
                 <div class="row">
                     <div class="col-8">
                         <canvas id="torta_close_bugs_root_cause_DVT"></canvas>    
+                        
                     </div>
                 </div>
                 <!-- fine riga con grafici progetti-->
