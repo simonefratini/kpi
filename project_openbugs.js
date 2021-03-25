@@ -15,10 +15,10 @@ let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
 }
 
 let root_cause_tooltip =  {
- "Not Set": "Root Cause not set"
-,"Component Issue": " It is sporadic failure"
+ "Not Set": "Cause not set"
+,"Component Issue": "It is 6&sigma; failure (sporadic, occasional, etc) "
 ,"Connectivity": "It is a team cause"
-,"Customer Induced": "Tampering, wrong use or NDF"
+,"Customer Induced": "Tampering, wrong use or no detect found"
 ,"DVT Functional": "It is a team cause"
 ,"DVT Integration": "It is a team cause"
 ,"DVT Reliability": "It is a team cause"
@@ -32,7 +32,7 @@ let root_cause_tooltip =  {
 ,"Project Management": "It is a team cause"
 ,"Quality & Failure Analysis": "It is a team cause"
 ,"Sourcing Issue":"Obsolescence, deviations, abandoned vendors"
-,"Vendor Issue":" Systematic, epidemic, relationship"
+,"Vendor Issue":"Systematic, epidemic, relationship"
 }
 
 // locale?
@@ -54,7 +54,15 @@ function openbugs(project_id, peso) {
         // uso il filtrato per la ciambella dei bugs di solo develpoment
         peso_bugs(rows,project_id);
         bugs_by_team(rows,project_id);
+        if (document.contains(document.getElementById("legendRootCause"))) {
+            document.getElementById("legendRootCause").remove();
+        }
         if (project_id != 0 ) { 
+            // aggiungo il div per il tooltip della legenda
+            var tooltip = document.createElement("div");
+            tooltip.setAttribute( 'id', 'legendRootCause' );
+            var e =  document.getElementById('divTortaCloseBug');
+            e.appendChild(tooltip);
             close_bugs_root_cause(project_id,peso);
             close_bugs_root_cause_DVT(project_id,peso)
         }
@@ -327,11 +335,12 @@ function close_bugs_root_cause (project_id,peso) {
 
          
         // filtro sul nome della colonna DVT...
-        var tutti = rows;
-        if (project_id=367) {
-            const regex= /^(?!DVT)/i;
-            rows = rows.filter(function(d) { return (d.key.match(regex))});
-        }
+        // quando il cini cambia idea a giorni dispari senza quarti di luna 
+        //var tutti = rows;
+        //if (project_id=367) {
+        //    const regex= /^(?!DVT)/i;
+        //    rows = rows.filter(function(d) { return (d.key.match(regex))});
+        //}
 
         let colonne = [];
         let data = [];
@@ -364,8 +373,8 @@ function close_bugs_root_cause (project_id,peso) {
         };
         var canvas = document.getElementById('torta_close_bugs_root_cause');
         var ctx = canvas.getContext('2d');
+        let tooltip = document.getElementById("legendRootCause");
         let hovering = false;
-        let tooltip = document.getElementById("legendRootCause"),
 
         torta_close_bugs_root_cause = new Chart(ctx, {
             type: 'pie',
@@ -378,7 +387,6 @@ function close_bugs_root_cause (project_id,peso) {
                          return;
                         }
                         hovering = true;
-                    console.log(event);
                         tooltip.innerHTML = root_cause_tooltip[legendItem.text];
                         tooltip.style.left = (event.layerX+30) + "px"; 
                         tooltip.style.top = (event.layerY-30) +"px";

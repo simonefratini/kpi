@@ -108,7 +108,7 @@ function popola_bugs(pid, is_high) {
         doughnut_bugs_priority.destroy();
     if (horizontalbar_bugs_by_team != undefined)
         horizontalbar_bugs_by_team.destroy();
-    if (torta_close_bugs_root_cause != undefined)
+    if (torta_close_bugs_root_cause != undefined) 
         torta_close_bugs_root_cause.destroy();
     if (torta_close_bugs_root_cause_DVT != undefined)
         torta_close_bugs_root_cause_DVT.destroy();
