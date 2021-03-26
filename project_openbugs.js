@@ -16,7 +16,8 @@ let issues_statues = { // questi sono i raggruppamenti degli stati di redmine
 
 let root_cause_tooltip =  {
  "Not Set": "Cause not set"
-,"Component Issue": "It is 6&sigma; failure (sporadic, occasional, etc) "
+,"Component Issue": "It is six-sigma failure (sporadic, occasional, etc) "
+
 ,"Connectivity": "It is a team cause"
 ,"Customer Induced": "Tampering, wrong use or no detect found"
 ,"DVT Functional": "It is a team cause"
