@@ -164,6 +164,7 @@ body:after{ content: "v=00F"; position: fixed; width: 80px; height: 25px; backgr
                                 </tr>
                             </thead>
                         </table>
+                        <canvas id="doughnut_author_bugs_open"></canvas><hr>
                     </div>
                 </div>
              <!-- fine riga con grafici TEAM-->
@@ -221,10 +222,10 @@ body:after{ content: "v=00F"; position: fixed; width: 80px; height: 25px; backgr
                 <h5>filter</h5>
                 <ul class="small font-italic">
                     <li>Priority &GreaterEqual; High, for every bugs is used the actual priority value </li>
-                    <li>Almost average is sample average </li>
+                    <li>Most of averages are <b>sample</b> averages </li>
                     <ul>
-                        <li>Are not sample, when filter is high and project or team is set</li>
-                        <li>Standard Error is sample standard deviation, useful because is not a normal distribution with constant variance for sample months</li>
+                        <li>Are not sample averages but actual when "Priority&GreaterEqual;High" is checked and is set project or team</li>
+                        <li>Standard error is <b>sample</b> standard deviation, useful because data are not a normal distribuited with constant variance for sample months</li>
                     </ul>
                     </li>
                     <li>

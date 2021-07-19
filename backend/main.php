@@ -97,6 +97,10 @@ sql2jsonfile($dao,$query,$output_path.'team_performance.json');
 //# aggregazione 
 $query='select * from team_performance_annuale';
 sql2jsonfile($dao,$query,$output_path.'team_performance_annuale.json');
+
+//# bug aperti dal team  
+$query='select * from team_author_open_bugs';
+sql2jsonfile($dao,$query,$output_path.'team_author_open_bugs.json');
 //# Salvo il timestamp dell'estrazioni in formato json
 $query='select date_format(now(),"%Y-%m-%d %h:%i %p") as timestamp';
 sql2jsonfile($dao,$query,$output_path.'timestamp.json');

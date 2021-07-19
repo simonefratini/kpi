@@ -381,3 +381,53 @@ function summarizedPercent(value) {
 }
 
 
+function authorOpenBugs(group_id,peso) {
+    if (group_id != 0  ) {
+        let url = datasource_path+'team_author_open_bugs.json';
+        fetch(url).then(response => response.json())
+            .then( function (rows) {
+                // filtro sul team 
+                rows = rows.filter(function(d) { return d.group_id == group_id; })
+                if (peso)
+                    // filtro sul peso  
+                    // high=5, urgent = 6 and immediate = 7 //
+                    rows = rows.filter(function(d) { return (d.peso >=5 &&  d.peso <=7)})
+                // uso il filtrato per la ciambella dei bugs di solo develpoment
+                //peso_bugs(rows,project_id);
+
+                // aggregazione di tutti i progetti sulla data
+                rows = d3.nest()
+                    .key(function(d) { return d.stato;})
+                    .rollup(function(v) { return d3.sum(v, function(d) { return d.bugs;})}) 
+                    .entries(rows)
+                let colonne = [];
+                let data = [];
+                let backgroundColor  = [];
+                let totale= 0;
+                //
+                rows.forEach(function (e) {
+                    colonne.push(issues_statues[e.key].label);
+                    data.push(e.value); 
+                    backgroundColor.push(issues_statues[e.key].color);
+                    totale += parseInt(e.value);
+                });
+
+                var canvas = document.getElementById('doughnut_author_bugs_open');
+                var ctx = canvas.getContext('2d');
+                doughnut_author_bugs_open = new Chart(ctx, {
+                    type: 'doughnut',    
+                    data: { datasets : [ { data : data, backgroundColor: backgroundColor } ], labels: colonne },
+                    options: {
+                        title: { display: true, text: 'Open bugs reported by team' },
+                        responsive: true,
+                        tooltips: { mode: 'label' },
+                        plugins : {
+                            datalabels : { render: 'value', font: { size: '20' }, },
+                            doughnutlabel: { labels: [ { text: totale, font: { size: '30' } }, ] },
+                        }
+                    }
+                });
+            });
+    }
+}
+

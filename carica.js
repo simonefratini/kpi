@@ -14,6 +14,7 @@ var bar_team_performance = null;
 var bar_team_latency = null;
 var doughnut_bugs_open_by_status = null;
 var doughnut_bugs_priority = null;
+var doughnut_author_bugs_open = null;
 var horizontalbar_bugs_by_team = null;
 var torta_close_bugs_root_cause = null;
 var torta_close_bugs_root_cause_DVT = null;
@@ -123,6 +124,7 @@ function popola_project(pid, is_high) {
         bar_bugs_average_to_close.destroy();
     monthly_performance_chart(pid, is_high);
     yearly_performance(pid, is_high);
+
 }
 
 function popola_team(gid, is_high) {
@@ -130,8 +132,11 @@ function popola_team(gid, is_high) {
         bar_team_performance.destroy();
     if (bar_team_latency != undefined)
         bar_team_latency.destroy();
+    if (doughnut_author_bugs_open != undefined)
+        doughnut_author_bugs_open.destroy();
     team_performance_chart(gid, is_high);
     team_performance_annuale(gid, is_high);
+    authorOpenBugs(gid,is_high);
 }
 
 function getTimestamp() {
