@@ -18,6 +18,7 @@ var doughnut_author_bugs_open = null;
 var horizontalbar_bugs_by_team = null;
 var torta_close_bugs_root_cause = null;
 var torta_close_bugs_root_cause_DVT = null;
+var torta_close_bugs_root_cause_by_author_team = null;
 
 
 // funzione per generare un numero random per forzare il reload delle chiamate con fetch
@@ -134,9 +135,12 @@ function popola_team(gid, is_high) {
         bar_team_latency.destroy();
     if (doughnut_author_bugs_open != undefined)
         doughnut_author_bugs_open.destroy();
+    if (torta_close_bugs_root_cause_by_author_team != undefined)
+        torta_close_bugs_root_cause_by_author_team.destroy();
     team_performance_chart(gid, is_high);
     team_performance_annuale(gid, is_high);
     authorOpenBugs(gid,is_high);
+    close_bugs_root_cause_vs_author_team(gid,is_high);
 }
 
 function getTimestamp() {

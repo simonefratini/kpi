@@ -101,6 +101,10 @@ sql2jsonfile($dao,$query,$output_path.'team_performance_annuale.json');
 //# bug aperti dal team  
 $query='select * from team_author_open_bugs';
 sql2jsonfile($dao,$query,$output_path.'team_author_open_bugs.json');
+# bug chiusi root cause vs team autore 
+$query='select * from close_bugs_root_cause_vs_author_team';
+sql2jsonfile($dao,$query,$output_path.'close_bugs_root_cause_vs_author_team.json');
+# 
 //# Salvo il timestamp dell'estrazioni in formato json
 $query='select date_format(now(),"%Y-%m-%d %h:%i %p") as timestamp';
 sql2jsonfile($dao,$query,$output_path.'timestamp.json');
