@@ -23,12 +23,12 @@ function monthly_performance_chart(project_id,is_high) {
         },
         {
             column: 'ratio',
-            name: 'Ratio (b)/(d)',
+            name: 'Ratio (d)/(b)',
             color: 'blue',
         },
         {
             column: 'ratio_all_closed',
-            name: 'Ratio [a+b]/[c+d]',
+            name: 'Ratio [c+d]/[a+b]',
             color: 'fuchsia',
 
         },
