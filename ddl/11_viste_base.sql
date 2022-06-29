@@ -23,8 +23,7 @@ and lastname in (
 ,'Product Engineering'
 ,'Mechanical Designer'
 ,'DVT Reliability'
-,'DVT Functional'
-,'DVT Integration'
+,'DVT Functional-Integration'
 ,'Project Management'
 ,'Product Engineering'
 );
